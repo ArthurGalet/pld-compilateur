@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+compiler/build/
+compiler/generated
+compiler/ifcc
+*.mk
+
+tests/ifcc-test.py
+tests/ifcc-wrapper.sh
