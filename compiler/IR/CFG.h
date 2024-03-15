@@ -1,14 +1,17 @@
-#ifndef IR_CFG_H
-#define IR_CFG_H
+#pragma once
+
 
 #include <vector>
 #include <string>
 #include <iostream>
 #include <initializer_list>
+#include <map>
 
 // Declarations from the parser -- replace with your own
-#include "type.h"
-#include "symbole.h"
+#include "Type.h"
+#include "BasicBlock.h"
+
+class DefFonction;
 
 using namespace std;
 

@@ -1,13 +1,13 @@
-#ifndef IR_INSTR_H
-#define IR_INSTR_H
+#pragma once
+
 
 #include <vector>
 #include <string>
 #include <iostream>
 #include <initializer_list>
 
-#include "type.h"
-#include "symbole.h"
+#include "Type.h"
+#include "BasicBlock.h"
 
 using namespace std;
 

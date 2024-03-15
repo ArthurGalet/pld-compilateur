@@ -1,5 +1,5 @@
-#ifndef IR_BB_H
-#define IR_BB_H
+#pragma once
+
 
 #include <vector>
 #include <string>
@@ -7,8 +7,9 @@
 #include <initializer_list>
 
 // Declarations from the parser -- replace with your own
-#include "type.h"
-#include "symbole.h"
+#include "Type.h"
+#include "IRInstr.h"
+#include "CFG.h"
 
 using namespace std;
 
@@ -54,6 +55,4 @@ class BasicBlock {
   string test_var_name;  /** < when generating IR code for an if(expr) or while(expr) etc,
 													 store here the name of the variable that holds the value of expr */
  protected:
-
- 
 };
