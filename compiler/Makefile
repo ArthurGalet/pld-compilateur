@@ -20,7 +20,9 @@ OBJECTS=build/ifccBaseVisitor.o \
 	build/main.o \
 	build/ValidatorVisitor.o \
 	build/CodeGenVisitor.o \
-	IR/IRInstr.o
+	IR/IRInstr.o \
+	IR/BasicBlock.o \
+	IR/CFG.o 
 
 ifcc: $(OBJECTS)
 	@mkdir -p build
