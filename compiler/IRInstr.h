@@ -7,10 +7,12 @@
 #include <initializer_list>
 
 #include "BasicBlock.h"
+#include "CFG.h"
 #include "Type.h"
 #include "Operation.h"
 
 class BasicBlock;
+class CFG;
 
 using namespace std;
 

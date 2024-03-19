@@ -17,7 +17,12 @@ typedef enum {
     call = 7,
     cmp_eq = 8,
     cmp_lt = 9,
-    cmp_le = 10
+    cmp_le = 10,
+    cmp_ge = 11,
+    cmp_gt = 12,
+    ret = 13,
+    divide = 14,
+    modulo = 15
 } Operation;
 
 #endif //PLD_COMP_OPERATION_H
