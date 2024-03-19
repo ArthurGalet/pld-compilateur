@@ -5,6 +5,7 @@ BasicBlock::BasicBlock(CFG* cfg, string entry_label){
     this->label = entry_label;
 
 }
+
 void BasicBlock::gen_asm(ostream &o){
     for (IRInstr* instr : instrs){
         instr->gen_asm(o);
@@ -24,4 +25,6 @@ void BasicBlock::gen_asm(ostream &o){
     }
 }
 
-//void BasicBlock::add_IRInstr(IRInstr::Operation op, Type t, vector<string> params);
+void BasicBlock::add_IRInstr(IRInstr::Operation op, Type t, vector<string> params) {
+    instrs.push_back(new IRInstr(this, op, t, params));
+}
