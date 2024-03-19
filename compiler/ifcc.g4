@@ -4,10 +4,8 @@ axiom : prog EOF ;
 
 prog : 'int' 'main' '(' ')' bloc ;
 
-instruction: ( return_stmt | affectation | declarations | ifelse) ';';
+instruction: ( return_stmt | expression | declarations | ifelse | while_loop ) ';';
 return_stmt: RETURN expression;
-
-affectation: VARIABLE '=' expression;
 
 declarations: 'int' declaration (',' declaration)*;
 declaration: VARIABLE ('=' expression)?;
@@ -18,25 +16,35 @@ bloc: '{' instruction* '}';
 
 ifelse : 'if' '(' expression ')' bloc ('else' (ifelse | bloc))?;
 
-expression: '(' expression ')'               #exprPARENS |
-            '-' expression                   #exprNEG    |
-            '!' expression                   #exprNOT    |
-            expression OPMDM expression      #exprMDM    |
-            expression OPAS  expression      #exprAS     |
-            expression INEQUALITY expression #exprNE     |
-            expression EQUALITY expression   #exprEQ     |
-            expression AND expression        #exprAND    |
-            expression XOR expression        #exprXOR    |
-            expression OR expression         #exprOR     |
-            valeur                           #exprVAL    ;
+while_loop : 'while' '(' expression ')' bloc;
+
+expression: '(' expression ')'                       #exprPARENS  |
+            '-' expression                           #exprNEG     |
+            '!' expression                           #exprNOT     |
+            expression OPMDM expression              #exprMDM     |
+            expression OPAS  expression              #exprAS      |
+            expression INEQUALITY expression         #exprNE      |
+            expression EQUALITY expression           #exprEQ      |
+            expression BWAND expression              #exprAND     |
+            expression BWXOR expression              #exprXOR     |
+            expression BWOR expression               #exprOR      |
+            expression LAZYAND expression            #exprLAND    |
+            expression LAZYOR expression             #exprLOR     |
+            expression '?' expression ':' expression #exprCOND    |
+            VARIABLE OPAFF expression                #affectation |
+            valeur                                   #exprVAL     ;
+            
 
 OPAS : [+-];
 OPMDM : [*/%];
-AND : '&';
-OR : '|';
-XOR : '^';
+BWAND : '&';
+BWOR : '|';
+BWXOR : '^';
+LAZYAND : '&&';
+LAZYOR : '||';
 EQUALITY : '==' | '!=';
 INEQUALITY : '<' | '>' | '<=' | '>=';
+OPAFF : '=' | '+=' | '-=' | '*=' | '/=' | '%=';
 
 RETURN : 'return' ;
 CONST : [0-9]+ ;
