@@ -38,3 +38,5 @@ compiler/ifcc
 
 tests/ifcc-test.py
 tests/ifcc-wrapper.sh
+
+.vscode/
