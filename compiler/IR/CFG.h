@@ -9,7 +9,8 @@
 
 // Declarations from the parser -- replace with your own
 #include "Type.h"
-#include "BasicBlock.h"
+
+class BasicBlock;
 
 class DefFonction;
 
@@ -53,6 +54,7 @@ class CFG {
 	map <string, int> SymbolIndex; /**< part of the symbol table  */
 	int nextFreeSymbolIndex; /**< to allocate new symbols in the symbol table */
 	int nextBBnumber; /**< just for naming */
+	int nextTmpVariableNumber;
 	
 	vector <BasicBlock*> bbs; /**< all the basic blocks of this CFG*/
 };

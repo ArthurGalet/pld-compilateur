@@ -1,12 +1,12 @@
 #include "BasicBlock.h"
 
-BasickBlock::BasicBlock(CFG* cfg, string entry_label){
+BasicBlock::BasicBlock(CFG* cfg, string entry_label){
     this->cfg = cfg;
     this->label = entry_label;
 
 }
-void BasickBlock::gen_asm(ostream &o){
-    for (IRInstr instr : instrs){
+void BasicBlock::gen_asm(ostream &o){
+    for (IRInstr* instr : instrs){
         instr->gen_asm(o);
     }
     
@@ -24,4 +24,4 @@ void BasickBlock::gen_asm(ostream &o){
     }
 }
 
-void BasickBlock::add_IRInstr(IRInstr::Operation op, Type t, vector<string> params);
+//void BasicBlock::add_IRInstr(IRInstr::Operation op, Type t, vector<string> params);

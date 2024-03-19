@@ -8,8 +8,9 @@
 
 // Declarations from the parser -- replace with your own
 #include "Type.h"
-#include "IRInstr.h"
+
 #include "CFG.h"
+#include "IRInstr.h"
 
 using namespace std;
 

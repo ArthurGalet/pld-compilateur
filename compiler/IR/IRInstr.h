@@ -7,7 +7,8 @@
 #include <initializer_list>
 
 #include "Type.h"
-#include "BasicBlock.h"
+
+class BasicBlock;
 
 using namespace std;
 

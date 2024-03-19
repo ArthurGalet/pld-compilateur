@@ -1,4 +1,5 @@
 #include "CFG.h"
+#include "BasicBlock.h"
 
 CFG::CFG(DefFonction *source_ast) {
     ast = source_ast;
@@ -51,6 +52,7 @@ void CFG::add_to_symbol_table(std::string name, Type t) {
 string CFG::create_new_tempvar(Type t) {
     string name = "!tmp";
     name.append(to_string(nextTmpVariableNumber));
+    return name;
 }
 
 int CFG::get_var_index(std::string name) {
@@ -65,4 +67,5 @@ string CFG::new_BB_name() {
     string name = "bb";
     name.append(to_string(nextBBnumber));
     nextBBnumber++;
+    return name;
 }
