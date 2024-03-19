@@ -21,14 +21,14 @@ void IRInstr::gen_asm(ostream &o) {
             break;
         case add:
             // P0 = P1 + P2
-            o << "    addl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", " << bb->cfg->IR_reg_to_asm(params[2]) << "\n";
-            o << "    movl    " << bb->cfg->IR_reg_to_asm(params[2]) << ", %eax\n";
+            o << "    movl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", %eax\n";
+            o << "    addl    " << bb->cfg->IR_reg_to_asm(params[2]) << ", %eax\n";
             o << "    movl %eax, " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
             break;
         case sub:
             // P0 = P1 - P2
-            o << "    subl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", " << bb->cfg->IR_reg_to_asm(params[2]) << "\n";
-            o << "    movl    " << bb->cfg->IR_reg_to_asm(params[2]) << ", %eax\n";
+            o << "    movl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", %eax\n";
+            o << "    subl    " << bb->cfg->IR_reg_to_asm(params[2]) << ", %eax\n";
             o << "    movl %eax, " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
             break;
         case mul:
