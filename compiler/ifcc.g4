@@ -25,11 +25,11 @@ expression: '(' expression ')'                       #exprPARENS  |
             expression OPAS  expression              #exprAS      |
             expression INEQUALITY expression         #exprNE      |
             expression EQUALITY expression           #exprEQ      |
-            expression AND expression                #exprAND     |
-            expression XOR expression                #exprXOR     |
+            expression BWAND expression              #exprAND     |
+            expression BWXOR expression              #exprXOR     |
+            expression BWOR expression               #exprOR      |
             expression LAZYAND expression            #exprLAND    |
             expression LAZYOR expression             #exprLOR     |
-            expression OR expression                 #exprOR      |
             expression '?' expression ':' expression #exprCOND    |
             VARIABLE OPAFF expression                #affectation |
             valeur                                   #exprVAL     ;
@@ -37,9 +37,9 @@ expression: '(' expression ')'                       #exprPARENS  |
 
 OPAS : [+-];
 OPMDM : [*/%];
-AND : '&';
-OR : '|';
-XOR : '^';
+BWAND : '&';
+BWOR : '|';
+BWXOR : '^';
 LAZYAND : '&&';
 LAZYOR : '||';
 EQUALITY : '==' | '!=';
