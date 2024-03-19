@@ -4,7 +4,7 @@ axiom : prog EOF ;
 
 prog : 'int' 'main' '(' ')' bloc ;
 
-instruction: ( return_stmt | affectation | declarations | ifelse) ';';
+instruction: ( return_stmt | affectation | declarations | ifelse | while_loop ) ';';
 return_stmt: RETURN expression;
 
 affectation: VARIABLE '=' expression;
@@ -17,6 +17,8 @@ valeur: VARIABLE | CONST;
 bloc: '{' instruction* '}';
 
 ifelse : 'if' '(' expression ')' bloc ('else' (ifelse | bloc))?;
+
+while_loop : 'while' '(' expression ')' bloc;
 
 expression: '(' expression ')'               #exprPARENS |
             '-' expression                   #exprNEG    |
