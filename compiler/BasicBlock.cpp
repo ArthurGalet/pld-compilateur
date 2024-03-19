@@ -26,5 +26,5 @@ void BasicBlock::gen_asm(ostream &o){
 }
 
 void BasicBlock::add_IRInstr(IRInstr::Operation op, Type t, vector<string> params) {
-    instrs.push_back(new IRInstr(this, op, t, params));
+    instrs.push_back(new IRInstr(this, op, params));
 }

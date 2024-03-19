@@ -1,9 +1,8 @@
 #include "IRInstr.h"
 
-IRInstr::IRInstr(BasicBlock* bb_, Operation op, Type t, vector<string> params) {
+IRInstr::IRInstr(BasicBlock* bb_, Operation op, vector<string> params) {
     this->bb = bb_;
     this->op = op;
-    this->t = t;
     this->params = params;
 }
 
