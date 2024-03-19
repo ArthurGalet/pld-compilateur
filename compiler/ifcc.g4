@@ -4,10 +4,8 @@ axiom : prog EOF ;
 
 prog : 'int' 'main' '(' ')' bloc ;
 
-instruction: ( return_stmt | affectation | declarations | ifelse | while_loop ) ';';
+instruction: ( return_stmt | expression | declarations | ifelse | while_loop ) ';';
 return_stmt: RETURN expression;
-
-affectation: VARIABLE '=' expression;
 
 declarations: 'int' declaration (',' declaration)*;
 declaration: VARIABLE ('=' expression)?;
@@ -29,16 +27,23 @@ expression: '(' expression ')'               #exprPARENS |
             expression EQUALITY expression   #exprEQ     |
             expression AND expression        #exprAND    |
             expression XOR expression        #exprXOR    |
+            expression LAZYAND expression    #exprLAND   |
+            expression LAZYOR expression     #exprLOR    |
             expression OR expression         #exprOR     |
+            VARIABLE OPAFF expression          #affectation|
             valeur                           #exprVAL    ;
+            
 
 OPAS : [+-];
 OPMDM : [*/%];
 AND : '&';
 OR : '|';
 XOR : '^';
+LAZYAND : '&&';
+LAZYOR : '||';
 EQUALITY : '==' | '!=';
 INEQUALITY : '<' | '>' | '<=' | '>=';
+OPAFF : '=' | '+=' | '-=' | '*=' | '/=' | '%=';
 
 RETURN : 'return' ;
 CONST : [0-9]+ ;
