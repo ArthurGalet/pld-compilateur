@@ -22,7 +22,7 @@ void CFG::gen_asm(std::ostream &o) {
 string CFG::IR_reg_to_asm(std::string reg) {
     string res = "-";
     if (SymbolIndex.find(reg) == SymbolIndex.end()) {
-        res.append(reg);
+        return "%"+reg;
     } else {
         res.append(to_string(SymbolIndex[reg]));
     }
@@ -52,6 +52,8 @@ void CFG::add_to_symbol_table(std::string name, Type t) {
 string CFG::create_new_tempvar(Type t) {
     string name = "!tmp";
     name.append(to_string(nextTmpVariableNumber));
+    nextTmpVariableNumber++;
+    add_to_symbol_table(name, t);
     return name;
 }
 
