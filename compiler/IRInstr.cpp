@@ -8,11 +8,12 @@ IRInstr::IRInstr(BasicBlock* bb_, Operation op, vector<string> params) {
 }
 
 void IRInstr::gen_asm(ostream &o) {
+
     switch (op) {
         case ldconst:
             o << "    movl    $" << bb->cfg->IR_reg_to_asm(params[1]) << ", " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
             break;
-        case copy:
+        case 1: //copy
             o << "    movl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", %eax\n";
             o << "    movl %eax, " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
             break;
@@ -30,8 +31,8 @@ void IRInstr::gen_asm(ostream &o) {
             o << "    movl    " << bb->cfg->IR_reg_to_asm(params[2]) << "(%eax), " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
             break;
         case wmem:
-            o << "    movl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", %eax" << "\n";
-            o << "    movl    " << bb->cfg->IR_reg_to_asm(params[0]) << ", " << bb->cfg->IR_reg_to_asm(params[2]) << "(%eax)" << "\n";
+            o << "    movl    " << bb->cfg->get_var_index(params[0]) << ", %eax" << "\n";
+            o << "    movl    %eax, -" << bb->cfg->get_var_index(params[1]) << "(%rbp)" << "\n";
             break;
         case call:
             o << "    call    " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";

@@ -6,7 +6,9 @@
 #include <iostream>
 #include <initializer_list>
 
+#include "BasicBlock.h"
 #include "Type.h"
+#include "Operation.h"
 
 class BasicBlock;
 
@@ -16,21 +18,6 @@ using namespace std;
 class IRInstr {
  
    public:
-	/** The instructions themselves -- feel free to subclass instead */
-	typedef enum {
-		ldconst,
-		copy,
-		add,
-		sub,
-		mul,
-		rmem,
-		wmem,
-		call, 
-		cmp_eq,
-		cmp_lt,
-		cmp_le
-	} Operation;
-
 
 	/**  constructor */
 	IRInstr(BasicBlock* bb_, Operation op, vector<string> params);
