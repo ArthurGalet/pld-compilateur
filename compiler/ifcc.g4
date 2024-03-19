@@ -18,20 +18,21 @@ ifelse : 'if' '(' expression ')' bloc ('else' (ifelse | bloc))?;
 
 while_loop : 'while' '(' expression ')' bloc;
 
-expression: '(' expression ')'               #exprPARENS |
-            '-' expression                   #exprNEG    |
-            '!' expression                   #exprNOT    |
-            expression OPMDM expression      #exprMDM    |
-            expression OPAS  expression      #exprAS     |
-            expression INEQUALITY expression #exprNE     |
-            expression EQUALITY expression   #exprEQ     |
-            expression AND expression        #exprAND    |
-            expression XOR expression        #exprXOR    |
-            expression LAZYAND expression    #exprLAND   |
-            expression LAZYOR expression     #exprLOR    |
-            expression OR expression         #exprOR     |
-            VARIABLE OPAFF expression          #affectation|
-            valeur                           #exprVAL    ;
+expression: '(' expression ')'                       #exprPARENS  |
+            '-' expression                           #exprNEG     |
+            '!' expression                           #exprNOT     |
+            expression OPMDM expression              #exprMDM     |
+            expression OPAS  expression              #exprAS      |
+            expression INEQUALITY expression         #exprNE      |
+            expression EQUALITY expression           #exprEQ      |
+            expression AND expression                #exprAND     |
+            expression XOR expression                #exprXOR     |
+            expression LAZYAND expression            #exprLAND    |
+            expression LAZYOR expression             #exprLOR     |
+            expression OR expression                 #exprOR      |
+            expression '?' expression ':' expression #exprCOND    |
+            VARIABLE OPAFF expression                #affectation |
+            valeur                                   #exprVAL     ;
             
 
 OPAS : [+-];
