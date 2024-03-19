@@ -9,9 +9,9 @@
 
 // Declarations from the parser -- replace with your own
 #include "Type.h"
+#include "BasicBlock.h"
 
 class BasicBlock;
-
 class DefFonction;
 
 using namespace std;

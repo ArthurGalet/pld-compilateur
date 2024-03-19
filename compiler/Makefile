@@ -5,7 +5,7 @@
 include config.mk
 
 CC=g++
-CCFLAGS=-g -c -std=c++17 -I$(ANTLRINC) -Wno-attributes # -Wno-defaulted-function-deleted -Wno-unknown-warning-option
+CCFLAGS=-g -c -std=c++17 -I$(ANTLRINC) -Wall -Wno-attributes # -Wno-defaulted-function-deleted -Wno-unknown-warning-option
 LDFLAGS=-g
 
 default: all
@@ -17,11 +17,12 @@ OBJECTS=build/ifccBaseVisitor.o \
 	build/ifccLexer.o \
 	build/ifccVisitor.o \
 	build/ifccParser.o \
-	build/main.o \
+	build/IRInstr.o \
+	build/BasicBlock.o \
+	build/CFG.o \
 	build/ValidatorVisitor.o \
-	IR/IRInstr.o \
-	IR/BasicBlock.o \
-	IR/CFG.o 
+	build/CToIRVisitor.o \
+	build/main.o
 
 ifcc: $(OBJECTS)
 	@mkdir -p build
@@ -70,5 +71,5 @@ gui:
 ##########################################
 # delete all machine-generated files
 clean:
-	rm -rf build generated
+	rm -rf build generated IR/*.o
 	rm -f ifcc

@@ -14,6 +14,8 @@
 
 using namespace std;
 
+class CFG;
+
 /**  The class for a basic block */
 
 /* A few important comments.

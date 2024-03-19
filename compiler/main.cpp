@@ -8,6 +8,7 @@
 #include "generated/ifccParser.h"
 
 #include "ValidatorVisitor.h"
+#include "CToIRVisitor.h"
 
 using namespace antlr4;
 using namespace std;
@@ -53,6 +54,9 @@ int main(int argn, const char **argv)
 
   ValidatorVisitor vv(declaredVariables);
   vv.visit(tree);
+
+  CToIRVisitor v;
+  v.visit(tree);
 
   return 0;
 }
