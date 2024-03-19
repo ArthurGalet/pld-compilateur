@@ -7,7 +7,6 @@
 #include "generated/ifccLexer.h"
 #include "generated/ifccParser.h"
 
-#include "CodeGenVisitor.h"
 #include "ValidatorVisitor.h"
 
 using namespace antlr4;
@@ -54,9 +53,6 @@ int main(int argn, const char **argv)
 
   ValidatorVisitor vv(declaredVariables);
   vv.visit(tree);
-
-  CodeGenVisitor cgv(declaredVariables);
-  cgv.visit(tree);
 
   return 0;
 }

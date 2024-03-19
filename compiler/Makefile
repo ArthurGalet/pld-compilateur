@@ -19,7 +19,6 @@ OBJECTS=build/ifccBaseVisitor.o \
 	build/ifccParser.o \
 	build/main.o \
 	build/ValidatorVisitor.o \
-	build/CodeGenVisitor.o \
 	IR/IRInstr.o \
 	IR/BasicBlock.o \
 	IR/CFG.o 

@@ -40,3 +40,4 @@ tests/ifcc-test.py
 tests/ifcc-wrapper.sh
 
 .vscode/
+compiler/.antlr/

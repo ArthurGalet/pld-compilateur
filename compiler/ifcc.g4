@@ -2,9 +2,9 @@ grammar ifcc;
 
 axiom : prog EOF ;
 
-prog : 'int' 'main' '(' ')' '{' instruction* '}' ;
+prog : 'int' 'main' '(' ')' bloc ;
 
-instruction: ( return_stmt | affectation | declarations ) ';';
+instruction: ( return_stmt | affectation | declarations | ifelse) ';';
 return_stmt: RETURN expression;
 
 affectation: VARIABLE '=' expression;
@@ -14,12 +14,29 @@ declaration: VARIABLE ('=' expression)?;
 
 valeur: VARIABLE | CONST;
 
-expression: valeur                      #exprVAL |
-            expression OPMDM expression #exprMDM |
-            expression OPAS  expression #exprAS  ;
+bloc: '{' instruction* '}';
+
+ifelse : 'if' '(' expression ')' bloc ('else' (ifelse | bloc))?;
+
+expression: '(' expression ')'               #exprPARENS |
+            '-' expression                   #exprNEG    |
+            '!' expression                   #exprNOT    |
+            expression OPMDM expression      #exprMDM    |
+            expression OPAS  expression      #exprAS     |
+            expression INEQUALITY expression #exprNE     |
+            expression EQUALITY expression   #exprEQ     |
+            expression AND expression        #exprAND    |
+            expression XOR expression        #exprXOR    |
+            expression OR expression         #exprOR     |
+            valeur                           #exprVAL    ;
 
 OPAS : [+-];
 OPMDM : [*/%];
+AND : '&';
+OR : '|';
+XOR : '^';
+EQUALITY : '==' | '!=';
+INEQUALITY : '<' | '>' | '<=' | '>=';
 
 RETURN : 'return' ;
 CONST : [0-9]+ ;
