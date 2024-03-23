@@ -65,6 +65,10 @@ Type CFG::get_var_type(std::string name) {
     return SymbolType[name];
 }
 
+bool CFG::is_variable_defined(string name) {
+    return SymbolIndex.find(name) != SymbolIndex.end();
+}
+
 string CFG::new_BB_name() {
     string name = "bb";
     name.append(to_string(nextBBnumber));
