@@ -31,6 +31,8 @@ jobs:
     
     steps:
     - uses: actions/checkout@v3
+    - name: Debug
+      run: tree  
     - name: Run tests
       run: |        
         for filepath in $(find testfiles -type f -name "*.c"); do
