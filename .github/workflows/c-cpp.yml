@@ -28,6 +28,7 @@ jobs:
       run:
         working-directory: ./tests
     runs-on: ubuntu-latest
+    needs: build
     
     steps:
     - uses: actions/checkout@v3
@@ -43,10 +44,6 @@ jobs:
             gcc -S -o asm-gcc.s "$filepath" > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
             gccstatus=$?      
 
-            echo $filepath
-            echo "$base/$filepath"
-            echo "$base/ifcc-wrapper.sh"
-            echo "$(dirname $0)/../compiler/ifcc"
             $base/ifcc-wrapper.sh asm-ifcc.s "$base/$filepath" > ifcc-compile.txt 2>&1
             ifccstatus=$?
 
