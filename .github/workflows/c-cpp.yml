@@ -31,12 +31,12 @@ jobs:
     
     steps:
     - uses: actions/checkout@v3
+    - name: Install GCC
+    - run: sudo apt-get install gcc
     - name: Run tests
       run: |        
         base=$(pwd)
-        echo 0
         for filepath in $(find testfiles -type f -name "*.c"); do
-            echo 1
             cd $base
             output_dir="${filepath%.c}"_output
             mkdir -p "$output_dir" || continue
@@ -44,8 +44,8 @@ jobs:
         
             echo 2
             gcc -S -o asm-gcc.s "$filepath" > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
-            gccstatus=$?
-        
+            gccstatus=$?      
+            echo 4
             ../ifcc-wrapper.sh asm-ifcc.s "$filepath" > ifcc-compile.txt 2>&1
             ifccstatus=$?
             echo 3
