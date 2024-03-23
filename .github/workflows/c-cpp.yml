@@ -8,6 +8,9 @@ on:
 
 jobs:
   build:
+    defaults:
+      run:
+        working-directory: ./compiler
 
     runs-on: ubuntu-latest
 
