@@ -44,6 +44,9 @@ jobs:
             gccstatus=$?      
 
             echo $filepath
+            echo "$base/$filepath"
+            echo "$base/ifcc-wrapper.sh"
+            echo "$(dirname $0)/../compiler/ifcc"
             $base/ifcc-wrapper.sh asm-ifcc.s "$base/$filepath" > ifcc-compile.txt 2>&1
             ifccstatus=$?
 
