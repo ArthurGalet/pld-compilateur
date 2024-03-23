@@ -31,8 +31,6 @@ jobs:
     
     steps:
     - uses: actions/checkout@v3
-    - name: Debug
-      run: tree  
     - name: Run tests
       run: |        
         for filepath in $(find testfiles -type f -name "*.c"); do
@@ -43,7 +41,7 @@ jobs:
             gcc -S -o asm-gcc.s "$filepath" > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
             gccstatus=$?
         
-            ../../ifcc-wrapper.sh asm-ifcc.s "$filepath" > ifcc-compile.txt 2>&1
+            ../ifcc-wrapper.sh asm-ifcc.s "$filepath" > ifcc-compile.txt 2>&1
             ifccstatus=$?
             
             if [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -ne 0 ]; then
@@ -61,4 +59,3 @@ jobs:
                 fi
             fi
         done
-      continue-on-error: true
