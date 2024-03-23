@@ -44,6 +44,8 @@ jobs:
             gccstatus=$?      
 
             tree $base
+            echo $(pwd)
+            echo $filepath
             $base/ifcc-wrapper.sh asm-ifcc.s "$filepath" > ifcc-compile.txt 2>&1
             ifccstatus=$?
             echo 3
