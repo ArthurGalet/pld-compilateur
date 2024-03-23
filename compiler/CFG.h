@@ -44,6 +44,7 @@ class CFG {
 	string create_new_tempvar(Type t);
 	int get_var_index(string name);
 	Type get_var_type(string name);
+    bool is_variable_defined(string name);
 
 	// basic block management
 	string new_BB_name();
