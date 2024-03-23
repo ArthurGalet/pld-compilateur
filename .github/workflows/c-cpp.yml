@@ -2,6 +2,7 @@ name: C/C++ CI
 
 on:
   push:
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
@@ -11,7 +12,6 @@ jobs:
     defaults:
       run:
         working-directory: ./compiler
-
     runs-on: ubuntu-latest
 
     steps:
@@ -22,3 +22,14 @@ jobs:
       run: sudo apt install antlr4 libantlr4-runtime-dev default-jdk
     - name: make
       run: make
+
+  tests:
+    defaults:
+      run:
+        working-directory: ./tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run tests
+      run: python3 ifcc-test.py testfiles/
