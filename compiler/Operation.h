@@ -8,7 +8,7 @@
 /** The instructions themselves -- feel free to subclass instead */
 typedef enum {
     ldconst = 0,
-    copy = 1,
+    copyvar = 1,
     add = 2,
     sub = 3,
     mul = 4,

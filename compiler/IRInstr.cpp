@@ -13,7 +13,7 @@ void IRInstr::gen_asm(ostream &o) {
         case ldconst:
             o << "    movl    $" << bb->cfg->IR_reg_to_asm(params[1]) << ", " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
             break;
-        case 1: //copy
+        case copyvar:
             o << "    movl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", %eax\n";
             o << "    movl %eax, " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
             break;
