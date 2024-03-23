@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: make clean
-      run: make
+      run: make clean
     - name : Install Antrl4
       run: sudo apt install antlr4 libantlr4-runtime-dev default-jdk
     - name: make
