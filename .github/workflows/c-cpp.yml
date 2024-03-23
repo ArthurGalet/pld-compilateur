@@ -32,7 +32,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Install GCC
-    - run: sudo apt-get install gcc
+      run: sudo apt-get install gcc
     - name: Run tests
       run: |        
         base=$(pwd)
