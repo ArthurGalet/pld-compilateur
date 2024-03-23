@@ -36,14 +36,14 @@ jobs:
         base=$(pwd)
         for filepath in $(find testfiles -type f -name "*.c"); do
             cd $base
-            output_dir="${filepath%.c}"_output
+            output_dir="${filepath%.c//\//-}"_output
             mkdir -p "$output_dir" || continue
             cd "$output_dir" || continue
         
             gcc -S -o asm-gcc.s "$filepath" > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
             gccstatus=$?      
 
-            echo $base/$filepath
+            echo $filepath
             $base/ifcc-wrapper.sh asm-ifcc.s "$base/$filepath" > ifcc-compile.txt 2>&1
             ifccstatus=$?
 
