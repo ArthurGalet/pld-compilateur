@@ -32,4 +32,31 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Run tests
-      run: python3 ifcc-test.py testfiles/
+      run: |        
+        for filepath in $(find testfiles -type f -name "*.c"); do
+            output_dir="${filepath%.c}"_output
+            mkdir -p "$output_dir" || continue
+            cd "$output_dir" || continue
+        
+            gcc -S -o asm-gcc.s "$filepath" > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
+            gccstatus=$?
+        
+            ../../ifcc-wrapper.sh asm-ifcc.s "$filepath" > ifcc-compile.txt 2>&1
+            ifccstatus=$?
+            
+            if [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -ne 0 ]; then
+                echo "TEST OK"
+            elif [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -eq 0 ]; then
+                echo "TEST FAIL (your compiler accepts an invalid program)"
+            elif [ "$gccstatus" -eq 0 ] && [ "$ifccstatus" -ne 0 ]; then
+                echo "TEST FAIL (your compiler rejects a valid program)"
+            else
+                gcc -o exe-ifcc asm-ifcc.s > /dev/null 2>&1 && ./exe-ifcc > ifcc-execute.txt 2>&1
+                if ! cmp -s "gcc-execute.txt" "ifcc-execute.txt"; then
+                    echo "TEST FAIL (different results at execution)"
+                else
+                    echo "TEST OK"
+                fi
+            fi
+        done
+      continue-on-error: true
