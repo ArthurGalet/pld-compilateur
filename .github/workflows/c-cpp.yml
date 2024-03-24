@@ -46,8 +46,7 @@ jobs:
             gcc -S -o asm-gcc.s "$filepath" > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
             gccstatus=$?      
 
-            echo "$base/ifcc-wrapper.sh"   "$base/$filepath"   "$base"
-            $base/ifcc-wrapper.sh asm-ifcc.s "$base/$filepath" > ifcc-compile.txt 2>&1
+            $base/../compiler/ifcc asm-ifcc.s "$base/$filepath" > ifcc-compile.txt 2>&1
             ifccstatus=$?
 
             echo $(basename $filepath)
