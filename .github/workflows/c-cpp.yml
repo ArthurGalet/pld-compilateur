@@ -39,7 +39,9 @@ jobs:
     - uses: actions/checkout@v4
     - name: Retrieve test files
       id: test_files
-      run: echo "files=$(find testfiles -type f -name '*.c' | jq -R -cs 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+      run: |
+        echo "files=$(find testfiles -type f -name '*.c' | jq -R -cs 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+        echo "names=$(find testfiles -type f -name '*.c' | sed -e 's/testfiles\///g' -e 's/\//-/g' | jq -R -cs 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
     
   tests:
     runs-on: ubuntu-latest
@@ -52,6 +54,8 @@ jobs:
       matrix:
         file: ${{ fromJSON(needs.setup.outputs.files) }}
       fail-fast: false
+
+    name: ${{ matrix.names }}
 
     steps:
     - uses: actions/checkout@v4
