@@ -38,34 +38,31 @@ jobs:
         base=$(pwd)
         for filepath in $(find testfiles -type f -name "*.c"); do
             cd $base
-            echo $SHELL
+
             output_dir="${filepath%.c//\//-}"_output
             mkdir -p "$output_dir" || continue
             cd "$output_dir" || continue
-            echo $base
+            
             gcc -S -o asm-gcc.s "$filepath" > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
             gccstatus=$?      
 
-            tree
-            echo "filepath
-            echo "$base/ifcc-wrapper.sh"
-            echo "$base/$filepath"
+            echo 'OK'
             $base/ifcc-wrapper.sh asm-ifcc.s "$base/$filepath" > ifcc-compile.txt 2>&1
             ifccstatus=$?
 
             echo $(basename $filepath)
             if [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -ne 0 ]; then
-                echo "TEST OK"
+                echo 'TEST OK'
             elif [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -eq 0 ]; then
-                echo "TEST FAIL (your compiler accepts an invalid program)"
+                echo 'TEST FAIL (your compiler accepts an invalid program)'
             elif [ "$gccstatus" -eq 0 ] && [ "$ifccstatus" -ne 0 ]; then
-                echo "TEST FAIL (your compiler rejects a valid program)"
+                echo 'TEST FAIL (your compiler rejects a valid program)'
             else
                 gcc -o exe-ifcc asm-ifcc.s > /dev/null 2>&1 && ./exe-ifcc > ifcc-execute.txt 2>&1
                 if ! cmp -s "gcc-execute.txt" "ifcc-execute.txt"; then
-                    echo "TEST FAIL (different results at execution)"
+                    echo 'TEST FAIL (different results at execution)'
                 else
-                    echo "TEST OK"
+                    echo 'TEST OK'
                 fi
             fi
         done
