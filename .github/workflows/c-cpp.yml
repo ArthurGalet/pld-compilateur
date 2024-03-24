@@ -84,14 +84,15 @@ jobs:
         fi
 
         chmod 777 $base/../compiler/ifcc $base/ifcc-wrapper.sh
-        $base/ifcc-wrapper.sh asm-ifcc.s "$base/$${{ matrix.file }}" > ifcc-compile.txt 2>&1
+        $base/ifcc-wrapper.sh asm-ifcc.s "$base/${{ matrix.file }}" > ifcc-compile.txt 2>&1
         
         echo "ifccstatus=$?" >> $GITHUB_OUTPUT
         echo "gccstatus=$gccstatus" >> $GITHUB_OUTPUT
         
-        echo "Compilation gcc"
+        echo "Compilation gcc :"
         cat gcc-compile.txt
-        echo "Compilation ifcc"
+        echo "-----"
+        echo "Compilation ifcc :"
         cat ifcc-compile.txt
 
     - name: Compare results
