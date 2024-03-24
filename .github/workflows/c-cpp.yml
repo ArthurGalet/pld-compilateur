@@ -97,7 +97,7 @@ jobs:
 
     - name: Compare results
       run: |
-        cd ${{ steps.setup.outputs.output_dir }}
+        cd ${{ steps.compile.outputs.output_dir }}
         
         gccstatus=${{ steps.compile.outputs.gccstatus }}
         ifccstatus=${{ steps.compile.outputs.ifccstatus }}
@@ -114,9 +114,10 @@ jobs:
         else
             gcc -o exe-ifcc asm-ifcc.s > /dev/null 2>&1 && ./exe-ifcc > ifcc-execute.txt 2>&1
         
-            echo "Execution gcc"
+            echo "Execution gcc :"
             cat gcc-execute.txt
-            echo "Execution ifcc"
+            echo "-----"
+            echo "Execution ifcc :"
             cat ifcc-execute.txt
         
             if ! cmp -s "gcc-execute.txt" "ifcc-execute.txt"; then
