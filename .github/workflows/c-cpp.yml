@@ -61,24 +61,18 @@ jobs:
         name: compiler
         path: compiler/
         
-    - name: Setup
-      id: setup
-      continue-on-error: true
-      run: |
-        filepath="${{ matrix.file }}"
-        output_dir="${filepath%.c//\//-}"_output
-        echo "wd=$(pwd)" >> $GITHUB_OUTPUT
-        echo "test_dir=$output_dir" >> $GITHUB_OUTPUT
-        mkdir -p "$output_dir" || continue
-        cd "$output_dir" || continue
-    
     - name: Compilation
       id: compile
+      continue-on-error: true
       run: |
-        set +e
-        cd ${{ steps.setup.outputs.test_dir }}
-        base=${{ steps.setup.outputs.wd }}
+        base=$(pwd)
         
+        output_dir="${${{ matrix.file }}%.c//\//-}"_output
+        echo "output_dir=$output_dir" >> $GITHUB_OUTPUT
+        mkdir -p "$output_dir"
+        cd "$output_dir"
+    
+        set +e
         gcc -S -o asm-gcc.s $base/${{ matrix.file }} > gcc-compile.txt 2>&1 
         gccstatus=$?
         if [ $gccstatus -eq 0 ]; then
@@ -97,6 +91,8 @@ jobs:
         
     - name: Compare results
       run: |
+        cd ${{ steps.setup.outputs.output_dir }}
+        
         gccstatus=${{ steps.compile.outputs.gccstatus }}
         ifccstatus=${{ steps.compile.outputs.ifccstatus }}
     
