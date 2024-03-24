@@ -89,9 +89,85 @@ int main()
         cerr << "[test_gen_asm] test_sub " << red_cross() << endl;
         success = false;
     }
+
+    if(make_test_gen_asm((Operation)1,11,11,19)) {
+        cout << "[test_gen_asm] test_copy " << green_check_mark() << endl;
+    }
+    else {
+        cerr << "[test_gen_asm] test_copy " << red_cross() << endl;
+        success = false;
+    }
+
+    if(make_test_gen_asm(Operation::mul,30,6,5)) {
+        cout << "[test_gen_asm] test_mul " << green_check_mark() << endl;
+    }
+    else {
+        cerr << "[test_gen_asm] test_mul " << red_cross() << endl;
+        success = false;
+    }
+
+    if(make_test_gen_asm(Operation::divide,5,10,2)) {
+        cout << "[test_gen_asm] test_divide " << green_check_mark() << endl;
+    }
+    else {
+        cerr << "[test_gen_asm] test_divide " << red_cross() << endl;
+        success = false;
+    }
+
+    if(make_test_gen_asm(Operation::modulo,3,8,5)) {
+        cout << "[test_gen_asm] test_modulo " << green_check_mark() << endl;
+    }
+    else {
+        cerr << "[test_gen_asm] test_modulo " << red_cross() << endl;
+        success = false;
+    }
+
+    if(make_test_gen_asm(Operation::cmp_eq,1,8,8) && make_test_gen_asm(Operation::cmp_eq,0,8,5)) {
+        cout << "[test_gen_asm] test_cmp_eq " << green_check_mark() << endl;
+    }
+    else {
+        cerr << "[test_gen_asm] test_cmp_eq " << red_cross() << endl;
+        success = false;
+    }
+
+    if(make_test_gen_asm(Operation::cmp_lt,1,3,8) && make_test_gen_asm(Operation::cmp_lt,0,8,5) && make_test_gen_asm(Operation::cmp_lt,0,8,8)) {
+        cout << "[test_gen_asm] test_cmp_lt " << green_check_mark() << endl;
+    }
+    else {
+        cerr << "[test_gen_asm] test_cmp_lt " << red_cross() << endl;
+        success = false;
+    }
+
+    if(make_test_gen_asm(Operation::cmp_le,1,3,8) && make_test_gen_asm(Operation::cmp_le,0,8,5) && make_test_gen_asm(Operation::cmp_le,1,8,8)) {
+        cout << "[test_gen_asm] test_cmp_le " << green_check_mark() << endl;
+    }
+    else {
+        cerr << "[test_gen_asm] test_cmp_le " << red_cross() << endl;
+        success = false;
+    }
+
+    if(make_test_gen_asm(Operation::cmp_gt,0,3,8) && make_test_gen_asm(Operation::cmp_gt,1,8,5) && make_test_gen_asm(Operation::cmp_gt,0,8,8)) {
+        cout << "[test_gen_asm] test_cmp_gt " << green_check_mark() << endl;
+    }
+    else {
+        cerr << "[test_gen_asm] test_cmp_gt " << red_cross() << endl;
+        success = false;
+    }
+
+    if(make_test_gen_asm(Operation::cmp_ge,0,3,8) && make_test_gen_asm(Operation::cmp_ge,1,8,5) && make_test_gen_asm(Operation::cmp_ge,1,8,8)) {
+        cout << "[test_gen_asm] test_cmp_ge " << green_check_mark() << endl;
+    }
+    else {
+        cerr << "[test_gen_asm] test_cmp_ge " << red_cross() << endl;
+        success = false;
+    }
     
-    if(success)
+    if(success) {
         cout << "test_gen_asm " << green_check_mark() << endl;
-    else
+        return 0;
+    }
+    else {
         cerr << "test_gen_asm " << red_cross() << endl;
+        return 1;
+    }
 }
