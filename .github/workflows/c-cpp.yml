@@ -71,16 +71,25 @@ jobs:
         output_dir="${filepath%.c//\//-}"_output
         mkdir -p "$output_dir" || continue
         cd "$output_dir" || continue
+
+        echo "wd=$base" >> $GITHUB_OUTPUT
+        echo "test_dir=$output_dir" >> $GITHUB_OUTPUT
     
     - name: Compile with gcc
       id: gcc_compile
       continue-on-error: true
-      run: gcc -S -o asm-gcc.s "$filepath" > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
+      run: |
+        cd ${{ steps.setup.outputs.test_dir }}
+        filepath="${{ matrix.file }}"
+        gcc -S -o asm-gcc.s "$filepath" > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
     
     - name: Compile with ifcc
       id: ifcc_compile
       continue-on-error: true
       run: |
+        cd ${{ steps.setup.outputs.test_dir }}
+        filepath="${{ matrix.file }}"
+        base=${{ steps.setup.outputs.base }}
         chmod 777 $base/../compiler/ifcc $base/ifcc-wrapper.sh
         $base/ifcc-wrapper.sh asm-ifcc.s "$base/$filepath" > ifcc-compile.txt 2>&1
     
@@ -89,7 +98,7 @@ jobs:
         gccstatus=${{ steps.gcc_compile.outcome }}
         ifccstatus=${{ steps.ifcc_compile.outcome }}
     
-        echo $(basename $filepath)
+        echo $(basename ${{ matrix.file }})
         if [ "$gccstatus" != "success" ] && [ "$ifccstatus" != "success" ]; then
             echo 'TEST OK'
         elif [ "$gccstatus" != "success" ] && [ "$ifccstatus" = "success" ]; then
