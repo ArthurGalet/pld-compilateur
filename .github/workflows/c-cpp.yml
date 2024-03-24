@@ -65,14 +65,13 @@ jobs:
       id: setup
       continue-on-error: true
       run: |
-        base=$(pwd)
         filepath="${{ matrix.file }}"
-    
         output_dir="${filepath%.c//\//-}"_output
+        
         mkdir -p "$output_dir" || continue
         cd "$output_dir" || continue
 
-        echo "wd=$base" >> $GITHUB_OUTPUT
+        echo "wd=$(pwd)" >> $GITHUB_OUTPUT
         echo "test_dir=$output_dir" >> $GITHUB_OUTPUT
     
     - name: Compile with gcc
@@ -98,7 +97,7 @@ jobs:
     - name: Compare results
       run: |
         gccstatus=${{ steps.gcc_compile.outputs.gccstatus }}
-        ifccstatus=${{ steps.ifccstatus.outputs.ifccstatus }}
+        ifccstatus=${{ steps.ifcc_compile.outputs.ifccstatus }}
     
         echo $(basename ${{ matrix.file }})
         if [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -ne 0 ]; then
