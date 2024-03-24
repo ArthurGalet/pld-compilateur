@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name : Install Antrl4
       run: sudo apt install antlr4 libantlr4-runtime-dev default-jdk
     - name: Make
@@ -36,7 +36,7 @@ jobs:
       files: ${{ steps.test_files.outputs.files }}
         
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Retrieve test files
       id: test_files
       run: echo "files=$(find testfiles -type f -name '*.c' | jq -R -cs 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
@@ -54,7 +54,7 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Download compiler
       uses: actions/download-artifact@master
       with:
