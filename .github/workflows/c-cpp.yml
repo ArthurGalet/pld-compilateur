@@ -46,9 +46,19 @@ jobs:
     - name: Retrieve test files
       id: test_files
       run: echo "files=$(find testfiles -type f -name '*.c' | jq -R -cs 'split("\n")[:-1]')" >> $GITHUB_ACTION
+    - name: Debug
+      run: echo ${{ fromJSON(steps.test_files.outputs.files) }}
 
 
-      
+  debug:
+    runs-on: ubuntu-latest
+    needs: setup 
+    steps:
+    - uses: actions/checkout@v3
+    - name: Debug
+      run: echo ${{ fromJSON(needs.setup.outputs.files) }}
+
+    
   tests:
     runs-on: ubuntu-latest
     needs: setup
