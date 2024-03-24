@@ -131,6 +131,22 @@ int main()
         cerr << "[test_gen_asm] test_modulo " << red_cross() << endl;
         success = false;
     }
+
+    if(make_test_gen_asm((Operation)1,3,3,5)) {
+        cout << "[test_gen_asm] test_ldconst " << green_check_mark() << endl;
+    }
+    else {
+        cerr << "[test_gen_asm] test_ldconst " << red_cross() << endl;
+        success = false;
+    }
+
+    if(make_test_gen_asm((Operation)1,3,3,5)) {
+        cout << "[test_gen_asm] test_ret " << green_check_mark() << endl;
+    }
+    else {
+        cerr << "[test_gen_asm] test_ret " << red_cross() << endl;
+        success = false;
+    }
     
     if(success) {
         cout << "test_gen_asm " << green_check_mark() << endl;
