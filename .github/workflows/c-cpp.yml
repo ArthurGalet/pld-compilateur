@@ -104,7 +104,6 @@ jobs:
         gccstatus=${{ steps.compile.outputs.gccstatus }}
         ifccstatus=${{ steps.compile.outputs.ifccstatus }}
     
-        echo $(basename {{ steps.compile.outputs.filepath }})
         if [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -ne 0 ]; then
             echo 'TEST OK'
         elif [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -eq 0 ]; then
