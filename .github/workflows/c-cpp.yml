@@ -35,15 +35,14 @@ jobs:
     
     strategy:
       matrix:
-        file: ${{ matrix.file }}
+        file: ${{ steps.test_files.outputs.files }}
       fail-fast: false
 
     steps:
     - uses: actions/checkout@v3
-    - name: List files
-      id: list_files
-      run: |
-        echo "::set-output name=files::$(find testfiles -type f -name '*.c')"
+    - name: Retrieve test files
+      id: test_files
+      run: echo "files=$(find testfiles -type f -name '*.c') >> "$GITHUB_OUTPUT"
 
     - name: Download compiler artifact
       uses: actions/download-artifact@v2
