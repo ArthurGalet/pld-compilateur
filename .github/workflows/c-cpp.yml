@@ -56,7 +56,10 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Download compiler
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@master
+      with:
+        name: compiler
+        path: compiler/
     - name: Run tests
       run: |
         base=$(pwd)
