@@ -72,9 +72,9 @@ run_unit_tests: unit_tests
 	@for file in $$(ls -1 ../tests/unit_testing/build); do ../tests/unit_testing/build/$$file; done
 
 unit_tests: ../tests/unit_testing/build/test_gen_asm
-	@mkdir -p ../tests/unit_testing/build
 
 ../tests/unit_testing/build/test_gen_asm: IRInstr.cpp ../tests/unit_testing/test_gen_asm/*.cpp
+	@mkdir -p ../tests/unit_testing/build
 	@g++ -o $@ $^
 
 
