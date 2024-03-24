@@ -66,18 +66,24 @@ void IRInstr::gen_asm(ostream &o) {
             exit(1);
             break;
         case cmp_eq:
-            // P0 == P1
+            // /!\ non implémenté
+            exit(1);
+            break;
         case cmp_lt:
-            // P0 =  (P1 < P2)
+            // /!\ non implémenté
+            exit(1);
+            break;
         case cmp_le:
-            // P0 = (P1 <= P2)
-            o << "    cmpl    " << bb->cfg->IR_reg_to_asm(params[0]) << ", " << bb->cfg->IR_reg_to_asm(params[1]) << "\n";
+            // /!\ non implémenté
+            exit(1);
             break;
         case cmp_gt:
-            // P0 = (P1 > P2)
+            // /!\ non implémenté
+            exit(1);
+            break;
         case cmp_ge:
-            // P0 = (P1 >= P2)
-            o << "    cmpl    " << bb->cfg->IR_reg_to_asm(params[0]) << ", " << bb->cfg->IR_reg_to_asm(params[1]) << "\n";
+            // /!\ non implémenté
+            exit(1);
             break;
         case ret:
             // return P0
