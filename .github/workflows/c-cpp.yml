@@ -43,7 +43,7 @@ jobs:
     - uses: actions/download-artifact@master
       with:
         name: compiler
-        path: ../compiler/ifcc
+        path: ../compiler/
     - name: Run tests
       run: |
         base=$(pwd)
