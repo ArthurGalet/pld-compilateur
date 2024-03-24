@@ -66,14 +66,15 @@ jobs:
       continue-on-error: true
       run: |
         base=$(pwd)
+        filename=${{ matrix.file }}
         
-        output_dir="${${{ matrix.file }}%.c//\//-}"_output
+        output_dir="${$filename%.c//\//-}"_output
         echo "output_dir=$output_dir" >> $GITHUB_OUTPUT
         mkdir -p "$output_dir"
         cd "$output_dir"
     
         set +e
-        gcc -S -o asm-gcc.s $base/${{ matrix.file }} > gcc-compile.txt 2>&1 
+        gcc -S -o asm-gcc.s $base/$filename > gcc-compile.txt 2>&1 
         gccstatus=$?
         if [ $gccstatus -eq 0 ]; then
             gcc -o exe-gcc asm-gcc.s > gcc-link.txt 2>&1
@@ -84,7 +85,7 @@ jobs:
         fi
 
         chmod 777 $base/../compiler/ifcc $base/ifcc-wrapper.sh
-        $base/ifcc-wrapper.sh asm-ifcc.s "$base/${{ matrix.file }}" > ifcc-compile.txt 2>&1
+        $base/ifcc-wrapper.sh asm-ifcc.s "$base/$filename" > ifcc-compile.txt 2>&1
         
         echo "ifccstatus=$?" >> $GITHUB_OUTPUT
         echo "gccstatus=$gccstatus" >> $GITHUB_OUTPUT
@@ -102,7 +103,7 @@ jobs:
         gccstatus=${{ steps.compile.outputs.gccstatus }}
         ifccstatus=${{ steps.compile.outputs.ifccstatus }}
     
-        echo $(basename ${{ matrix.file }})
+        echo $(basename $filename)
         if [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -ne 0 ]; then
             echo 'TEST OK'
         elif [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -eq 0 ]; then
