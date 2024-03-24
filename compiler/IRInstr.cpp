@@ -33,53 +33,61 @@ void IRInstr::gen_asm(ostream &o) {
             break;
         case mul:
             // P0 = P1 * P2
-            o << "    imull    " << bb->cfg->IR_reg_to_asm(params[1]) << ", " << bb->cfg->IR_reg_to_asm(params[2]) << "\n";
-            o << "    movl    " << bb->cfg->IR_reg_to_asm(params[2]) << ", %eax\n";
+            o << "    movl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", %eax\n";
+            o << "    imull    " << bb->cfg->IR_reg_to_asm(params[2]) << ", %eax" << "\n";
             o << "    movl %eax, " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
             break;
         case divide:
             // P0 = P1 / P2
             o << "    movl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", %eax\n";
             o << "    cltd\n";
-            o << "    idivl -" << bb->cfg->IR_reg_to_asm(params[2]) << "(%rbp)\n";
+            o << "    movl " << bb->cfg->IR_reg_to_asm(params[2]) << ", %ebx\n";
+            o << "    idivl %ebx\n";
             o << "    movl %eax, " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
             break;
         case modulo:
-            // P0 = P1 % P2
+             // P0 = P1 / P2
             o << "    movl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", %eax\n";
             o << "    cltd\n";
-            o << "    idivl -" << bb->cfg->IR_reg_to_asm(params[2]) << "(%rbp)\n";
+            o << "    movl " << bb->cfg->IR_reg_to_asm(params[2]) << ", %ebx\n";
+            o << "    idivl %ebx\n";
             o << "    movl %edx, " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
             break;
         case rmem:
-            o << "    movl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", %eax" << "\n";
-            o << "    movl    " << bb->cfg->IR_reg_to_asm(params[2]) << "(%eax), " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
+            // /!\ non implémenté
+            exit(1);
             break;
         case wmem:
-            o << "    movl    " << bb->cfg->get_var_index(params[0]) << ", %eax" << "\n";
-            o << "    movl    %eax, -" << bb->cfg->get_var_index(params[1]) << "(%rbp)" << "\n";
+            // /!\ non implémenté
+            exit(1);
             break;
         case call:
             // /!\ non implémenté
-            exit(0);
+            exit(1);
             break;
         case cmp_eq:
-            // P0 == P1
+            // /!\ non implémenté
+            exit(1);
+            break;
         case cmp_lt:
-            // P0 > P1
+            // /!\ non implémenté
+            exit(1);
+            break;
         case cmp_le:
-            // P0 >= P1
-            o << "    cmpl    " << bb->cfg->IR_reg_to_asm(params[0]) << ", " << bb->cfg->IR_reg_to_asm(params[1]) << "\n";
+            // /!\ non implémenté
+            exit(1);
             break;
         case cmp_gt:
-            // P0 < P1
+            // /!\ non implémenté
+            exit(1);
+            break;
         case cmp_ge:
-            // P0 <= P1
-            o << "    cmpl    " << bb->cfg->IR_reg_to_asm(params[0]) << ", " << bb->cfg->IR_reg_to_asm(params[1]) << "\n";
+            // /!\ non implémenté
+            exit(1);
             break;
         case ret:
             // return P0
-            o << "    movl    " << bb->cfg->get_var_index(params[0]) << ", %eax" << "\n";
+            o << "    movl    " << bb->cfg->IR_reg_to_asm(params[0]) << ", %eax" << "\n";
             break;
     }
 }
