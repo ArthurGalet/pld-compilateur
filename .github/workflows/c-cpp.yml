@@ -77,7 +77,6 @@ jobs:
     
     - name: Compile with gcc
       id: gcc_compile
-      continue-on-error: true
       run: |
         set +e
         cd ${{ steps.setup.outputs.test_dir }}
@@ -88,7 +87,6 @@ jobs:
     
     - name: Compile with ifcc
       id: ifcc_compile
-      continue-on-error: true
       run: |
         set +e
         cd ${{ steps.setup.outputs.test_dir }}
@@ -100,7 +98,7 @@ jobs:
     - name: Compare results
       run: |
         gccstatus=${{ steps.gcc_compile.outputs.gccstatus }}
-        ifccstatus=${{ steps.gcc_compile.outputs.ifccstatus }}
+        ifccstatus=${{ steps.ifccstatus.outputs.ifccstatus }}
     
         echo $(basename ${{ matrix.file }})
         if [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -ne 0 ]; then
