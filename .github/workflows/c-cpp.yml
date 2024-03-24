@@ -60,7 +60,8 @@ jobs:
       with:
         name: compiler
         path: compiler/
-    - name: Compile files
+        
+    - name: Setup
       continue-on-error: true
       run: |
         base=$(pwd)
@@ -70,12 +71,23 @@ jobs:
         mkdir -p "$output_dir" || continue
         cd "$output_dir" || continue
         
-        gcc -S -o asm-gcc.s "$filepath" > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
-        gccstatus=$?      
+    - name: Compile with gcc
+      continue-on-error: true
+      run: gcc -S -o asm-gcc.s "$filepath" > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
+      
+    - name: Retrieve gcc return code
+      run: gccstatus=$?      
 
+    - name: Compile with ifcc
+      continue-on-error: true
+      run: |
         chmod 777 $base/../compiler/ifcc $base/ifcc-wrapper.sh
         $base/ifcc-wrapper.sh asm-ifcc.s "$base/$filepath" > ifcc-compile.txt 2>&1
+
+    - name: Retrieve ifcc return code
+      run: 
         ifccstatus=$?
+
     - name: Compare results
       run: |
         echo $(basename $filepath)
