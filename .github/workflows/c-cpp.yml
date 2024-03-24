@@ -34,6 +34,7 @@ jobs:
 
     outputs:
       files: ${{ steps.test_files.outputs.files }}
+      names: ${{ steps.test_files.outputs.names }}
         
     steps:
     - uses: actions/checkout@v4
@@ -53,9 +54,10 @@ jobs:
     strategy:
       matrix:
         file: ${{ fromJSON(needs.setup.outputs.files) }}
+        jobname: ${{ fromJSON(needs.setup.outputs.names) }}
       fail-fast: false
 
-    name: ${{ matrix.names }}
+    name: ${{ matrix.jobname }}
 
     steps:
     - uses: actions/checkout@v4
