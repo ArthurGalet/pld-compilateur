@@ -67,6 +67,7 @@ jobs:
       run: |
         base=$(pwd)
         filename=${{ matrix.file }}
+        echo "filename=filename" >> $GITHUB_OUTPUT
         
         output_dir="${filename%.c//\//-}"_output
         echo "output_dir=$output_dir" >> $GITHUB_OUTPUT
@@ -103,7 +104,7 @@ jobs:
         gccstatus=${{ steps.compile.outputs.gccstatus }}
         ifccstatus=${{ steps.compile.outputs.ifccstatus }}
     
-        echo $(basename $filename)
+        echo $(basename {{ steps.compile.outputs.filepath }})
         if [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -ne 0 ]; then
             echo 'TEST OK'
         elif [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -eq 0 ]; then
@@ -113,7 +114,9 @@ jobs:
             echo 'TEST FAIL (your compiler rejects a valid program)'
             exit 1
         else
+            set +e
             gcc -o exe-ifcc asm-ifcc.s > /dev/null 2>&1 && ./exe-ifcc > ifcc-execute.txt 2>&1
+            set -e
         
             echo "Execution gcc :"
             cat gcc-execute.txt
