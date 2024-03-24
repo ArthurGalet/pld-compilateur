@@ -16,14 +16,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: make clean
-      run: make clean
     - name : Install Antrl4
       run: sudo apt install antlr4 libantlr4-runtime-dev default-jdk
-    - name: make
+    - name: Make
       run: make
-    - name: debug
-      run: tree
+    - name: Upload compiler
     - uses: actions/upload-artifact@master
       with:
         name: compiler
@@ -58,11 +55,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Download compiler artifact
+    - name: Download compiler
       uses: actions/download-artifact@v2
-      with:
-        name: compiler
-        path: compiler/
     - name: Run tests
       run: |
         base=$(pwd)
