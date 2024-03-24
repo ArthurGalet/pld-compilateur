@@ -42,7 +42,7 @@ jobs:
     - uses: actions/checkout@v3
     - name: Retrieve test files
       id: test_files
-      run: echo "files=$(find testfiles -type f -name '*.c') >> $GITHUB_OUTPUT"
+      run: echo "files=$(find testfiles -type f -name '*.c' | jq -R -s 'split("\n")[:-1]') >> $GITHUB_OUTPUT"
 
 
       
@@ -55,7 +55,7 @@ jobs:
     
     strategy:
       matrix:
-        file: ${{ needs.setup.outputs.files }}
+        file: ${{ fromJSON(needs.setup.outputs.files) }}
       fail-fast: false
 
     steps:
