@@ -35,7 +35,7 @@ jobs:
     
     strategy:
       matrix:
-        file: ${{ steps.list_files.outputs.files }}
+        file: ${{ matrix.file }}
       fail-fast: false
 
     steps:
