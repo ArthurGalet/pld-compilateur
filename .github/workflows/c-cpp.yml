@@ -33,14 +33,16 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Run tests
-      run: |        
+      run: |
+        set +o posix
         base=$(pwd)
         for filepath in $(find testfiles -type f -name "*.c"); do
             cd $base
+            echo $SHELL
             output_dir="${filepath%.c//\//-}"_output
             mkdir -p "$output_dir" || continue
             cd "$output_dir" || continue
-        
+            echo $base
             gcc -S -o asm-gcc.s "$filepath" > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
             gccstatus=$?      
 
