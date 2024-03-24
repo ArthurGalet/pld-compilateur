@@ -68,7 +68,7 @@ jobs:
         base=$(pwd)
         filename=${{ matrix.file }}
         
-        output_dir="${$filename%.c//\//-}"_output
+        output_dir="${filename%.c//\//-}"_output
         echo "output_dir=$output_dir" >> $GITHUB_OUTPUT
         mkdir -p "$output_dir"
         cd "$output_dir"
