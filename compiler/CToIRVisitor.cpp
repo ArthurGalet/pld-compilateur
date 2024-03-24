@@ -93,9 +93,9 @@ antlrcpp::Any CToIRVisitor::visitExprMDM(ifccParser::ExprMDMContext *ctx) {
     params.push_back(visit(ctx->expression()[0]));
     params.push_back(visit(ctx->expression()[1]));
 
-    if (ctx->OPMDM()->getText() == "*") {
+    if (ctx->MULT() != 0) {
         cfg->current_bb->add_IRInstr(mul, params);
-    } else if (ctx->OPMDM()->getText() == "/") {
+    } else if (ctx->DIV() != 0){
         cfg->current_bb->add_IRInstr(divide, params);
     } else {
         cfg->current_bb->add_IRInstr(modulo, params);
@@ -112,7 +112,7 @@ antlrcpp::Any CToIRVisitor::visitExprAS(ifccParser::ExprASContext *ctx) {
     params.push_back(visit(ctx->expression()[0]));
     params.push_back(visit(ctx->expression()[1]));
 
-    if (ctx->OPAS()->getText() == "+") {
+    if (ctx->PLUS() != 0) {
         cfg->current_bb->add_IRInstr(add, params);
     } else {
         cfg->current_bb->add_IRInstr(sub, params);
