@@ -27,7 +27,7 @@ jobs:
     - uses: actions/upload-artifact@master
       with:
         name: compiler
-        path: ifcc
+        path: compiler/ifcc
 
   
 
