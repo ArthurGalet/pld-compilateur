@@ -62,41 +62,40 @@ jobs:
         path: compiler/
         
     - name: Setup
+      id: setup
       continue-on-error: true
       run: |
         base=$(pwd)
         filepath="${{ matrix.file }}"
-
+    
         output_dir="${filepath%.c//\//-}"_output
         mkdir -p "$output_dir" || continue
         cd "$output_dir" || continue
-        
+    
     - name: Compile with gcc
+      id: gcc_compile
       continue-on-error: true
       run: gcc -S -o asm-gcc.s "$filepath" > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
-      
-    - name: Retrieve gcc return code
-      run: gccstatus=$?      
-
+    
     - name: Compile with ifcc
+      id: ifcc_compile
       continue-on-error: true
       run: |
         chmod 777 $base/../compiler/ifcc $base/ifcc-wrapper.sh
         $base/ifcc-wrapper.sh asm-ifcc.s "$base/$filepath" > ifcc-compile.txt 2>&1
-
-    - name: Retrieve ifcc return code
-      run: 
-        ifccstatus=$?
-
+    
     - name: Compare results
       run: |
+        gccstatus=${{ steps.gcc_compile.outcome }}
+        ifccstatus=${{ steps.ifcc_compile.outcome }}
+    
         echo $(basename $filepath)
-        if [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -ne 0 ]; then
+        if [ "$gccstatus" != "success" ] && [ "$ifccstatus" != "success" ]; then
             echo 'TEST OK'
-        elif [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -eq 0 ]; then
+        elif [ "$gccstatus" != "success" ] && [ "$ifccstatus" = "success" ]; then
             echo 'TEST FAIL (your compiler accepts an invalid program)'
             exit 1  # Fail the job if the test fails
-        elif [ "$gccstatus" -eq 0 ] && [ "$ifccstatus" -ne 0 ]; then
+        elif [ "$gccstatus" = "success" ] && [ "$ifccstatus" != "success" ]; then
             echo 'TEST FAIL (your compiler rejects a valid program)'
             exit 1  # Fail the job if the test fails
         else
