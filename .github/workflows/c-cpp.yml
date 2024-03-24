@@ -22,6 +22,12 @@ jobs:
       run: sudo apt install antlr4 libantlr4-runtime-dev default-jdk
     - name: make
       run: make
+    - uses: actions/upload-artifact@master
+      with:
+        name: compiler
+        path: ./ifcc
+
+  
 
   tests:
     defaults:
@@ -32,6 +38,10 @@ jobs:
     
     steps:
     - uses: actions/checkout@v3
+    - uses: actions/download-artifact@master
+      with:
+        name: compiler
+        path: ../compiler/ifcc
     - name: Run tests
       run: |
         base=$(pwd)
