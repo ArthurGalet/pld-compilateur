@@ -79,7 +79,7 @@ void IRInstr::gen_asm(ostream &o) {
             break;
         case ret:
             // return P0
-            o << "    movl    " << bb->cfg->get_var_index(params[0]) << ", %eax" << "\n";
+            o << "    movl    " << bb->cfg->IR_reg_to_asm(params[0]) << ", %eax" << "\n";
             break;
     }
 }
