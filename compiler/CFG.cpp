@@ -14,6 +14,8 @@ void CFG::add_bb(BasicBlock *bb) {
 }
 
 void CFG::gen_asm(std::ostream &o) {
+    gen_asm_prologue(o);
+
     for (auto& bb : bbs) {
         bb->gen_asm(o);
     }
