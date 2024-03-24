@@ -68,8 +68,19 @@ gui:
 	javac -cp $(ANTLRJAR) -d build generated/*.java
 	java -cp $(ANTLRJAR):build org.antlr.v4.gui.TestRig ifcc axiom -gui $(FILE)
 
+run_unit_tests: unit_tests
+	@for file in $$(ls -1 ../tests/unit_testing/build); do ../tests/unit_testing/build/$$file; done
+
+unit_tests: ../tests/unit_testing/build/test_gen_asm
+	@mkdir -p ../tests/unit_testing/build
+
+../tests/unit_testing/build/test_gen_asm: IRInstr.cpp ../tests/unit_testing/test_gen_asm/*.cpp
+	@g++ -o $@ $^
+
+
 ##########################################
 # delete all machine-generated files
 clean:
 	rm -rf build generated IR/*.o
 	rm -f ifcc
+	rm  ../tests/unit_testing/build/*

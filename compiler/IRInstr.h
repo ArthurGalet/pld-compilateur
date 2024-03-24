@@ -6,8 +6,6 @@
 #include <iostream>
 #include <initializer_list>
 
-#include "BasicBlock.h"
-#include "CFG.h"
 #include "Type.h"
 #include "Operation.h"
 
