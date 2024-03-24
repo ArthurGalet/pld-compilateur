@@ -80,7 +80,7 @@ jobs:
       continue-on-error: true
       run: |
         cd ${{ steps.setup.outputs.test_dir }}
-        gcc -S -o asm-gcc.s "${{ steps.setup.outputs.wd }}/${{ matrix.file }} > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
+        gcc -S -o asm-gcc.s ${{ steps.setup.outputs.wd }}/${{ matrix.file }} > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
     
     - name: Compile with ifcc
       id: ifcc_compile
