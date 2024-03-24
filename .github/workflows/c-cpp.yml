@@ -65,25 +65,29 @@ jobs:
       id: setup
       continue-on-error: true
       run: |
-        echo "wd=$(pwd)" >> $GITHUB_OUTPUT
-        
         filepath="${{ matrix.file }}"
         output_dir="${filepath%.c//\//-}"_output
-        
+        echo "wd=$(pwd)" >> $GITHUB_OUTPUT
+        echo "test_dir=$output_dir" >> $GITHUB_OUTPUT
         mkdir -p "$output_dir" || continue
         cd "$output_dir" || continue
-
-        echo "test_dir=$output_dir" >> $GITHUB_OUTPUT
     
     - name: Compile with gcc
       id: gcc_compile
       run: |
         set +e
         cd ${{ steps.setup.outputs.test_dir }}
-        gcc -S -o asm-gcc.s ${{ steps.setup.outputs.wd }}/${{ matrix.file }} > gcc-compile.txt 2>&1
-        gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1
-        ./exe-gcc > gcc-execute.txt 2>&1
-        echo "gccstatus=$?" >> $GITHUB_OUTPUT
+        gcc -S -o asm-gcc.s ${{ steps.setup.outputs.wd }}/${{ matrix.file }} > gcc-compile.txt 2>&1 
+        gccstatus=$?
+        if [ $gccstatus -eq 0 ]; then
+            gcc -o exe-gcc asm-gcc.s > gcc-link.txt 2>&1
+            gccstatus=$?
+        fi
+        if [ $gccstatus -eq 0 ]; then
+            ./exe-gcc > gcc-execute.txt 2>&1
+        fi
+ 
+        echo "gccstatus=$gccstatus" >> $GITHUB_OUTPUT
     
     - name: Compile with ifcc
       id: ifcc_compile
