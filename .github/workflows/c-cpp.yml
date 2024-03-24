@@ -72,12 +72,14 @@ jobs:
         mkdir -p "$output_dir" || continue
         cd "$output_dir" || continue
     
-    - name: Compile with gcc
-      id: gcc_compile
+    - name: Compilation
+      id: compile
       run: |
         set +e
         cd ${{ steps.setup.outputs.test_dir }}
-        gcc -S -o asm-gcc.s ${{ steps.setup.outputs.wd }}/${{ matrix.file }} > gcc-compile.txt 2>&1 
+        base=${{ steps.setup.outputs.wd }}
+        
+        gcc -S -o asm-gcc.s $base/${{ matrix.file }} > gcc-compile.txt 2>&1 
         gccstatus=$?
         if [ $gccstatus -eq 0 ]; then
             gcc -o exe-gcc asm-gcc.s > gcc-link.txt 2>&1
@@ -86,23 +88,17 @@ jobs:
         if [ $gccstatus -eq 0 ]; then
             ./exe-gcc > gcc-execute.txt 2>&1
         fi
- 
-        echo "gccstatus=$gccstatus" >> $GITHUB_OUTPUT
-    
-    - name: Compile with ifcc
-      id: ifcc_compile
-      run: |
-        set +e
-        cd ${{ steps.setup.outputs.test_dir }}
-        base=${{ steps.setup.outputs.wd }}
+
         chmod 777 $base/../compiler/ifcc $base/ifcc-wrapper.sh
         $base/ifcc-wrapper.sh asm-ifcc.s "$base/$${{ matrix.file }}" > ifcc-compile.txt 2>&1
+        
         echo "ifccstatus=$?" >> $GITHUB_OUTPUT
+        echo "gccstatus=$gccstatus" >> $GITHUB_OUTPUT
         
     - name: Compare results
       run: |
-        gccstatus=${{ steps.gcc_compile.outputs.gccstatus }}
-        ifccstatus=${{ steps.ifcc_compile.outputs.ifccstatus }}
+        gccstatus=${{ steps.compile.outputs.gccstatus }}
+        ifccstatus=${{ steps.compile.outputs.ifccstatus }}
     
         echo $(basename ${{ matrix.file }})
         if [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -ne 0 ]; then
