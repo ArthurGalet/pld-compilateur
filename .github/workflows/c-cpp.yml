@@ -37,12 +37,15 @@ jobs:
     defaults:
       run:
         working-directory: ./tests
+
+    outputs:
+      files: ${{ steps.test_files.outputs.files }}
         
     steps:
     - uses: actions/checkout@v3
     - name: Retrieve test files
       id: test_files
-      run: echo "files=$(find testfiles -type f -name '*.c' | jq -R -s 'split("\n")[:-1]') >> $GITHUB_OUTPUT"
+      run: echo "::set-output name=files::$(find testfiles -type f -name '*.c' | jq -R -s 'split("\n")[:-1]')"
 
 
       
