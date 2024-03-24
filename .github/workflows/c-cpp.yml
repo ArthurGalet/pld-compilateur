@@ -57,6 +57,8 @@ jobs:
     - uses: actions/checkout@v3
     - name: Download compiler
       uses: actions/download-artifact@v2
+      with:
+        name: compiler
     - name: Run tests
       run: |
         base=$(pwd)
