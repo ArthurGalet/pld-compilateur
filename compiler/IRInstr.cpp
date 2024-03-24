@@ -89,5 +89,9 @@ void IRInstr::gen_asm(ostream &o) {
             // return P0
             o << "    movl    " << bb->cfg->IR_reg_to_asm(params[0]) << ", %eax" << "\n";
             break;
+        case neg:
+            // P0 = -P0
+            o << "    neg    " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
+            break;
     }
 }
