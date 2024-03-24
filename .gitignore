@@ -43,3 +43,4 @@ tests/ifcc-test-output/
 .vscode/
 compiler/.antlr/*
 /tests/ifcc-test-output/
+tests/unit_testing/build/*
