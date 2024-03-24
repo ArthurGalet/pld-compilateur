@@ -80,18 +80,16 @@ jobs:
       continue-on-error: true
       run: |
         cd ${{ steps.setup.outputs.test_dir }}
-        filepath="${{ matrix.file }}"
-        gcc -S -o asm-gcc.s "$filepath" > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
+        gcc -S -o asm-gcc.s "${{ steps.setup.outputs.wd }}/${{ matrix.file }} > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
     
     - name: Compile with ifcc
       id: ifcc_compile
       continue-on-error: true
       run: |
         cd ${{ steps.setup.outputs.test_dir }}
-        filepath="${{ matrix.file }}"
-        base=${{ steps.setup.outputs.base }}
+        base=${{ steps.setup.outputs.wd }}
         chmod 777 $base/../compiler/ifcc $base/ifcc-wrapper.sh
-        $base/ifcc-wrapper.sh asm-ifcc.s "$base/$filepath" > ifcc-compile.txt 2>&1
+        $base/ifcc-wrapper.sh asm-ifcc.s "$base/$${{ matrix.file }}" > ifcc-compile.txt 2>&1
     
     - name: Compare results
       run: |
