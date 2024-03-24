@@ -46,10 +46,11 @@ void IRInstr::gen_asm(ostream &o) {
             o << "    movl %eax, " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
             break;
         case modulo:
-            // P0 = P1 % P2
+             // P0 = P1 / P2
             o << "    movl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", %eax\n";
             o << "    cltd\n";
-            o << "    idivl -" << bb->cfg->IR_reg_to_asm(params[2]) << "(%rbp)\n";
+            o << "    movl " << bb->cfg->IR_reg_to_asm(params[2]) << ", %ebx\n";
+            o << "    idivl %ebx\n";
             o << "    movl %edx, " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
             break;
         case rmem:
