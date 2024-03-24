@@ -60,11 +60,11 @@ jobs:
       with:
         name: compiler
         path: compiler/
-    - name: Run tests
+    - name: Compile files
+      continue-on-error: true
       run: |
         base=$(pwd)
         filepath="${{ matrix.file }}"
-        cd $base
 
         output_dir="${filepath%.c//\//-}"_output
         mkdir -p "$output_dir" || continue
@@ -76,7 +76,8 @@ jobs:
         chmod 777 $base/../compiler/ifcc $base/ifcc-wrapper.sh
         $base/ifcc-wrapper.sh asm-ifcc.s "$base/$filepath" > ifcc-compile.txt 2>&1
         ifccstatus=$?
-        
+    - name: Compare results
+      run: |
         echo $(basename $filepath)
         if [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -ne 0 ]; then
             echo 'TEST OK'
