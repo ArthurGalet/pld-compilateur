@@ -47,6 +47,9 @@ bool make_test_gen_asm(Operation op, int expectedVarOut, int varIn1, int varIn2)
     }
     catch(const std::exception& e) {
         cerr << e.what() << endl;
+        cerr << filename << ".s: " << endl;
+        string cat_command = "cat "+filename+".s";
+        system(cat_command.c_str());
         return false;
     }
     
@@ -62,6 +65,9 @@ bool make_test_gen_asm(Operation op, int expectedVarOut, int varIn1, int varIn2)
 
     if (return_value != expectedVarOut) {
         cerr << "the assembly does not produce the expected value" << endl;
+        cerr << filename << ".s: " << endl;
+        string cat_command = "cat "+filename+".s";
+        system(cat_command.c_str());
         return false;
     }
     return true;
