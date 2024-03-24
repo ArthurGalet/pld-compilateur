@@ -39,28 +39,21 @@ antlrcpp::Any CToIRVisitor::visitAffectation(ifccParser::AffectationContext *ctx
     string operandVariable = visit(ctx->expression());
 
     vector<string> params = vector<string>();
-    params.push_back(variableName);
-
-    if (ctx->OPAFF()->getText() == "=") {
-        params.push_back(operandVariable);
-        cfg->current_bb->add_IRInstr(copyvar, params);
-        return variableName;
-    }
 
     params.push_back(variableName);
     params.push_back(operandVariable);
 
-    if (ctx->OPAFF()->getText() == "+=") {
+    if (ctx->EQ() != 0) {
         cfg->current_bb->add_IRInstr(copyvar, params);
-    } else if (ctx->OPAFF()->getText() == "+=") {
+    } else if (ctx->PLUSEQ() != 0) {
         cfg->current_bb->add_IRInstr(add, params);
-    } else if (ctx->OPAFF()->getText() == "-=") {
+    } else if (ctx->MINUSEQ() != 0) {
         cfg->current_bb->add_IRInstr(sub, params);
-    } else if (ctx->OPAFF()->getText() == "*=") {
+    } else if (ctx->MULTEQ() != 0) {
         cfg->current_bb->add_IRInstr(mul, params);
-    } else if (ctx->OPAFF()->getText() == "/=") {
+    } else if (ctx->DIVEQ() != 0) {
         cfg->current_bb->add_IRInstr(divide, params);
-    } else if (ctx->OPAFF()->getText() == "%=") {
+    } else if (ctx->MODEQ() != 0) {
         cfg->current_bb->add_IRInstr(modulo, params);
     }
 
