@@ -22,10 +22,12 @@ jobs:
       run: sudo apt install antlr4 libantlr4-runtime-dev default-jdk
     - name: make
       run: make
+    - name: debug
+      run: tree
     - uses: actions/upload-artifact@master
       with:
         name: compiler
-        path: ./ifcc
+        path: ifcc
 
   
 
