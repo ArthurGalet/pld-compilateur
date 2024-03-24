@@ -83,4 +83,4 @@ unit_tests: ../tests/unit_testing/build/test_gen_asm
 clean:
 	rm -rf build generated IR/*.o
 	rm -f ifcc
-	rm  ../tests/unit_testing/build/*
+	rm -rf ../tests/unit_testing/build/
