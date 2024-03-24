@@ -65,13 +65,14 @@ jobs:
       id: setup
       continue-on-error: true
       run: |
+        echo "wd=$(pwd)" >> $GITHUB_OUTPUT
+        
         filepath="${{ matrix.file }}"
         output_dir="${filepath%.c//\//-}"_output
         
         mkdir -p "$output_dir" || continue
         cd "$output_dir" || continue
 
-        echo "wd=$(pwd)" >> $GITHUB_OUTPUT
         echo "test_dir=$output_dir" >> $GITHUB_OUTPUT
     
     - name: Compile with gcc
