@@ -89,6 +89,11 @@ jobs:
         echo "ifccstatus=$?" >> $GITHUB_OUTPUT
         echo "gccstatus=$gccstatus" >> $GITHUB_OUTPUT
         
+        echo "Compilation gcc"
+        cat gcc-compile.txt
+        echo "Compilation ifcc"
+        cat ifcc-compile.txt
+
     - name: Compare results
       run: |
         cd ${{ steps.setup.outputs.output_dir }}
@@ -101,15 +106,21 @@ jobs:
             echo 'TEST OK'
         elif [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -eq 0 ]; then
             echo 'TEST FAIL (your compiler accepts an invalid program)'
-            exit 1  # Fail the job if the test fails
+            exit 1
         elif [ "$gccstatus" -eq 0 ] && [ "$ifccstatus" -ne 0 ]; then
             echo 'TEST FAIL (your compiler rejects a valid program)'
-            exit 1  # Fail the job if the test fails
+            exit 1
         else
             gcc -o exe-ifcc asm-ifcc.s > /dev/null 2>&1 && ./exe-ifcc > ifcc-execute.txt 2>&1
+        
+            echo "Execution gcc"
+            cat gcc-execute.txt
+            echo "Execution ifcc"
+            cat ifcc-execute.txt
+        
             if ! cmp -s "gcc-execute.txt" "ifcc-execute.txt"; then
                 echo 'TEST FAIL (different results at execution)'
-                exit 1  # Fail the job if the test fails
+                exit 1
             else
                 echo 'TEST OK'
             fi
