@@ -29,53 +29,59 @@ jobs:
         name: compiler
         path: compiler/ifcc
 
-  
-
   tests:
-    defaults:
-      run:
-        working-directory: ./tests
     runs-on: ubuntu-latest
     needs: build
     
+    strategy:
+      matrix:
+        file: ${{ steps.list_files.outputs.files }}
+      fail-fast: false
+
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/download-artifact@master
+    - name: List files
+      id: list_files
+      run: |
+        echo "::set-output name=files::$(find testfiles -type f -name '*.c')"
+
+    - name: Download compiler artifact
+      uses: actions/download-artifact@v2
       with:
         name: compiler
         path: compiler/
     - name: Run tests
       run: |
         base=$(pwd)
-        for filepath in $(find testfiles -type f -name "*.c"); do
-            cd $base
+        filepath="${{ matrix.file }}"
+        cd $base
 
-            output_dir="${filepath%.c//\//-}"_output
-            mkdir -p "$output_dir" || continue
-            cd "$output_dir" || continue
-            
-            gcc -S -o asm-gcc.s "$filepath" > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
-            gccstatus=$?      
+        output_dir="${filepath%.c//\//-}"_output
+        mkdir -p "$output_dir" || continue
+        cd "$output_dir" || continue
+        
+        gcc -S -o asm-gcc.s "$filepath" > gcc-compile.txt 2>&1 && gcc -o exe-gcc asm-gcc.s > /dev/null 2>&1 && ./exe-gcc > gcc-execute.txt 2>&1
+        gccstatus=$?      
 
-            echo 1
-            chmod 777 $base/../compiler/ifcc $base/ifcc-wrapper.sh
-            echo 2
-            $base/ifcc-wrapper.sh asm-ifcc.s "$base/$filepath" > ifcc-compile.txt 2>&1
-            ifccstatus=$?
-            
-            echo $(basename $filepath)
-            if [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -ne 0 ]; then
-                echo 'TEST OK'
-            elif [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -eq 0 ]; then
-                echo 'TEST FAIL (your compiler accepts an invalid program)'
-            elif [ "$gccstatus" -eq 0 ] && [ "$ifccstatus" -ne 0 ]; then
-                echo 'TEST FAIL (your compiler rejects a valid program)'
+        chmod 777 $base/../compiler/ifcc $base/ifcc-wrapper.sh
+        $base/ifcc-wrapper.sh asm-ifcc.s "$base/$filepath" > ifcc-compile.txt 2>&1
+        ifccstatus=$?
+        
+        echo $(basename $filepath)
+        if [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -ne 0 ]; then
+            echo 'TEST OK'
+        elif [ "$gccstatus" -ne 0 ] && [ "$ifccstatus" -eq 0 ]; then
+            echo 'TEST FAIL (your compiler accepts an invalid program)'
+            exit 1  # Fail the job if the test fails
+        elif [ "$gccstatus" -eq 0 ] && [ "$ifccstatus" -ne 0 ]; then
+            echo 'TEST FAIL (your compiler rejects a valid program)'
+            exit 1  # Fail the job if the test fails
+        else
+            gcc -o exe-ifcc asm-ifcc.s > /dev/null 2>&1 && ./exe-ifcc > ifcc-execute.txt 2>&1
+            if ! cmp -s "gcc-execute.txt" "ifcc-execute.txt"; then
+                echo 'TEST FAIL (different results at execution)'
+                exit 1  # Fail the job if the test fails
             else
-                gcc -o exe-ifcc asm-ifcc.s > /dev/null 2>&1 && ./exe-ifcc > ifcc-execute.txt 2>&1
-                if ! cmp -s "gcc-execute.txt" "ifcc-execute.txt"; then
-                    echo 'TEST FAIL (different results at execution)'
-                else
-                    echo 'TEST OK'
-                fi
+                echo 'TEST OK'
             fi
-        done
+        fi
