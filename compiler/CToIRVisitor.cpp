@@ -159,6 +159,33 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
     return 0;
 }
 
+antlrcpp::Any CToIRVisitor::visitWhile_loop(ifccParser::While_loopContext *ctx) {
+    BasicBlock *bbTest = new BasicBlock(cfg, cfg->new_BB_name());
+    BasicBlock *bbBloc = new BasicBlock(cfg, cfg->new_BB_name());
+    BasicBlock *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
+
+    cfg->add_bb(bbTest);
+    cfg->add_bb(bbBloc);
+    cfg->add_bb(bbOut);
+
+    cfg->current_bb->exit_true = bbTest;
+    cfg->current_bb = bbTest;
+    bbTest->exit_true = bbBloc;
+    bbTest->exit_false = bbOut;
+    bbBloc->exit_true = bbTest;
+
+    cfg->current_bb = bbTest;
+    string variableName = visit(ctx->expression());
+    cfg->current_bb->test_var_name = variableName;
+
+    cfg->current_bb = bbBloc;
+    visit(ctx->bloc());
+
+    cfg->current_bb = bbOut;
+
+    return 0;
+}
+
 antlrcpp::Any CToIRVisitor::visitExprEQ(ifccParser::ExprEQContext *ctx) {
     string variableName = cfg->create_new_tempvar(INT);
 
@@ -206,4 +233,3 @@ antlrcpp::Any CToIRVisitor::visitExprNE(ifccParser::ExprNEContext *ctx) {
 
     return variableName;
 }
-
