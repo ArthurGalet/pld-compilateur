@@ -20,4 +20,5 @@ public :
     antlrcpp::Any visitExprMDM(ifccParser::ExprMDMContext *ctx) override;
     antlrcpp::Any visitExprAS(ifccParser::ExprASContext *ctx) override;
     antlrcpp::Any visitExprNEG(ifccParser::ExprNEGContext *ctx) override;
+    antlrcpp::Any visitIfelse(ifccParser::IfelseContext *ctx) override;
 };
