@@ -8,7 +8,7 @@
 /** The instructions themselves -- feel free to subclass instead */
 typedef enum {
     ldconst = 0,
-    copy = 1,
+    copyvar = 1,
     add = 2,
     sub = 3,
     mul = 4,
@@ -22,7 +22,8 @@ typedef enum {
     cmp_gt = 12,
     ret = 13,
     divide = 14,
-    modulo = 15
+    modulo = 15,
+    neg = 16
 } Operation;
 
 #endif //PLD_COMP_OPERATION_H

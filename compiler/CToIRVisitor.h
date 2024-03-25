@@ -7,7 +7,17 @@
 using namespace std;
 
 class CToIRVisitor : public ifccBaseVisitor  {
-    public :
-        CFG* cfg;
-        antlrcpp::Any visitReturn_stmt(ifccParser::Return_stmtContext *ctx);
+public :
+    CFG* cfg;
+
+    explicit CToIRVisitor();
+
+    antlrcpp::Any visitReturn_stmt(ifccParser::Return_stmtContext *ctx) override;
+    antlrcpp::Any visitDeclaration(ifccParser::DeclarationContext *ctx) override;
+
+    antlrcpp::Any visitAffectation(ifccParser::AffectationContext *ctx) override;
+    antlrcpp::Any visitExprVAL(ifccParser::ExprVALContext *ctx) override;
+    antlrcpp::Any visitExprMDM(ifccParser::ExprMDMContext *ctx) override;
+    antlrcpp::Any visitExprAS(ifccParser::ExprASContext *ctx) override;
+    antlrcpp::Any visitExprNEG(ifccParser::ExprNEGContext *ctx) override;
 };

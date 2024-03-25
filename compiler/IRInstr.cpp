@@ -14,7 +14,7 @@ void IRInstr::gen_asm(ostream &o) {
             // P0 = P1 (P1 CONST)
             o << "    movl    $" << params[1] << ", " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
             break;
-        case 1: // correspond à copy mais c'est le nom d'une fonction de la librairie standard
+        case copyvar:
             // P0 = P1
             o << "    movl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", %eax\n";
             o << "    movl %eax, " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
@@ -88,6 +88,10 @@ void IRInstr::gen_asm(ostream &o) {
         case ret:
             // return P0
             o << "    movl    " << bb->cfg->IR_reg_to_asm(params[0]) << ", %eax" << "\n";
+            break;
+        case neg:
+            // P0 = -P0
+            o << "    neg    " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
             break;
     }
 }
