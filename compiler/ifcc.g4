@@ -16,7 +16,7 @@ valeur: VARIABLE | CONST;
 
 bloc: '{' commande* '}';
 
-ifelse : 'if' '(' expression ')' bloc ('else' (ifelse | bloc))?;
+ifelse : 'if' '(' expression ')' bloc (ELSE (ifelse | bloc))?;
 
 while_loop : 'while' '(' expression ')' bloc;
 
@@ -36,7 +36,7 @@ expression: '(' expression ')'                                         #exprPARE
             VARIABLE (EQ|PLUSEQ|MINUSEQ|MULTEQ|DIVEQ|MODEQ) expression #affectation |
             valeur                                                     #exprVAL     ;
             
-
+ELSE : 'else' ;
 PLUS : '+' ;
 MINUS : '-' ;
 MULT : '*' ;

@@ -124,6 +124,41 @@ antlrcpp::Any CToIRVisitor::visitExprNEG(ifccParser::ExprNEGContext *ctx) {
     return variableName;
 }
 
+antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
+    string variableName = visit(ctx->expression());
+    cfg->current_bb->test_var_name = variableName;
+
+    BasicBlock *bbIf = cfg->current_bb;
+    BasicBlock *bbTrue = new BasicBlock(cfg, cfg->new_BB_name());
+    BasicBlock *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
+    bbIf->exit_true = bbTrue;
+    bbTrue->exit_true = bbOut;
+
+    cfg->add_bb(bbTrue);
+    cfg->current_bb = bbTrue;
+    visit(ctx->bloc()[0]);
+
+    if (ctx->ELSE() == 0) {
+        bbIf->exit_false = bbOut;
+    } else {
+        BasicBlock *bbFalse = new BasicBlock(cfg, cfg->new_BB_name());
+        bbFalse->exit_true = bbOut;
+        bbIf->exit_false = bbFalse;
+
+        cfg->add_bb(bbFalse);
+        cfg->current_bb = bbFalse;
+        if (ctx->ifelse() != 0) {
+            visit(ctx->ifelse());
+        } else {
+            visit(ctx->bloc()[1]);
+        }
+    }
+    cfg->add_bb(bbOut);
+    cfg->current_bb = bbOut;
+
+    return 0;
+}
+
 antlrcpp::Any CToIRVisitor::visitExprEQ(ifccParser::ExprEQContext *ctx) {
     string variableName = cfg->create_new_tempvar(INT);
 

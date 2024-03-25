@@ -36,13 +36,14 @@ string CFG::IR_reg_to_asm(std::string reg) {
 void CFG::gen_asm_prologue(std::ostream &o) {
     o << ".globl main\n" ;
     o << "main: \n" ;
-    o << "pushq %rbp\n" ;
-    o << "movq %rsp, %rbp\n" ;
+    o << "    pushq %rbp\n" ;
+    o << "    movq %rsp, %rbp\n" ;
+    o << "    jmp bb0\n";
 }
 
 void CFG::gen_asm_epilogue(std::ostream &o) {
-    o << "popq %rbp\n" ;
-    o << "ret\n " ;
+    o << "    popq %rbp\n" ;
+    o << "    ret\n " ;
 }
 
 void CFG::add_to_symbol_table(std::string name, Type t) {
