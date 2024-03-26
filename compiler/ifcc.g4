@@ -12,7 +12,7 @@ return_stmt: RETURN expression;
 declarations: 'int' declaration (',' declaration)*;
 declaration: VARIABLE ('=' expression)?;
 
-valeur: VARIABLE | CONST;
+valeur: VARIABLE | CONST | CONSTCHAR;
 
 bloc: '{' commande* '}';
 
@@ -64,6 +64,7 @@ MODEQ : '%=' ;
 RETURN : 'return' ;
 CONST : [0-9]+ ;
 VARIABLE : [a-zA-Z][a-zA-Z0-9]* ;
+CONSTCHAR : '\''  [ -~] '\'';
 COMMENT : '/*' .*? '*/' -> skip ;
 DIRECTIVE : '#' .*? '\n' -> skip ;
 WS    : [ \t\r\n] -> channel(HIDDEN);
