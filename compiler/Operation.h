@@ -6,7 +6,8 @@
 #define PLD_COMP_OPERATION_H
 
 /** The instructions themselves -- feel free to subclass instead */
-typedef enum {
+typedef enum
+{
     ldconst = 0,
     copyvar = 1,
     add = 2,
@@ -23,7 +24,8 @@ typedef enum {
     ret = 13,
     divide = 14,
     modulo = 15,
-    neg = 16
+    neg = 16,
+    cmp_ne = 17
 } Operation;
 
-#endif //PLD_COMP_OPERATION_H
+#endif // PLD_COMP_OPERATION_H
