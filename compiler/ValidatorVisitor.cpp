@@ -45,7 +45,7 @@ antlrcpp::Any ValidatorVisitor::visitDeclaration(ifccParser::DeclarationContext 
 }
 
 antlrcpp::Any ValidatorVisitor::visitValeur(ifccParser::ValeurContext *ctx) {
-    if (ctx->CONST() != nullptr) {
+    if (ctx->VARIABLE() == nullptr) {
         return 0;
     }
 
