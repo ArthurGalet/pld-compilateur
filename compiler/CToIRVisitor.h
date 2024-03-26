@@ -24,6 +24,8 @@ public :
     antlrcpp::Any visitWhile_loop(ifccParser::While_loopContext *ctx)  override;
     antlrcpp::Any visitExprEQ(ifccParser::ExprEQContext *ctx) override;
     antlrcpp::Any visitExprNE(ifccParser::ExprNEContext *ctx) override;
+    antlrcpp::Any visitExprOR(ifccParser::ExprORContext *ctx) override;
+    antlrcpp::Any visitExprAND(ifccParser::ExprANDContext *ctx) override;
+    antlrcpp::Any visitExprXOR(ifccParser::ExprXORContext *ctx) override;
     antlrcpp::Any visitExprPARENS(ifccParser::ExprPARENSContext *ctx) override;
-
-    };
+};
