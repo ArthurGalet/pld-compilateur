@@ -4,12 +4,15 @@ axiom : prog EOF ;
 
 prog : 'int' 'main' '(' ')' bloc ;
 
+function: TYPE VARIABLE '(' parameters ')' bloc;
+
 commande: instruction | ifelse | while_loop;
 
 instruction: ( return_stmt | expression | declarations ) ';';
 return_stmt: RETURN expression;
 
-declarations: 'int' declaration (',' declaration)*;
+parameters: TYPE VARIABLE (',' TYPE VARIABLE)*;
+declarations: TYPE declaration (',' declaration)*;
 declaration: VARIABLE ('=' expression)?;
 
 valeur: VARIABLE | CONST;
@@ -60,7 +63,7 @@ MULTEQ : '*=' ;
 DIVEQ : '/=' ;
 MODEQ : '%=' ;
 
-
+TYPE : 'int' ;
 RETURN : 'return' ;
 CONST : [0-9]+ ;
 VARIABLE : [a-zA-Z][a-zA-Z0-9]* ;
