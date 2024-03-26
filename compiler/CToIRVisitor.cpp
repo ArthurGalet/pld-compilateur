@@ -226,3 +226,7 @@ antlrcpp::Any CToIRVisitor::visitExprNE(ifccParser::ExprNEContext *ctx) {
 
     return variableName;
 }
+
+antlrcpp::Any CToIRVisitor::visitExprPARENS(ifccParser::ExprPARENSContext *ctx) {
+    return visit(ctx->expression());
+}
