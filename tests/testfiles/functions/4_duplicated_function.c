@@ -1,0 +1,16 @@
+int pitagoras(int a, int b) {
+    int result = a * a + b * b;
+    return result;
+}
+
+int pitagoras(int a, int b) {
+    int result = -1;
+    return result;
+}
+
+int main() {
+    int x = 3;
+    int y = 4;
+    int z = pitagoras(x, y);
+    return z;
+}

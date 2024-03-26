@@ -19,8 +19,17 @@ public:
     antlrcpp::Any visitExprMDM(ifccParser::ExprMDMContext *ctx) override;
     antlrcpp::Any visitExprAS(ifccParser::ExprASContext *ctx) override;
 
+    antlrcpp::Any visitFunction_def(ifccParser::Function_defContext *ctx) override;
+    antlrcpp::Any visitFunction_call(ifccParser::Function_callContext *ctx) override;
+    antlrcpp::Any visitParameters(ifccParser::ParametersContext *ctx) override;
+
 protected:
     int stackTop;
     map<string, tuple<int, int>>* declaredVariables;
+    map<string, vector<int>> functionParameters;
+    map<string, int> functionStackOffsets;
+
+    void generateFunctionPrologue(const string& functionName);
+    void generateFunctionEpilogue(const string& functionName);
 };
 

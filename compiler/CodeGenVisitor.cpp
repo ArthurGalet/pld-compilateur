@@ -118,4 +118,60 @@ antlrcpp::Any CodeGenVisitor::visitExprAS(ifccParser::ExprASContext *ctx) {
     return resultIndex;
 }
 
+antlrcpp::Any CodeGenVisitor::visitFunction_def(ifccParser::Function_defContext *ctx) {
+    string functionName = ctx->VARIABLE()->getText();
+    generateFunctionPrologue(functionName);
+
+    vector<int> parameterOffsets;
+    int parameterOffset = 8;
+    for (auto param : ctx->parameters()->VARIABLE()) {
+        functionParameters[functionName].push_back(parameterOffset);
+        parameterOffsets.push_back(parameterOffset);
+        parameterOffset += 4;
+    }
+
+    functionStackOffsets[functionName] = parameterOffset;
+
+    for (auto cmd : ctx->bloc()->commande()) {
+        visit(cmd);
+    }
+
+    generateFunctionEpilogue(functionName);
+
+    for (auto offset : parameterOffsets) {
+        functionParameters[functionName].pop_back();
+    }
+
+    return 0;
+}
+
+antlrcpp::Any CodeGenVisitor::visitFunction_call(ifccParser::Function_callContext *ctx) {
+    string functionName = ctx->VARIABLE()->getText();
+
+    if (functionStackOffsets.find(functionName) == functionStackOffsets.end()) {
+        std::cerr << "Error: Function '" << functionName << "' not defined." << std::endl;
+        return 0;
+    }
+
+    vector<int> parameterOffsets = functionParameters[functionName];
+
+    if (ctx->expression().size() != parameterOffsets.size()) {
+        std::cerr << "Error: Incorrect number of parameters provided in the function '" << functionName << "'." << std::endl;
+        return 0;
+    }
+
+    for (size_t i = 0; i < ctx->expression().size(); ++i) {
+        int resultIndex = visit(ctx->expression(i));
+        std::cout << "   movl -" << resultIndex << "(%rbp), %eax\n";
+        std::cout << "   movl %eax, " << parameterOffsets[i] << "(%rbp)\n";
+    }
+
+    std::cout << "   call " << functionName << "\n";
+
+    int resultIndex = stackTop;
+    std::cout << "   movl %eax, -" << resultIndex << "(%rbp)\n";
+    stackTop += 4;
+
+    return resultIndex;
+}
 

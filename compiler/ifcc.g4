@@ -2,7 +2,7 @@ grammar ifcc;
 
 axiom : prog EOF ;
 
-prog : 'int' 'main' '(' ')' bloc ;
+prog : function_def* 'int' 'main' '(' ')' bloc;
 
 function_def: TYPE VARIABLE '(' parameters ')' bloc;
 parameters: (TYPE VARIABLE (',' TYPE VARIABLE)*)?;
@@ -10,7 +10,7 @@ function_call: VARIABLE '(' (expression (',' expression)*)? ')';
 
 commande: instruction | ifelse | while_loop;
 
-instruction: ( return_stmt | expression | declarations ) ';';
+instruction: ( return_stmt | expression | declarations | function_call ) ';';
 return_stmt: RETURN expression;
 
 declarations: TYPE declaration (',' declaration)*;
