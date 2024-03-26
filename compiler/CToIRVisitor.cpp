@@ -124,3 +124,23 @@ antlrcpp::Any CToIRVisitor::visitExprNEG(ifccParser::ExprNEGContext *ctx) {
     return variableName;
 }
 
+antlrcpp::Any CToIRVisitor::visitExprEQ(ifccParser::ExprEQContext *ctx) {
+    string variableName = cfg->create_new_tempvar(INT);
+
+    vector<string> params = vector<string>();
+    params.push_back(variableName);
+    params.push_back(visit(ctx->expression()[0]));
+    params.push_back(visit(ctx->expression()[1]));
+
+    if (ctx->EQEQ() != nullptr)
+    {
+        cfg->current_bb->add_IRInstr(cmp_eq, params);
+    }
+    else
+    {
+        cfg->current_bb->add_IRInstr(cmp_ne, params);
+    }
+
+    return variableName;
+}
+
