@@ -4,14 +4,15 @@ axiom : prog EOF ;
 
 prog : 'int' 'main' '(' ')' bloc ;
 
-function: TYPE VARIABLE '(' parameters ')' bloc;
+function_def: TYPE VARIABLE '(' parameters ')' bloc;
+parameters: (TYPE VARIABLE (',' TYPE VARIABLE)*)?;
+function_call: VARIABLE '(' (expression (',' expression)*)? ')';
 
 commande: instruction | ifelse | while_loop;
 
 instruction: ( return_stmt | expression | declarations ) ';';
 return_stmt: RETURN expression;
 
-parameters: TYPE VARIABLE (',' TYPE VARIABLE)*;
 declarations: TYPE declaration (',' declaration)*;
 declaration: VARIABLE ('=' expression)?;
 
