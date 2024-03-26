@@ -144,3 +144,31 @@ antlrcpp::Any CToIRVisitor::visitExprEQ(ifccParser::ExprEQContext *ctx) {
     return variableName;
 }
 
+antlrcpp::Any CToIRVisitor::visitExprNE(ifccParser::ExprNEContext *ctx) {
+    string variableName = cfg->create_new_tempvar(INT);
+
+    vector<string> params = vector<string>();
+    params.push_back(variableName);
+    params.push_back(visit(ctx->expression()[0]));
+    params.push_back(visit(ctx->expression()[1]));
+
+    if (ctx->GT() != nullptr)
+    {
+        cfg->current_bb->add_IRInstr(cmp_gt, params);
+    }
+    else if (ctx->LT() != nullptr)
+    {
+        cfg->current_bb->add_IRInstr(cmp_lt, params);
+    }
+    else if (ctx->GE() != nullptr)
+    {
+        cfg->current_bb->add_IRInstr(cmp_ge, params);
+    }
+    else
+    {
+        cfg->current_bb->add_IRInstr(cmp_le, params);
+    }
+
+    return variableName;
+}
+
