@@ -165,13 +165,23 @@ int main()
         success = false;
     }
 
-    if (make_test_gen_asm(cmp_eq, 1, 3, 3) && make_test_gen_asm(cmp_eq, 0, 3, 5))
+    if (make_test_gen_asm(cmp_eq, 1, 3, 3) && make_test_gen_asm(cmp_eq, 0, 3, 5) && make_test_gen_asm(cmp_eq, 1, -5, -5) && make_test_gen_asm(cmp_eq, 0, -5, 5))
     {
         cout << "[test_gen_asm] test_cmp_eq " << green_check_mark() << endl;
     }
     else
     {
         cerr << "[test_gen_asm] test_cmp_eq " << red_cross() << endl;
+        success = false;
+    }
+
+    if (make_test_gen_asm(cmp_lt, 0, 3, 3) && make_test_gen_asm(cmp_lt, 1, -3, 5) && make_test_gen_asm(cmp_lt, 1, -5, -4) && make_test_gen_asm(cmp_lt, 0, 5, 3) && make_test_gen_asm(cmp_lt, 0, -6, -7) && make_test_gen_asm(cmp_lt, 1, 5, 6) && make_test_gen_asm(cmp_lt, 0, 0, 0) && make_test_gen_asm(cmp_lt, 0, -5, -5))
+    {
+        cout << "[test_gen_asm] test_cmp_lt " << green_check_mark() << endl;
+    }
+    else
+    {
+        cerr << "[test_gen_asm] test_cmp_lt " << red_cross() << endl;
         success = false;
     }
 
