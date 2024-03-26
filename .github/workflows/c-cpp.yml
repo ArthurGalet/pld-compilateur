@@ -114,9 +114,13 @@ jobs:
             exit 1
         else
             set +e
-            gcc -o exe-ifcc asm-ifcc.s > /dev/null 2>&1 && ./exe-ifcc > ifcc-execute.txt 2>&1
+            gcc -o exe-ifcc asm-ifcc.s > ifcc-link.txt 2>&1 && ./exe-ifcc > ifcc-execute.txt 2>&1
             set -e
-        
+            
+            echo "Editions des liens"
+            cat ifcc-link.txt
+            echo "-----"
+            
             echo "Execution gcc :"
             cat gcc-execute.txt
             echo "-----"
