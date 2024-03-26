@@ -25,7 +25,10 @@ typedef enum
     divide = 14,
     modulo = 15,
     neg = 16,
-    cmp_ne = 17
+    cmp_ne = 17,
+    bwor = 18,
+    bwand = 19,
+    bwxor = 20
 } Operation;
 
 #endif // PLD_COMP_OPERATION_H
