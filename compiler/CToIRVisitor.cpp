@@ -136,7 +136,7 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
 
     cfg->add_bb(bbTrue);
     cfg->current_bb = bbTrue;
-    visit(ctx->bloc()[0]);
+    visit(ctx->ifelse_bloc()[0]);
 
     if (ctx->ELSE() == nullptr) {
         bbIf->exit_false = bbOut;
@@ -150,7 +150,7 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
         if (ctx->ifelse() != nullptr) {
             visit(ctx->ifelse());
         } else {
-            visit(ctx->bloc()[1]);
+            visit(ctx->ifelse_bloc()[1]);
         }
     }
     cfg->add_bb(bbOut);
@@ -194,12 +194,9 @@ antlrcpp::Any CToIRVisitor::visitExprEQ(ifccParser::ExprEQContext *ctx) {
     params.push_back(visit(ctx->expression()[0]));
     params.push_back(visit(ctx->expression()[1]));
 
-    if (ctx->EQEQ() != nullptr)
-    {
+    if (ctx->EQEQ() != nullptr) {
         cfg->current_bb->add_IRInstr(cmp_eq, params);
-    }
-    else
-    {
+    } else {
         cfg->current_bb->add_IRInstr(cmp_ne, params);
     }
 
@@ -214,20 +211,13 @@ antlrcpp::Any CToIRVisitor::visitExprNE(ifccParser::ExprNEContext *ctx) {
     params.push_back(visit(ctx->expression()[0]));
     params.push_back(visit(ctx->expression()[1]));
 
-    if (ctx->GT() != nullptr)
-    {
+    if (ctx->GT() != nullptr) {
         cfg->current_bb->add_IRInstr(cmp_gt, params);
-    }
-    else if (ctx->LT() != nullptr)
-    {
+    } else if (ctx->LT() != nullptr) {
         cfg->current_bb->add_IRInstr(cmp_lt, params);
-    }
-    else if (ctx->GE() != nullptr)
-    {
+    } else if (ctx->GE() != nullptr) {
         cfg->current_bb->add_IRInstr(cmp_ge, params);
-    }
-    else
-    {
+    } else {
         cfg->current_bb->add_IRInstr(cmp_le, params);
     }
 

@@ -16,7 +16,8 @@ valeur: VARIABLE | CONST;
 
 bloc: '{' commande* '}';
 
-ifelse : 'if' '(' expression ')' bloc (ELSE (ifelse | bloc))?;
+ifelse : 'if' '(' expression ')' ifelse_bloc (ELSE (ifelse | ifelse_bloc))?;
+ifelse_bloc : (return_stmt ';'| expression ';'| bloc) ;
 
 while_loop : 'while' '(' expression ')' bloc;
 
