@@ -69,10 +69,13 @@ antlrcpp::Any CToIRVisitor::visitExprVAL(ifccParser::ExprVALContext *ctx) {
     if (ctx->valeur()->CONST() != nullptr) {
         params.push_back(ctx->valeur()->CONST()->getText());
         cfg->current_bb->add_IRInstr(ldconst, params);
-    } else {
-
+    } else if (ctx->valeur()->VARIABLE() != nullptr){
         params.push_back(ctx->valeur()->VARIABLE()->getText());
         cfg->current_bb->add_IRInstr(copyvar, params);
+    } else {
+        int ascii_code = ctx->valeur()->CONSTCHAR()->getText()[1];
+        params.push_back(to_string(ascii_code));
+        cfg->current_bb->add_IRInstr(ldconst, params);
     }
 
     return variableName;
