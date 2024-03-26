@@ -1,11 +1,13 @@
 #include "IRInstr.h"
+
+#include <utility>
 #include "BasicBlock.h"
 
 IRInstr::IRInstr(BasicBlock *bb_, Operation op, vector<string> params)
 {
     this->bb = bb_;
     this->op = op;
-    this->params = params;
+    this->params = std::move(params);
 }
 
 void IRInstr::gen_asm(ostream &o)

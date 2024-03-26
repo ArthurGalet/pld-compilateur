@@ -1,10 +1,10 @@
 #include "CToIRVisitor.h"
 
 CToIRVisitor::CToIRVisitor() {
-    this->cfg = new CFG(nullptr);
+    this->cfg = new CFG();
 
     string name = this->cfg->new_BB_name();
-    BasicBlock* bb = new BasicBlock(this->cfg, name);
+    auto bb = new BasicBlock(this->cfg, name);
     this->cfg->add_bb(bb);
     this->cfg->current_bb = bb;
 }
@@ -43,17 +43,17 @@ antlrcpp::Any CToIRVisitor::visitAffectation(ifccParser::AffectationContext *ctx
     params.push_back(variableName);
     params.push_back(operandVariable);
 
-    if (ctx->EQ() != 0) {
+    if (ctx->EQ() != nullptr) {
         cfg->current_bb->add_IRInstr(copyvar, params);
-    } else if (ctx->PLUSEQ() != 0) {
+    } else if (ctx->PLUSEQ() != nullptr) {
         cfg->current_bb->add_IRInstr(add, params);
-    } else if (ctx->MINUSEQ() != 0) {
+    } else if (ctx->MINUSEQ() != nullptr) {
         cfg->current_bb->add_IRInstr(sub, params);
-    } else if (ctx->MULTEQ() != 0) {
+    } else if (ctx->MULTEQ() != nullptr) {
         cfg->current_bb->add_IRInstr(mul, params);
-    } else if (ctx->DIVEQ() != 0) {
+    } else if (ctx->DIVEQ() != nullptr) {
         cfg->current_bb->add_IRInstr(divide, params);
-    } else if (ctx->MODEQ() != 0) {
+    } else if (ctx->MODEQ() != nullptr) {
         cfg->current_bb->add_IRInstr(modulo, params);
     }
 
@@ -86,9 +86,9 @@ antlrcpp::Any CToIRVisitor::visitExprMDM(ifccParser::ExprMDMContext *ctx) {
     params.push_back(visit(ctx->expression()[0]));
     params.push_back(visit(ctx->expression()[1]));
 
-    if (ctx->MULT() != 0) {
+    if (ctx->MULT() != nullptr) {
         cfg->current_bb->add_IRInstr(mul, params);
-    } else if (ctx->DIV() != 0){
+    } else if (ctx->DIV() != nullptr){
         cfg->current_bb->add_IRInstr(divide, params);
     } else {
         cfg->current_bb->add_IRInstr(modulo, params);
@@ -105,7 +105,7 @@ antlrcpp::Any CToIRVisitor::visitExprAS(ifccParser::ExprASContext *ctx) {
     params.push_back(visit(ctx->expression()[0]));
     params.push_back(visit(ctx->expression()[1]));
 
-    if (ctx->PLUS() != 0) {
+    if (ctx->PLUS() != nullptr) {
         cfg->current_bb->add_IRInstr(add, params);
     } else {
         cfg->current_bb->add_IRInstr(sub, params);
@@ -128,9 +128,9 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
     string variableName = visit(ctx->expression());
     cfg->current_bb->test_var_name = variableName;
 
-    BasicBlock *bbIf = cfg->current_bb;
-    BasicBlock *bbTrue = new BasicBlock(cfg, cfg->new_BB_name());
-    BasicBlock *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbIf = cfg->current_bb;
+    auto *bbTrue = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
     bbIf->exit_true = bbTrue;
     bbTrue->exit_true = bbOut;
 
@@ -138,16 +138,16 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
     cfg->current_bb = bbTrue;
     visit(ctx->bloc()[0]);
 
-    if (ctx->ELSE() == 0) {
+    if (ctx->ELSE() == nullptr) {
         bbIf->exit_false = bbOut;
     } else {
-        BasicBlock *bbFalse = new BasicBlock(cfg, cfg->new_BB_name());
+        auto *bbFalse = new BasicBlock(cfg, cfg->new_BB_name());
         bbFalse->exit_true = bbOut;
         bbIf->exit_false = bbFalse;
 
         cfg->add_bb(bbFalse);
         cfg->current_bb = bbFalse;
-        if (ctx->ifelse() != 0) {
+        if (ctx->ifelse() != nullptr) {
             visit(ctx->ifelse());
         } else {
             visit(ctx->bloc()[1]);
@@ -160,9 +160,9 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
 }
 
 antlrcpp::Any CToIRVisitor::visitWhile_loop(ifccParser::While_loopContext *ctx) {
-    BasicBlock *bbTest = new BasicBlock(cfg, cfg->new_BB_name());
-    BasicBlock *bbBloc = new BasicBlock(cfg, cfg->new_BB_name());
-    BasicBlock *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbTest = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbBloc = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
 
     cfg->add_bb(bbTest);
     cfg->add_bb(bbBloc);

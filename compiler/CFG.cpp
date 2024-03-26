@@ -1,8 +1,7 @@
 #include "CFG.h"
 #include "BasicBlock.h"
 
-CFG::CFG(DefFonction *source_ast) {
-    ast = source_ast;
+CFG::CFG() {
     nextFreeSymbolIndex = 0;
     current_bb = nullptr;
     nextBBnumber = 0;
@@ -21,7 +20,7 @@ void CFG::gen_asm(std::ostream &o) {
     }
 }
 
-string CFG::IR_reg_to_asm(std::string reg) {
+string CFG::IR_reg_to_asm(const string & reg) {
     string res = "-";
     if (SymbolIndex.find(reg) == SymbolIndex.end()) {
         return "%"+reg;
@@ -33,7 +32,7 @@ string CFG::IR_reg_to_asm(std::string reg) {
     return res;
 }
 
-void CFG::gen_asm_prologue(std::ostream &o) {
+void CFG::gen_asm_prologue(ostream &o) {
     o << ".globl main\n" ;
     o << "main: \n" ;
     o << "    pushq %rbp\n" ;
@@ -41,12 +40,12 @@ void CFG::gen_asm_prologue(std::ostream &o) {
     o << "    jmp bb0\n";
 }
 
-void CFG::gen_asm_epilogue(std::ostream &o) {
+void CFG::gen_asm_epilogue(ostream &o) {
     o << "    popq %rbp\n" ;
     o << "    ret\n " ;
 }
 
-void CFG::add_to_symbol_table(std::string name, Type t) {
+void CFG::add_to_symbol_table(const string & name, Type t) {
     SymbolType.insert(make_pair(name, t));
     SymbolIndex.insert(make_pair(name, nextFreeSymbolIndex));
     nextFreeSymbolIndex += 4;
@@ -60,11 +59,11 @@ string CFG::create_new_tempvar(Type t) {
     return name;
 }
 
-int CFG::get_var_index(std::string name) {
+int CFG::get_var_index(const string & name) {
     return SymbolIndex[name];
 }
 
-Type CFG::get_var_type(std::string name) {
+Type CFG::get_var_type(const string & name) {
     return SymbolType[name];
 }
 

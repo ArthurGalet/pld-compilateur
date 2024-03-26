@@ -48,9 +48,9 @@ antlrcpp::Any ValidatorVisitor::visitProg(ifccParser::ProgContext *ctx) {
     visitChildren(ctx);
 
     // recherche des variables inutilisées
-    for(map<string, tuple<int, int>>::iterator it = declaredVariables->begin(); it != declaredVariables->end(); it++) {
-        if (get<0>(it->second) < 2) {
-            cerr << "Variable " << it->first << " inutilisée\n";
+    for(auto & declaredVariable : *declaredVariables) {
+        if (get<0>(declaredVariable.second) < 2) {
+            cerr << "Variable " << declaredVariable.first << " inutilisée\n";
         }
     }
 

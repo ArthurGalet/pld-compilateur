@@ -1,9 +1,12 @@
 #include "BasicBlock.h"
 
+#include <utility>
+
 BasicBlock::BasicBlock(CFG* cfg, string entry_label){
     this->cfg = cfg;
-    this->label = entry_label;
-
+    this->label = std::move(entry_label);
+    this->exit_true = nullptr;
+    this->exit_false = nullptr;
 }
 
 void BasicBlock::gen_asm(ostream &o){
@@ -13,7 +16,7 @@ void BasicBlock::gen_asm(ostream &o){
     }
     
     if (exit_true == nullptr){
-        this->cfg->gen_asm_epilogue(o);
+        CFG::gen_asm_epilogue(o);
     }
     else if (exit_false == nullptr){
         o << "    jmp " << exit_true->label << endl;
@@ -27,5 +30,5 @@ void BasicBlock::gen_asm(ostream &o){
 
 
 void BasicBlock::add_IRInstr(Operation op, vector<string> params) {
-    instrs.push_back(new IRInstr(this, op, params));
+    instrs.push_back(new IRInstr(this, op, std::move(params)));
 }
