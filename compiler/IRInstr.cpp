@@ -86,12 +86,20 @@ void IRInstr::gen_asm(ostream &o)
         o << "    movl %eax, " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
         break;
     case cmp_le:
-        // /!\ non implémenté
-        exit(1);
+        // P0 = (P1 <= P2)
+        o << "    movl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", %eax\n";
+        o << "    cmp    " << bb->cfg->IR_reg_to_asm(params[2]) << ", %eax\n";
+        o << "    setle %bl\n";
+        o << "    movzbl %bl, %eax\n";
+        o << "    movl %eax, " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
         break;
     case cmp_gt:
-        // /!\ non implémenté
-        exit(1);
+        // P0 = (P1 > P2)
+        o << "    movl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", %eax\n";
+        o << "    cmp    " << bb->cfg->IR_reg_to_asm(params[2]) << ", %eax\n";
+        o << "    setg %bl\n";
+        o << "    movzbl %bl, %eax\n";
+        o << "    movl %eax, " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
         break;
     case cmp_ge:
         // /!\ non implémenté
