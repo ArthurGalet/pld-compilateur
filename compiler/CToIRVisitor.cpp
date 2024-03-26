@@ -206,7 +206,7 @@ antlrcpp::Any CToIRVisitor::visitExprXOR(ifccParser::ExprXORContext *ctx) {
     params.push_back(visit(ctx->expression()[0]));
     params.push_back(visit(ctx->expression()[1]));
 
-    cfg->current_bb->add_IRInstr(bwor, params);
+    cfg->current_bb->add_IRInstr(bwxor, params);
 
     return variableName;
 }

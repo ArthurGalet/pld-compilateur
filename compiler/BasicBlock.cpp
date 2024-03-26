@@ -2,8 +2,9 @@
 
 BasicBlock::BasicBlock(CFG* cfg, string entry_label){
     this->cfg = cfg;
-    this->label = entry_label;
-
+    label = entry_label;
+    exit_true = nullptr;
+    exit_false = nullptr;
 }
 
 void BasicBlock::gen_asm(ostream &o){
