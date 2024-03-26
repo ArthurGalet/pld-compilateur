@@ -1,17 +1,18 @@
 #include "ValidatorVisitor.h"
 
-ValidatorVisitor::ValidatorVisitor(map<string, tuple<int, int>> *vars) {
-    declaredVariables = vars;
+ValidatorVisitor::ValidatorVisitor(){
+    declaredVariables = new vector<map<string, tuple<int, int>>*>();
+    declaredVariables->push_back(new map<string, tuple<int, int>>());
 }
 
 antlrcpp::Any ValidatorVisitor::visitAffectation(ifccParser::AffectationContext *ctx) {
     string nom = ctx->VARIABLE()->getText();
 
-    if (declaredVariables->find(nom) == declaredVariables->end()) {
+    if (findVariable(nom) == nullptr) {
         cerr << "Variable " << nom << " utilisée sans être déclarée\n";
         exit(2); // variable non déclarée
     } else {
-        get<0>((*declaredVariables)[nom]) = max(1, get<0>((*declaredVariables)[nom]));
+        get<0>(*findVariable(nom)) = max(1, get<0>(*findVariable(nom)));
     }
 
     // VARIABLE = VARIABLE
@@ -24,35 +25,21 @@ antlrcpp::Any ValidatorVisitor::visitDeclaration(ifccParser::DeclarationContext 
 {
     string nom = ctx->VARIABLE()->getText();
 
-    if (declaredVariables->find(nom) != declaredVariables->end()) {
+    if (findVariable(nom) != nullptr) {
         cerr << "Redéfinition de la variable " << nom << "\n";
         exit (1); // variable déjà déclarée
     }
 
     if (ctx->expression() == nullptr) {
         // int VARIABLE;
-        declaredVariables->insert(make_pair(nom, tuple(0, (declaredVariables->size() + 1) * 4)));
+        declaredVariables->back()->insert(make_pair(nom, tuple(0, (declaredVariables->size() + 1) * 4)));
         return 0;
     }
 
-    declaredVariables->insert(make_pair(nom, tuple(0, (declaredVariables->size() + 1) * 4)));
+    declaredVariables->back()->insert(make_pair(nom, tuple(0, (declaredVariables->size() + 1) * 4)));
 
     visit(ctx->expression());
-    get<0>((*declaredVariables)[nom]) = 1;
-
-    //declaredVariables->insert(make_pair(nom, tuple(1, (declaredVariables->size() + 1) * 4)));
-    return 0;
-}
-
-antlrcpp::Any ValidatorVisitor::visitProg(ifccParser::ProgContext *ctx) {
-    visitChildren(ctx);
-
-    // recherche des variables inutilisées
-    for(map<string, tuple<int, int>>::iterator it = declaredVariables->begin(); it != declaredVariables->end(); it++) {
-        if (get<0>(it->second) < 2) {
-            cerr << "Variable " << it->first << " inutilisée\n";
-        }
-    }
+    get<0>(*findVariable(nom)) = 1;
 
     return 0;
 }
@@ -64,14 +51,36 @@ antlrcpp::Any ValidatorVisitor::visitValeur(ifccParser::ValeurContext *ctx) {
 
     string nom = ctx->VARIABLE()->getText();
 
-    if (declaredVariables->find(nom) == declaredVariables->end()) {
+    if (findVariable(nom) == nullptr) {
         cerr << "Variable " << nom << " utilisée sans être déclarée\n";
         exit(2); // variable non déclarée
-    } else if (get<0>((*declaredVariables)[nom]) == 0) {
+    } else if (get<0>(*findVariable(nom)) == 0) {
         cerr << "Variable " << nom << " utilisée sans être initialisée\n";
     }
 
-    get<0>((*declaredVariables)[nom]) = 2;
+    get<0>(*findVariable(nom)) = 2;
     return 0;
 }
 
+antlrcpp::Any ValidatorVisitor::visitBloc(ifccParser::BlocContext *ctx) {
+    declaredVariables->push_back(new map<string, tuple<int, int>>());
+    visitChildren(ctx);
+    for (auto & variable : *(declaredVariables->back())) {
+        if (get<0>(variable.second) < 2) {
+            cerr << "Variable " << variable.first << " inutilisée\n";
+        }
+    }
+    declaredVariables->pop_back();
+    return 0;
+}
+
+tuple<int,int>* ValidatorVisitor::findVariable(string nom) {
+    for (auto & blocVariables : *declaredVariables) {
+        for (auto & variable : *blocVariables) {
+            if (variable.first == nom) {
+                return &variable.second;
+            }
+        }
+    }
+    return nullptr;
+}
