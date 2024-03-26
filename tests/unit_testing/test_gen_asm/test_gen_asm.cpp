@@ -205,6 +205,16 @@ int main()
         success = false;
     }
 
+    if (make_test_gen_asm(cmp_ge, 1, 3, 3) && make_test_gen_asm(cmp_ge, 0, -3, 5) && make_test_gen_asm(cmp_ge, 0, -5, -4) && make_test_gen_asm(cmp_ge, 1, 5, 3) && make_test_gen_asm(cmp_ge, 1, -6, -7) && make_test_gen_asm(cmp_ge, 0, 5, 6) && make_test_gen_asm(cmp_ge, 1, 0, 0) && make_test_gen_asm(cmp_ge, 1, -5, -5))
+    {
+        cout << "[test_gen_asm] test_cmp_ge " << green_check_mark() << endl;
+    }
+    else
+    {
+        cerr << "[test_gen_asm] test_cmp_ge " << red_cross() << endl;
+        success = false;
+    }
+
     if (success)
     {
         cout << "test_gen_asm " << green_check_mark() << endl;
