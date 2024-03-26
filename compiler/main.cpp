@@ -46,13 +46,9 @@ int main(int argn, const char **argv)
   {
       cerr << "error: syntax error during parsing" << endl;
       exit(1);
-  }
+  }  
 
-  auto declaredVariables = new map<string, tuple<int, int>>;
-  // K : nom de la variable, V : (statut, index)
-  // statut : 0=déclarée, 1=initialisée, 2=utilisée
-
-  ValidatorVisitor vv(declaredVariables);
+  ValidatorVisitor vv;
   vv.visit(tree);
 
   CToIRVisitor v;
