@@ -1,12 +1,24 @@
 #include "CToIRVisitor.h"
 
 CToIRVisitor::CToIRVisitor() {
-    this->cfg = new CFG();
 
-    string name = this->cfg->new_BB_name();
-    auto bb = new BasicBlock(this->cfg, name);
-    this->cfg->add_bb(bb);
-    this->cfg->current_bb = bb;
+}
+
+antlrcpp::Any CToIRVisitor::visitFunction(ifccParser::FunctionContext *context) {
+
+    string function_name = context->ID()->getText();
+    auto cfg = new CFG(function_name);
+
+    string name = cfg->new_BB_name();
+    auto bb = new BasicBlock(cfg, name);
+    cfg->add_bb(bb);
+    cfg->current_bb = bb;
+    add_cfg(cfg);
+
+    visit(context->bloc());
+
+    return 0;
+
 }
 
 antlrcpp::Any CToIRVisitor::visitReturn_stmt(ifccParser::Return_stmtContext *ctx) {
@@ -21,7 +33,7 @@ antlrcpp::Any CToIRVisitor::visitReturn_stmt(ifccParser::Return_stmtContext *ctx
 }
 
 antlrcpp::Any CToIRVisitor::visitDeclaration(ifccParser::DeclarationContext *ctx) {
-    string variableName = ctx->VARIABLE()->getText();
+    string variableName = ctx->ID()->getText();
     cfg->add_to_symbol_table(variableName, INT);
 
     if (ctx->expression() != nullptr) {
@@ -35,7 +47,7 @@ antlrcpp::Any CToIRVisitor::visitDeclaration(ifccParser::DeclarationContext *ctx
 }
 
 antlrcpp::Any CToIRVisitor::visitAffectation(ifccParser::AffectationContext *ctx) {
-    string variableName = ctx->VARIABLE()->getText();
+    string variableName = ctx->ID()->getText();
     string operandVariable = visit(ctx->expression());
 
     vector<string> params = vector<string>();
@@ -69,8 +81,8 @@ antlrcpp::Any CToIRVisitor::visitExprVAL(ifccParser::ExprVALContext *ctx) {
     if (ctx->valeur()->CONST() != nullptr) {
         params.push_back(ctx->valeur()->CONST()->getText());
         cfg->current_bb->add_IRInstr(ldconst, params);
-    } else if (ctx->valeur()->VARIABLE() != nullptr){
-        params.push_back(ctx->valeur()->VARIABLE()->getText());
+    } else if (ctx->valeur()->ID() != nullptr){
+        params.push_back(ctx->valeur()->ID()->getText());
         cfg->current_bb->add_IRInstr(copyvar, params);
     } else {
         int ascii_code = ctx->valeur()->CONSTCHAR()->getText()[1];
@@ -229,4 +241,9 @@ antlrcpp::Any CToIRVisitor::visitExprNE(ifccParser::ExprNEContext *ctx) {
 
 antlrcpp::Any CToIRVisitor::visitExprPARENS(ifccParser::ExprPARENSContext *ctx) {
     return visit(ctx->expression());
+}
+
+void CToIRVisitor::add_cfg(CFG * cfg) {
+    this->cfgs.push_back(cfg);
+    this->cfg = cfg;
 }

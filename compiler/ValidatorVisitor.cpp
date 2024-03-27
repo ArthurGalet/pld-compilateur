@@ -6,7 +6,7 @@ ValidatorVisitor::ValidatorVisitor(){
 }
 
 antlrcpp::Any ValidatorVisitor::visitAffectation(ifccParser::AffectationContext *ctx) {
-    string nom = ctx->VARIABLE()->getText();
+    string nom = ctx->ID()->getText();
 
     if (findVariable(nom) == nullptr) {
         cerr << "Variable " << nom << " utilisée sans être déclarée\n";
@@ -15,7 +15,7 @@ antlrcpp::Any ValidatorVisitor::visitAffectation(ifccParser::AffectationContext 
         get<0>(*findVariable(nom)) = max(1, get<0>(*findVariable(nom)));
     }
 
-    // VARIABLE = VARIABLE
+    // ID = ID
     visit(ctx->expression());
 
     return 0;
@@ -23,7 +23,7 @@ antlrcpp::Any ValidatorVisitor::visitAffectation(ifccParser::AffectationContext 
 
 antlrcpp::Any ValidatorVisitor::visitDeclaration(ifccParser::DeclarationContext *ctx)
 {
-    string nom = ctx->VARIABLE()->getText();
+    string nom = ctx->ID()->getText();
 
     if (findVariable(nom) != nullptr) {
         cerr << "Redéfinition de la variable " << nom << "\n";
@@ -31,7 +31,7 @@ antlrcpp::Any ValidatorVisitor::visitDeclaration(ifccParser::DeclarationContext 
     }
 
     if (ctx->expression() == nullptr) {
-        // int VARIABLE;
+        // int ID;
         declaredVariables->back()->insert(make_pair(nom, tuple(0, (declaredVariables->size() + 1) * 4)));
         return 0;
     }
@@ -45,11 +45,11 @@ antlrcpp::Any ValidatorVisitor::visitDeclaration(ifccParser::DeclarationContext 
 }
 
 antlrcpp::Any ValidatorVisitor::visitValeur(ifccParser::ValeurContext *ctx) {
-    if (ctx->VARIABLE() == nullptr) {
+    if (ctx->ID() == nullptr) {
         return 0;
     }
 
-    string nom = ctx->VARIABLE()->getText();
+    string nom = ctx->ID()->getText();
 
     if (findVariable(nom) == nullptr) {
         cerr << "Variable " << nom << " utilisée sans être déclarée\n";

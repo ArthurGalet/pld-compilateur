@@ -2,7 +2,9 @@ grammar ifcc;
 
 axiom : prog EOF ;
 
-prog : 'int' 'main' '(' ')' bloc ;
+prog : function*;
+
+function : 'int' ID '(' ')' bloc ;
 
 commande: instruction | ifelse | while_loop;
 
@@ -10,9 +12,9 @@ instruction: ( return_stmt | expression | declarations ) ';';
 return_stmt: RETURN expression;
 
 declarations: 'int' declaration (',' declaration)*;
-declaration: VARIABLE ('=' expression)?;
+declaration: ID ('=' expression)?;
 
-valeur: VARIABLE | CONST | CONSTCHAR;
+valeur: ID | CONST | CONSTCHAR;
 
 bloc: '{' commande* '}';
 
@@ -34,7 +36,7 @@ expression: '(' expression ')'                                         #exprPARE
             expression LAZYAND expression                              #exprLAND    |
             expression LAZYOR expression                               #exprLOR     |
             expression '?' expression ':' expression                   #exprCOND    |
-            VARIABLE (EQ|PLUSEQ|MINUSEQ|MULTEQ|DIVEQ|MODEQ) expression #affectation |
+            ID (EQ|PLUSEQ|MINUSEQ|MULTEQ|DIVEQ|MODEQ) expression #affectation |
             valeur                                                     #exprVAL     ;
             
 ELSE : 'else' ;
@@ -61,10 +63,9 @@ MULTEQ : '*=' ;
 DIVEQ : '/=' ;
 MODEQ : '%=' ;
 
-
 RETURN : 'return' ;
 CONST : [0-9]+ ;
-VARIABLE : [a-zA-Z][a-zA-Z0-9]* ;
+ID : [a-zA-Z_][a-zA-Z0-9_]*;
 CONSTCHAR : '\''  [ -~] '\'';
 COMMENT : '/*' .*? '*/' -> skip ;
 DIRECTIVE : '#' .*? '\n' -> skip ;
