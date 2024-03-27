@@ -194,7 +194,7 @@ antlrcpp::Any CToIRVisitor::visitWhile_loop(ifccParser::While_loopContext *ctx) 
     cfg->current_bb->test_var_name = variableName;
 
     cfg->current_bb = bbBloc;
-    visit(ctx->bloc());
+    visit(ctx->while_bloc());
 
     cfg->current_bb = bbOut;
 
@@ -244,7 +244,6 @@ antlrcpp::Any CToIRVisitor::visitExprPARENS(ifccParser::ExprPARENSContext *ctx) 
 }
 
 antlrcpp::Any CToIRVisitor::visitExprNOT(ifccParser::ExprNOTContext *ctx) {
-    
     string variableName = visit(ctx->expression());
 
     vector<string> params = vector<string>();
@@ -260,7 +259,6 @@ void CToIRVisitor::add_cfg(CFG * cfg) {
 }
 
 antlrcpp::Any CToIRVisitor::visitExprLAND(ifccParser::ExprLANDContext *ctx) {
-
     string tmp0 = visit(ctx->expression()[0]);
     cfg->current_bb->test_var_name = tmp0;
 
@@ -276,25 +274,19 @@ antlrcpp::Any CToIRVisitor::visitExprLAND(ifccParser::ExprLANDContext *ctx) {
 
     bbTmp0True->exit_true = bbCopyTemp0Tmp1;
     bbCopyTemp0Tmp1->exit_true = bbOut;
-    
-
 
     cfg->add_bb(bbTmp0True);
-    
-   
 
     cfg->current_bb = bbTmp0True;
     string tmp1 = visit(ctx->expression()[1]);
 
     bbCopyTemp0Tmp1->add_IRInstr(copyvar, {tmp0, tmp1});
 
-
     cfg->add_bb(bbCopyTemp0Tmp1);
     cfg->add_bb(bbOut);
     cfg->current_bb = bbOut;
 
     return tmp0;
-
 }
 
 antlrcpp::Any CToIRVisitor::visitExprLOR(ifccParser::ExprLORContext *ctx) {
@@ -314,12 +306,8 @@ antlrcpp::Any CToIRVisitor::visitExprLOR(ifccParser::ExprLORContext *ctx) {
 
     bbTmp0False->exit_true = bbCopyTemp0Tmp1;
     bbCopyTemp0Tmp1->exit_true = bbOut;
-    
-
 
     cfg->add_bb(bbTmp0False);
-    
-   
 
     cfg->current_bb = bbTmp0False;
     string tmp1 = visit(ctx->expression()[1]);
@@ -333,4 +321,17 @@ antlrcpp::Any CToIRVisitor::visitExprLOR(ifccParser::ExprLORContext *ctx) {
 
     return tmp0;
 
+}
+
+antlrcpp::Any CToIRVisitor::visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) {
+    vector<string> params = vector<string>();
+
+    if (ctx->BREAK() != nullptr) {
+        params.push_back(cfg->current_bb->exit_true->label);
+    } else {
+        params.push_back(cfg->current_bb->label);
+    }
+
+    cfg->current_bb->add_IRInstr(jump, params);
+    return 0;
 }

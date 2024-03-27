@@ -136,5 +136,8 @@ void IRInstr::gen_asm(ostream &o)
         o << "    movzbl %al, %eax\n";
         o << "    movl %eax, " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
         break;
+    case jump:
+        // jump P0;
+        o << "    jmp " << params[0] << "\n";
     }
 }

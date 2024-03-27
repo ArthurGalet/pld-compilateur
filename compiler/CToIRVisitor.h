@@ -31,6 +31,7 @@ public :
     antlrcpp::Any visitFunction(ifccParser::FunctionContext *context) override;
     antlrcpp::Any visitExprLAND(ifccParser::ExprLANDContext *context) override;
     antlrcpp::Any visitExprLOR(ifccParser::ExprLORContext *context) override;
+    antlrcpp::Any visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) override;
 
     void add_cfg(CFG * cfg);
-    };
+};

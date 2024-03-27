@@ -26,7 +26,8 @@ typedef enum
     modulo = 15,
     neg = 16,
     cmp_ne = 17,
-    lnot = 18
+    lnot = 18,
+    jump = 19
 } Operation;
 
 #endif // PLD_COMP_OPERATION_H
