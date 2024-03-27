@@ -45,7 +45,12 @@ antlrcpp::Any CToIRVisitor::visitAffectation(ifccParser::AffectationContext *ctx
 
     if (ctx->EQ() != nullptr) {
         cfg->current_bb->add_IRInstr(copyvar, params);
-    } else if (ctx->PLUSEQ() != nullptr) {
+        return variableName;
+    }
+
+    params.insert(params.begin(), variableName);
+
+    if (ctx->PLUSEQ() != nullptr) {
         cfg->current_bb->add_IRInstr(add, params);
     } else if (ctx->MINUSEQ() != nullptr) {
         cfg->current_bb->add_IRInstr(sub, params);
