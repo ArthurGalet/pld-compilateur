@@ -230,3 +230,14 @@ antlrcpp::Any CToIRVisitor::visitExprNE(ifccParser::ExprNEContext *ctx) {
 antlrcpp::Any CToIRVisitor::visitExprPARENS(ifccParser::ExprPARENSContext *ctx) {
     return visit(ctx->expression());
 }
+
+antlrcpp::Any CToIRVisitor::visitExprNOT(ifccParser::ExprNOTContext *ctx) {
+    
+    string variableName = visit(ctx->expression());
+
+    vector<string> params = vector<string>();
+    params.push_back(variableName);
+    cfg->current_bb->add_IRInstr(lnot, params);
+
+    return variableName;
+}
