@@ -7,6 +7,18 @@ CFG::CFG(string function_name) {
     nextBBnumber = 0;
     nextTmpVariableNumber = 0;
     cfg_name = function_name;
+
+    string name_entry = new_BB_name();
+    string name_exit = new_BB_name();
+    auto entryBB = new BasicBlock(this, name_entry);
+    auto exitBB = new BasicBlock(this, name_exit);
+
+    add_bb(entryBB);
+    add_bb(exitBB);
+
+    entryBB->exit_true = exitBB;
+    
+    current_bb = entryBB;
 }
 
 void CFG::add_bb(BasicBlock *bb) {

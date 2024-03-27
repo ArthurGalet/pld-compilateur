@@ -9,10 +9,6 @@ antlrcpp::Any CToIRVisitor::visitFunction(ifccParser::FunctionContext *context) 
     string function_name = context->ID()->getText();
     auto cfg = new CFG(function_name);
 
-    string name = cfg->new_BB_name();
-    auto bb = new BasicBlock(cfg, name);
-    cfg->add_bb(bb);
-    cfg->current_bb = bb;
     add_cfg(cfg);
 
     visit(context->bloc());
@@ -146,6 +142,8 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
     auto *bbIf = cfg->current_bb;
     auto *bbTrue = new BasicBlock(cfg, cfg->new_BB_name());
     auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
+    bbOut->exit_true = cfg->current_bb->exit_true;
+    bbOut->exit_false = cfg->current_bb->exit_false;
     bbIf->exit_true = bbTrue;
     bbTrue->exit_true = bbOut;
 
@@ -183,6 +181,8 @@ antlrcpp::Any CToIRVisitor::visitWhile_loop(ifccParser::While_loopContext *ctx) 
     cfg->add_bb(bbBloc);
     cfg->add_bb(bbOut);
 
+    bbOut->exit_true = cfg->current_bb->exit_true;
+    bbOut->exit_false = cfg->current_bb->exit_false;
     cfg->current_bb->exit_true = bbTest;
     cfg->current_bb = bbTest;
     bbTest->exit_true = bbBloc;
