@@ -37,7 +37,7 @@ void CFG::gen_asm_prologue(ostream &o) {
     o << "main: \n" ;
     o << "    pushq %rbp\n" ;
     o << "    movq %rsp, %rbp\n" ;
-    o << "    subl $"<< to_string(nextFreeSymbolIndex) << ", %rsp\n" ;
+    o << "    subq $"<< to_string(nextFreeSymbolIndex) << ", %rsp\n" ;
     o << "    jmp bb0\n";
 }
 
