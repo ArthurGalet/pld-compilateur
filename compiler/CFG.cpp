@@ -2,7 +2,7 @@
 #include "BasicBlock.h"
 
 CFG::CFG() {
-    nextFreeSymbolIndex = 0;
+    nextFreeSymbolIndex = 4;
     current_bb = nullptr;
     nextBBnumber = 0;
     nextTmpVariableNumber = 0;
