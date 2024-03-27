@@ -19,7 +19,7 @@ public :
     antlrcpp::Any visitExprVAL(ifccParser::ExprVALContext *ctx) override;
     antlrcpp::Any visitExprMDM(ifccParser::ExprMDMContext *ctx) override;
     antlrcpp::Any visitExprAS(ifccParser::ExprASContext *ctx) override;
-    antlrcpp::Any visitExprNEG(ifccParser::ExprNEGContext *ctx) override;
+    antlrcpp::Any visitExprUNAIRE(ifccParser::ExprUNAIREContext *ctx) override;
     antlrcpp::Any visitIfelse(ifccParser::IfelseContext *ctx) override;
     antlrcpp::Any visitWhile_loop(ifccParser::While_loopContext *ctx)  override;
     antlrcpp::Any visitExprEQ(ifccParser::ExprEQContext *ctx) override;

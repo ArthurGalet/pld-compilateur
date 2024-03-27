@@ -122,12 +122,19 @@ antlrcpp::Any CToIRVisitor::visitExprAS(ifccParser::ExprASContext *ctx) {
     return variableName;
 }
 
-antlrcpp::Any CToIRVisitor::visitExprNEG(ifccParser::ExprNEGContext *ctx) {
+antlrcpp::Any CToIRVisitor::visitExprUNAIRE(ifccParser::ExprUNAIREContext *ctx) {
     string variableName = visit(ctx->expression());
 
     vector<string> params = vector<string>();
     params.push_back(variableName);
-    cfg->current_bb->add_IRInstr(neg, params);
+
+    if (ctx->MINUS() != nullptr) {
+        cfg->current_bb->add_IRInstr(neg, params);
+    } else if (ctx->BWNOT() != nullptr) {
+        cfg->current_bb->add_IRInstr(bwnot, params);
+    } else if (ctx->LNOT() != nullptr) {
+        cfg->current_bb->add_IRInstr(lnot, params);
+    }
 
     return variableName;
 }

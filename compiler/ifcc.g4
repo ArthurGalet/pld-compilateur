@@ -22,7 +22,7 @@ ifelse_bloc : (return_stmt ';'| expression ';'| bloc) ;
 while_loop : 'while' '(' expression ')' bloc;
 
 expression: '(' expression ')'                                         #exprPARENS  |
-            MINUS expression                                           #exprNEG     |
+            (PLUS|MINUS|LNOT|BWNOT) expression                         #exprUNAIRE  |
             '!' expression                                             #exprNOT     |
             expression (MULT|DIV|MOD) expression                       #exprMDM     |
             expression (PLUS|MINUS) expression                         #exprAS      |
@@ -60,6 +60,8 @@ PLUSEQ : '+=' ;
 MULTEQ : '*=' ;
 DIVEQ : '/=' ;
 MODEQ : '%=' ;
+LNOT : '!' ;
+BWNOT : '~';
 
 
 RETURN : 'return' ;
