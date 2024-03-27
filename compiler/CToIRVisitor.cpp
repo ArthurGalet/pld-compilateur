@@ -172,8 +172,8 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
 
 antlrcpp::Any CToIRVisitor::visitWhile_loop(ifccParser::While_loopContext *ctx) {
     auto *bbTest = new BasicBlock(cfg, cfg->new_BB_name(), cfg->current_bb);
-    auto *bbBloc = new BasicBlock(cfg, cfg->new_BB_name(), cfg->current_bb);
-    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name(), cfg->current_bb);
+    auto *bbBloc = new BasicBlock(cfg, cfg->new_BB_name(), bbTest);
+    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name(), bbTest);
 
     cfg->add_bb(bbTest);
     cfg->add_bb(bbBloc);
@@ -325,7 +325,7 @@ antlrcpp::Any CToIRVisitor::visitControl_flow_instruction(ifccParser::Control_fl
     vector<string> params = vector<string>();
 
     if (ctx->BREAK() != nullptr) {
-        params.push_back(cfg->current_bb->exit_true->label);
+        params.push_back(cfg->current_bb->exit_true->exit_false->label);
     } else {
         params.push_back(cfg->current_bb->previous_bb->label);
     }

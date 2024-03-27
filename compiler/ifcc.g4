@@ -20,7 +20,7 @@ ifelse_bloc : (return_stmt ';'| expression ';'| bloc) ;
 
 while_loop : 'while' '(' expression ')' while_bloc ;
 while_bloc : '{' (commande | control_flow_instruction)* '}' ;
-control_flow_instruction : BREAK | CONTINUE ';' ;
+control_flow_instruction : ( BREAK | CONTINUE ) ';' ;
 
 expression: '(' expression ')'                                         #exprPARENS  |
             MINUS expression                                           #exprNEG     |
