@@ -1,10 +1,7 @@
 grammar ifcc;
 
 axiom : prog EOF ;
-
 prog : 'int' 'main' '(' ')' bloc ;
-
-commande: instruction | ifelse | while_loop;
 
 instruction: ( return_stmt | expression | declarations ) ';';
 return_stmt: RETURN expression;
@@ -15,11 +12,14 @@ declaration: VARIABLE ('=' expression)?;
 valeur: VARIABLE | CONST | CONSTCHAR;
 
 bloc: '{' commande* '}';
+commande: instruction | ifelse | while_loop;
 
 ifelse : 'if' '(' expression ')' ifelse_bloc (ELSE (ifelse | ifelse_bloc))?;
 ifelse_bloc : (return_stmt ';'| expression ';'| bloc) ;
 
-while_loop : 'while' '(' expression ')' bloc;
+while_loop : 'while' '(' expression ')' while_bloc ;
+while_bloc : '{' (commande | control_flow_instruction)* '}' ;
+control_flow_instruction : BREAK | CONTINUE ';' ;
 
 expression: '(' expression ')'                                         #exprPARENS  |
             MINUS expression                                           #exprNEG     |
@@ -61,7 +61,8 @@ MULTEQ : '*=' ;
 DIVEQ : '/=' ;
 MODEQ : '%=' ;
 
-
+CONTINUE : 'continue' ;
+BREAK : 'break' ;
 RETURN : 'return' ;
 CONST : [0-9]+ ;
 VARIABLE : [a-zA-Z][a-zA-Z0-9]* ;

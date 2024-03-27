@@ -182,7 +182,7 @@ antlrcpp::Any CToIRVisitor::visitWhile_loop(ifccParser::While_loopContext *ctx) 
     cfg->current_bb->test_var_name = variableName;
 
     cfg->current_bb = bbBloc;
-    visit(ctx->bloc());
+    visit(ctx->while_bloc());
 
     cfg->current_bb = bbOut;
 
@@ -229,4 +229,17 @@ antlrcpp::Any CToIRVisitor::visitExprNE(ifccParser::ExprNEContext *ctx) {
 
 antlrcpp::Any CToIRVisitor::visitExprPARENS(ifccParser::ExprPARENSContext *ctx) {
     return visit(ctx->expression());
+}
+
+antlrcpp::Any CToIRVisitor::visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) {
+    vector<string> params = vector<string>();
+
+    if (ctx->BREAK() != nullptr) {
+        params.push_back(cfg->current_bb->exit_true->label);
+    } else {
+        params.push_back(cfg->current_bb->label);
+    }
+
+    cfg->current_bb->add_IRInstr(jump, params);
+    return 0;
 }
