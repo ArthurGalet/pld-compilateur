@@ -23,13 +23,13 @@ antlrcpp::Any CodeGenVisitor::visitProg(ifccParser::ProgContext *ctx) {
 }
 
 antlrcpp::Any CodeGenVisitor::visitDeclaration(ifccParser::DeclarationContext *ctx) {
-    // int VARIABLE
+    // int ID
     if (ctx->expression() == nullptr) {
         return 0;
     }
 
-    // int VARIABLE = EXPRESSION
-    int variableIndex = get<1>((*declaredVariables)[ctx->VARIABLE()->getText()]);
+    // int ID = EXPRESSION
+    int variableIndex = get<1>((*declaredVariables)[ctx->ID()->getText()]);
     int resultIndex = visit(ctx->expression());
 
     std::cout << "   movl -" << resultIndex << "(%rbp), %eax\n";
@@ -39,7 +39,7 @@ antlrcpp::Any CodeGenVisitor::visitDeclaration(ifccParser::DeclarationContext *c
 }
 
 antlrcpp::Any CodeGenVisitor::visitAffectation(ifccParser::AffectationContext *ctx) {
-    int variableIndex = get<1>((*declaredVariables)[ctx->VARIABLE()->getText()]);
+    int variableIndex = get<1>((*declaredVariables)[ctx->ID()->getText()]);
     int resultIndex = visit(ctx->expression());
 
     std::cout << "   movl -" << resultIndex << "(%rbp), %eax\n";
@@ -63,7 +63,7 @@ antlrcpp::Any CodeGenVisitor::visitExprVAL(ifccParser::ExprVALContext *ctx) {
     if (ctx->valeur()->CONST() != nullptr) {
         std::cout << "   movl $" << stoi(ctx->valeur()->CONST()->getText()) << ", -" << resultIndex << "(%rbp)\n";
     } else {
-        string nom = ctx->valeur()->VARIABLE()->getText();
+        string nom = ctx->valeur()->ID()->getText();
         std::cout << "   movl -" << get<1>((*declaredVariables)[nom]) << "(%rbp), %eax\n";
         std::cout << "   movl %eax, -" << resultIndex << "(%rbp)\n";
     }

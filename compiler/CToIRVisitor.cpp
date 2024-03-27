@@ -6,7 +6,7 @@ CToIRVisitor::CToIRVisitor() {
 
 antlrcpp::Any CToIRVisitor::visitFunction(ifccParser::FunctionContext *context) {
 
-    string function_name = context->VARIABLE()->getText();
+    string function_name = context->ID()->getText();
     auto cfg = new CFG(function_name);
 
     string name = cfg->new_BB_name();
@@ -33,7 +33,7 @@ antlrcpp::Any CToIRVisitor::visitReturn_stmt(ifccParser::Return_stmtContext *ctx
 }
 
 antlrcpp::Any CToIRVisitor::visitDeclaration(ifccParser::DeclarationContext *ctx) {
-    string variableName = ctx->VARIABLE()->getText();
+    string variableName = ctx->ID()->getText();
     cfg->add_to_symbol_table(variableName, INT);
 
     if (ctx->expression() != nullptr) {
@@ -47,7 +47,7 @@ antlrcpp::Any CToIRVisitor::visitDeclaration(ifccParser::DeclarationContext *ctx
 }
 
 antlrcpp::Any CToIRVisitor::visitAffectation(ifccParser::AffectationContext *ctx) {
-    string variableName = ctx->VARIABLE()->getText();
+    string variableName = ctx->ID()->getText();
     string operandVariable = visit(ctx->expression());
 
     vector<string> params = vector<string>();
@@ -81,8 +81,8 @@ antlrcpp::Any CToIRVisitor::visitExprVAL(ifccParser::ExprVALContext *ctx) {
     if (ctx->valeur()->CONST() != nullptr) {
         params.push_back(ctx->valeur()->CONST()->getText());
         cfg->current_bb->add_IRInstr(ldconst, params);
-    } else if (ctx->valeur()->VARIABLE() != nullptr){
-        params.push_back(ctx->valeur()->VARIABLE()->getText());
+    } else if (ctx->valeur()->ID() != nullptr){
+        params.push_back(ctx->valeur()->ID()->getText());
         cfg->current_bb->add_IRInstr(copyvar, params);
     } else {
         int ascii_code = ctx->valeur()->CONSTCHAR()->getText()[1];
