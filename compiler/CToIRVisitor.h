@@ -25,5 +25,5 @@ public :
     antlrcpp::Any visitExprEQ(ifccParser::ExprEQContext *ctx) override;
     antlrcpp::Any visitExprNE(ifccParser::ExprNEContext *ctx) override;
     antlrcpp::Any visitExprPARENS(ifccParser::ExprPARENSContext *ctx) override;
-
-    };
+    antlrcpp::Any visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) override;
+};
