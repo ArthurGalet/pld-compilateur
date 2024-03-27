@@ -2,7 +2,7 @@
 #include "BasicBlock.h"
 
 CFG::CFG() {
-    nextFreeSymbolIndex = 0;
+    nextFreeSymbolIndex = 4;
     current_bb = nullptr;
     nextBBnumber = 0;
     nextTmpVariableNumber = 0;
@@ -37,10 +37,12 @@ void CFG::gen_asm_prologue(ostream &o) {
     o << "main: \n" ;
     o << "    pushq %rbp\n" ;
     o << "    movq %rsp, %rbp\n" ;
+    o << "    subl $"<< to_string(nextFreeSymbolIndex) << ", %rsp\n" ;
     o << "    jmp bb0\n";
 }
 
 void CFG::gen_asm_epilogue(ostream &o) {
+    o << "    movq %rbp, %rsp\n";
     o << "    popq %rbp\n" ;
     o << "    ret\n " ;
 }

@@ -16,7 +16,7 @@ void BasicBlock::gen_asm(ostream &o){
     }
     
     if (exit_true == nullptr){
-        CFG::gen_asm_epilogue(o);
+        cfg->gen_asm_epilogue(o);
     }
     else if (exit_false == nullptr){
         o << "    jmp " << exit_true->label << endl;
