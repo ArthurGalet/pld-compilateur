@@ -1,12 +1,24 @@
 #include "CToIRVisitor.h"
 
 CToIRVisitor::CToIRVisitor() {
-    this->cfg = new CFG("main");
 
-    string name = this->cfg->new_BB_name();
-    auto bb = new BasicBlock(this->cfg, name);
-    this->cfg->add_bb(bb);
-    this->cfg->current_bb = bb;
+}
+
+antlrcpp::Any CToIRVisitor::visitFunction(ifccParser::FunctionContext *context) {
+
+    string function_name = context->VARIABLE()->getText();
+    auto cfg = new CFG(function_name);
+
+    string name = cfg->new_BB_name();
+    auto bb = new BasicBlock(cfg, name);
+    cfg->add_bb(bb);
+    cfg->current_bb = bb;
+    add_cfg(cfg);
+
+    visit(context->bloc());
+
+    return 0;
+
 }
 
 antlrcpp::Any CToIRVisitor::visitReturn_stmt(ifccParser::Return_stmtContext *ctx) {
@@ -229,4 +241,9 @@ antlrcpp::Any CToIRVisitor::visitExprNE(ifccParser::ExprNEContext *ctx) {
 
 antlrcpp::Any CToIRVisitor::visitExprPARENS(ifccParser::ExprPARENSContext *ctx) {
     return visit(ctx->expression());
+}
+
+void CToIRVisitor::add_cfg(CFG * cfg) {
+    this->cfgs.push_back(cfg);
+    this->cfg = cfg;
 }

@@ -34,8 +34,8 @@ string CFG::IR_reg_to_asm(const string & reg) {
 }
 
 void CFG::gen_asm_prologue(ostream &o) {
-    o << ".globl main\n" ;
-    o << "main: \n" ;
+    o << ".globl "<< cfg_name <<"\n" ;
+    o << ""<< cfg_name <<": \n" ;
     o << "    pushq %rbp\n" ;
     o << "    movq %rsp, %rbp\n" ;
     o << "    subq $"<< to_string(nextFreeSymbolIndex) << ", %rsp\n" ;

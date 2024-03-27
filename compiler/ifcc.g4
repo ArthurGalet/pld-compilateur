@@ -2,7 +2,9 @@ grammar ifcc;
 
 axiom : prog EOF ;
 
-prog : 'int' 'main' '(' ')' bloc ;
+prog : function*;
+
+function : 'int' VARIABLE '(' ')' bloc ;
 
 commande: instruction | ifelse | while_loop;
 
@@ -60,7 +62,6 @@ PLUSEQ : '+=' ;
 MULTEQ : '*=' ;
 DIVEQ : '/=' ;
 MODEQ : '%=' ;
-
 
 RETURN : 'return' ;
 CONST : [0-9]+ ;
