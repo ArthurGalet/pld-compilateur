@@ -1,7 +1,7 @@
 #include "CToIRVisitor.h"
 
 CToIRVisitor::CToIRVisitor() {
-    this->cfg = new CFG();
+    this->cfg = new CFG("main");
 
     string name = this->cfg->new_BB_name();
     auto bb = new BasicBlock(this->cfg, name);
