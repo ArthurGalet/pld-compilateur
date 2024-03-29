@@ -17,7 +17,6 @@ public :
 
     antlrcpp::Any visitReturn_stmt(ifccParser::Return_stmtContext *ctx) override;
     antlrcpp::Any visitDeclaration(ifccParser::DeclarationContext *ctx) override;
-
     antlrcpp::Any visitAffectation(ifccParser::AffectationContext *ctx) override;
     antlrcpp::Any visitExprVAL(ifccParser::ExprVALContext *ctx) override;
     antlrcpp::Any visitExprMDM(ifccParser::ExprMDMContext *ctx) override;
@@ -28,8 +27,8 @@ public :
     antlrcpp::Any visitExprEQ(ifccParser::ExprEQContext *ctx) override;
     antlrcpp::Any visitExprNE(ifccParser::ExprNEContext *ctx) override;
     antlrcpp::Any visitExprPARENS(ifccParser::ExprPARENSContext *ctx) override;
+    antlrcpp::Any visitExprNOT(ifccParser::ExprNOTContext *ctx) override;
     antlrcpp::Any visitFunction(ifccParser::FunctionContext *context) override;
 
     void add_cfg(CFG * cfg);
-
     };
