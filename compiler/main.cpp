@@ -53,7 +53,9 @@ int main(int argn, const char **argv)
 
   CToIRVisitor v;
   v.visit(tree);
-  v.cfg->gen_asm(cout);
+  
+  for (auto cfg : v.cfgs)
+    cfg->gen_asm(cout);
 
   return 0;
 }
