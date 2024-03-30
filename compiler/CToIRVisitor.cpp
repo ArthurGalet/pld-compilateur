@@ -1,15 +1,11 @@
 #include "CToIRVisitor.h"
 
-CToIRVisitor::CToIRVisitor() {
-
-}
-
 antlrcpp::Any CToIRVisitor::visitFunction(ifccParser::FunctionContext *context) {
 
     string function_name = context->ID()->getText();
-    auto cfg = new CFG(function_name);
+    auto newCfg = new CFG(function_name);
 
-    add_cfg(cfg);
+    add_cfg(newCfg);
 
     visit(context->bloc());
 
@@ -143,16 +139,16 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
     auto *bbTrue = new BasicBlock(cfg, cfg->new_BB_name());
     auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
     bbIf->exit_true = bbTrue;
-    bbTrue->exit_true = bbOut;
 
     cfg->add_bb(bbTrue);
     cfg->current_bb = bbTrue;
     visit(ctx->ifelse_bloc()[0]);
+    cfg->current_bb->exit_true = bbOut;
 
     if (ctx->ELSE() == nullptr) {
         bbIf->exit_false = bbOut;
     } else {
-        auto *bbFalse = new BasicBlock(cfg, cfg->new_BB_name(), cfg->current_bb);
+        auto *bbFalse = new BasicBlock(cfg, cfg->new_BB_name());
         bbFalse->exit_true = bbOut;
         bbIf->exit_false = bbFalse;
 
@@ -171,9 +167,9 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
 }
 
 antlrcpp::Any CToIRVisitor::visitWhile_loop(ifccParser::While_loopContext *ctx) {
-    auto *bbTest = new BasicBlock(cfg, cfg->new_BB_name(), cfg->current_bb);
-    auto *bbBloc = new BasicBlock(cfg, cfg->new_BB_name(), bbTest);
-    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name(), bbTest);
+    auto *bbTest = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbBloc = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
 
     cfg->add_bb(bbTest);
     cfg->add_bb(bbBloc);
@@ -253,9 +249,9 @@ antlrcpp::Any CToIRVisitor::visitExprNOT(ifccParser::ExprNOTContext *ctx) {
     return variableName;
 }
 
-void CToIRVisitor::add_cfg(CFG * cfg) {
-    this->cfgs.push_back(cfg);
-    this->cfg = cfg;
+void CToIRVisitor::add_cfg(CFG * newCfg) {
+    this->cfgs.push_back(newCfg);
+    this->cfg = newCfg;
 }
 
 antlrcpp::Any CToIRVisitor::visitExprLAND(ifccParser::ExprLANDContext *ctx) {
