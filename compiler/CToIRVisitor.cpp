@@ -239,6 +239,44 @@ antlrcpp::Any CToIRVisitor::visitExprNE(ifccParser::ExprNEContext *ctx) {
     return variableName;
 }
 
+antlrcpp::Any CToIRVisitor::visitExprOR(ifccParser::ExprORContext *ctx) {
+    string variableName = cfg->create_new_tempvar(INT);
+
+    vector<string> params = vector<string>();
+    params.push_back(variableName);
+    params.push_back(visit(ctx->expression()[0]));
+    params.push_back(visit(ctx->expression()[1]));
+
+    cfg->current_bb->add_IRInstr(bwor, params);
+
+    return variableName;
+}
+
+antlrcpp::Any CToIRVisitor::visitExprAND(ifccParser::ExprANDContext *ctx) {
+    string variableName = cfg->create_new_tempvar(INT);
+
+    vector<string> params = vector<string>();
+    params.push_back(variableName);
+    params.push_back(visit(ctx->expression()[0]));
+    params.push_back(visit(ctx->expression()[1]));
+
+    cfg->current_bb->add_IRInstr(bwand, params);
+
+    return variableName;
+}
+
+antlrcpp::Any CToIRVisitor::visitExprXOR(ifccParser::ExprXORContext *ctx) {
+    string variableName = cfg->create_new_tempvar(INT);
+
+    vector<string> params = vector<string>();
+    params.push_back(variableName);
+    params.push_back(visit(ctx->expression()[0]));
+    params.push_back(visit(ctx->expression()[1]));
+
+    cfg->current_bb->add_IRInstr(bwxor, params);
+
+    return variableName;
+}
 antlrcpp::Any CToIRVisitor::visitExprPARENS(ifccParser::ExprPARENSContext *ctx) {
     return visit(ctx->expression());
 }
