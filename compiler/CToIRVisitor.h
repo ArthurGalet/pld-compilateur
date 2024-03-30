@@ -36,6 +36,7 @@ public :
     antlrcpp::Any visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) override;
     antlrcpp::Any visitBloc(ifccParser::BlocContext *ctx) override;
     antlrcpp::Any visitExprBWSHIFT(ifccParser::ExprBWSHIFTContext *ctx) override;
+    antlrcpp::Any visitExprCALL(ifccParser::ExprCALLContext *ctx) override;
 
     void add_cfg(CFG * newCfg);
 

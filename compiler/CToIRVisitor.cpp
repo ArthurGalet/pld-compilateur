@@ -375,3 +375,14 @@ antlrcpp::Any CToIRVisitor::visitExprBWSHIFT(ifccParser::ExprBWSHIFTContext *ctx
         return add_2op_instr(bwsr, ctx->expression()[0], ctx->expression()[1]);
     }
 }
+antlrcpp::Any CToIRVisitor::visitExprCALL(ifccParser::ExprCALLContext *ctx) {
+    string variableName = cfg->create_new_tempvar(INT);
+    string function_name = ctx->ID()->getText();
+
+    vector<string> params = vector<string>();
+    params.push_back(variableName);
+    params.push_back(function_name);    
+    cfg->current_bb->add_IRInstr(call, params);
+
+    return variableName;
+}
