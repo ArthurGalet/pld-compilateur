@@ -258,3 +258,79 @@ void CToIRVisitor::add_cfg(CFG * cfg) {
     this->cfgs.push_back(cfg);
     this->cfg = cfg;
 }
+
+antlrcpp::Any CToIRVisitor::visitExprLAND(ifccParser::ExprLANDContext *ctx) {
+
+    string tmp0 = visit(ctx->expression()[0]);
+    cfg->current_bb->test_var_name = tmp0;
+
+    auto *bbTestTmp0 = cfg->current_bb;
+    auto *bbTmp0True = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbCopyTemp0Tmp1 = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
+    bbOut->exit_true = cfg->current_bb->exit_true;
+    bbOut->exit_false = cfg->current_bb->exit_false;
+
+    bbTestTmp0->exit_true = bbTmp0True;
+    bbTestTmp0->exit_false = bbOut;
+
+    bbTmp0True->exit_true = bbCopyTemp0Tmp1;
+    bbCopyTemp0Tmp1->exit_true = bbOut;
+    
+
+
+    cfg->add_bb(bbTmp0True);
+    
+   
+
+    cfg->current_bb = bbTmp0True;
+    string tmp1 = visit(ctx->expression()[1]);
+
+    bbCopyTemp0Tmp1->add_IRInstr(copyvar, {tmp0, tmp1});
+
+
+    cfg->add_bb(bbCopyTemp0Tmp1);
+    cfg->add_bb(bbOut);
+    cfg->current_bb = bbOut;
+
+    return tmp0;
+
+}
+
+antlrcpp::Any CToIRVisitor::visitExprLOR(ifccParser::ExprLORContext *ctx) {
+
+    string tmp0 = visit(ctx->expression()[0]);
+    cfg->current_bb->test_var_name = tmp0;
+
+    auto *bbTestTmp0 = cfg->current_bb;
+    auto *bbTmp0False = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbCopyTemp0Tmp1 = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
+    bbOut->exit_true = cfg->current_bb->exit_true;
+    bbOut->exit_false = cfg->current_bb->exit_false;
+
+    bbTestTmp0->exit_true = bbOut;
+    bbTestTmp0->exit_false = bbTmp0False;
+
+    bbTmp0False->exit_true = bbCopyTemp0Tmp1;
+    bbCopyTemp0Tmp1->exit_true = bbOut;
+    
+
+
+    cfg->add_bb(bbTmp0False);
+    
+   
+
+    cfg->current_bb = bbTmp0False;
+    string tmp1 = visit(ctx->expression()[1]);
+
+    bbCopyTemp0Tmp1->add_IRInstr(copyvar, {tmp0, tmp1});
+
+
+    cfg->add_bb(bbCopyTemp0Tmp1);
+    cfg->add_bb(bbOut);
+    cfg->current_bb = bbOut;
+
+    return tmp0;
+
+}
