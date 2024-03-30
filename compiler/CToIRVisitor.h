@@ -8,13 +8,15 @@ using namespace std;
 
 class CToIRVisitor : public ifccBaseVisitor  {
 public :
-    CFG* cfg;
+    vector<CFG*> cfgs;
+    //current cfg
+    CFG * cfg;
+
 
     explicit CToIRVisitor();
 
     antlrcpp::Any visitReturn_stmt(ifccParser::Return_stmtContext *ctx) override;
     antlrcpp::Any visitDeclaration(ifccParser::DeclarationContext *ctx) override;
-
     antlrcpp::Any visitAffectation(ifccParser::AffectationContext *ctx) override;
     antlrcpp::Any visitExprVAL(ifccParser::ExprVALContext *ctx) override;
     antlrcpp::Any visitExprMDM(ifccParser::ExprMDMContext *ctx) override;
@@ -28,4 +30,10 @@ public :
     antlrcpp::Any visitExprAND(ifccParser::ExprANDContext *ctx) override;
     antlrcpp::Any visitExprXOR(ifccParser::ExprXORContext *ctx) override;
     antlrcpp::Any visitExprPARENS(ifccParser::ExprPARENSContext *ctx) override;
+    antlrcpp::Any visitExprNOT(ifccParser::ExprNOTContext *ctx) override;
+    antlrcpp::Any visitFunction(ifccParser::FunctionContext *context) override;
+    antlrcpp::Any visitExprLAND(ifccParser::ExprLANDContext *context) override;
+    antlrcpp::Any visitExprLOR(ifccParser::ExprLORContext *context) override;
+
+    void add_cfg(CFG * cfg);
 };

@@ -127,6 +127,14 @@ void IRInstr::gen_asm(ostream &o)
         // P0 = -P0
         o << "    neg    " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
         break;
+    case lnot:
+        // P0 = !P0
+        o << "    movl    " << bb->cfg->IR_reg_to_asm(params[0]) << ", %eax\n";
+        o << "    test %eax, %eax\n";
+        o << "    setz %al\n";
+        o << "    movzbl %al, %eax\n";
+        o << "    movl %eax, " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
+        break;
     case bwor:
         // P0 = P1 | P2
         o << "    movl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", %eax\n";
