@@ -29,6 +29,7 @@ public :
     antlrcpp::Any visitExprPARENS(ifccParser::ExprPARENSContext *ctx) override;
     antlrcpp::Any visitExprNOT(ifccParser::ExprNOTContext *ctx) override;
     antlrcpp::Any visitFunction(ifccParser::FunctionContext *context) override;
+    antlrcpp::Any visitExprLAND(ifccParser::ExprLANDContext *context) override;
 
     void add_cfg(CFG * cfg);
     };
