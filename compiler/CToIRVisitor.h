@@ -26,4 +26,7 @@ public :
     antlrcpp::Any visitExprNE(ifccParser::ExprNEContext *ctx) override;
     antlrcpp::Any visitExprPARENS(ifccParser::ExprPARENSContext *ctx) override;
     antlrcpp::Any visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) override;
+
+protected:
+    stack<BasicBlock*> pileBoucles;
 };
