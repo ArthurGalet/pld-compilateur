@@ -185,14 +185,16 @@ antlrcpp::Any CToIRVisitor::visitWhile_loop(ifccParser::While_loopContext *ctx) 
     cfg->current_bb = bbTest;
     bbTest->exit_true = bbBloc;
     bbTest->exit_false = bbOut;
-    bbBloc->exit_true = bbTest;
 
     cfg->current_bb = bbTest;
     string variableName = visit(ctx->expression());
     cfg->current_bb->test_var_name = variableName;
 
+    pileBoucles.push(bbTest);
     cfg->current_bb = bbBloc;
-    visit(ctx->while_bloc());
+    visit(ctx->bloc());
+    cfg->current_bb->exit_true = bbTest;
+    pileBoucles.pop();
 
     cfg->current_bb = bbOut;
 
@@ -325,9 +327,9 @@ antlrcpp::Any CToIRVisitor::visitControl_flow_instruction(ifccParser::Control_fl
     vector<string> params = vector<string>();
 
     if (ctx->BREAK() != nullptr) {
-        params.push_back(cfg->current_bb->exit_true->exit_false->label);
+        params.push_back(pileBoucles.top()->exit_false->label);
     } else {
-        params.push_back(cfg->current_bb->previous_bb->label);
+        params.push_back(pileBoucles.top()->label);
     }
 
     cfg->current_bb->add_IRInstr(jump, params);

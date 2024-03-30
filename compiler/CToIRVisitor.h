@@ -34,4 +34,7 @@ public :
     antlrcpp::Any visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) override;
 
     void add_cfg(CFG * cfg);
+
+protected:
+    stack<BasicBlock*> pileBoucles;
 };
