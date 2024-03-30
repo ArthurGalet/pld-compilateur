@@ -136,8 +136,8 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
     cfg->current_bb->test_var_name = variableName;
 
     auto *bbIf = cfg->current_bb;
-    auto *bbTrue = new BasicBlock(cfg, cfg->new_BB_name(), cfg->current_bb);
-    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name(), cfg->current_bb);
+    auto *bbTrue = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
     bbIf->exit_true = bbTrue;
 
     cfg->add_bb(bbTrue);
@@ -148,7 +148,7 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
     if (ctx->ELSE() == nullptr) {
         bbIf->exit_false = bbOut;
     } else {
-        auto *bbFalse = new BasicBlock(cfg, cfg->new_BB_name(), cfg->current_bb);
+        auto *bbFalse = new BasicBlock(cfg, cfg->new_BB_name());
         bbFalse->exit_true = bbOut;
         bbIf->exit_false = bbFalse;
 
@@ -167,9 +167,9 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
 }
 
 antlrcpp::Any CToIRVisitor::visitWhile_loop(ifccParser::While_loopContext *ctx) {
-    auto *bbTest = new BasicBlock(cfg, cfg->new_BB_name(), cfg->current_bb);
-    auto *bbBloc = new BasicBlock(cfg, cfg->new_BB_name(), bbTest);
-    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name(), bbTest);
+    auto *bbTest = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbBloc = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
 
     cfg->add_bb(bbTest);
     cfg->add_bb(bbBloc);

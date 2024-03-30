@@ -2,12 +2,11 @@
 
 #include <utility>
 
-BasicBlock::BasicBlock(CFG* cfg, string entry_label, BasicBlock* previous){
+BasicBlock::BasicBlock(CFG* cfg, string entry_label){
     this->cfg = cfg;
     this->label = std::move(entry_label);
     this->exit_true = nullptr;
     this->exit_false = nullptr;
-    this->previous_bb = previous;
 }
 
 void BasicBlock::gen_asm(ostream &o){
