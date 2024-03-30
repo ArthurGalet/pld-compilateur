@@ -258,3 +258,15 @@ void CToIRVisitor::add_cfg(CFG * cfg) {
     this->cfgs.push_back(cfg);
     this->cfg = cfg;
 }
+
+antlrcpp::Any CToIRVisitor::visitExprCALL(ifccParser::ExprCALLContext *ctx) {
+    string variableName = cfg->create_new_tempvar(INT);
+    string function_name = ctx->ID()->getText();
+
+    vector<string> params = vector<string>();
+    params.push_back(variableName);
+    params.push_back(function_name);    
+    cfg->current_bb->add_IRInstr(call, params);
+
+    return variableName;
+}

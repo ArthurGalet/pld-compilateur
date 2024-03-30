@@ -68,8 +68,9 @@ void IRInstr::gen_asm(ostream &o)
         exit(1);
         break;
     case call:
-        // /!\ non implémenté
-        exit(1);
+        // P0 = call P1
+        o << "    call    " << params[1] << "\n";
+        o << "    movl    %eax, " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
         break;
     case cmp_eq:
         // P0 = (P1 == P2)

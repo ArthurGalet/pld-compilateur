@@ -36,6 +36,7 @@ expression: '(' expression ')'                                         #exprPARE
             expression LAZYAND expression                              #exprLAND    |
             expression LAZYOR expression                               #exprLOR     |
             expression '?' expression ':' expression                   #exprCOND    |
+            ID '(' ')'                 #exprCALL    |
             ID (EQ|PLUSEQ|MINUSEQ|MULTEQ|DIVEQ|MODEQ) expression #affectation |
             valeur                                                     #exprVAL     ;
             
