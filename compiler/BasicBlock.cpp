@@ -22,9 +22,9 @@ void BasicBlock::gen_asm(ostream &o){
         o << "    jmp " << exit_true->label << endl;
     }
     else{
-        o << "    cmpl    $0, " << cfg->IR_reg_to_asm(test_var_name) << endl;
-        o << "    je    " << exit_false->label << endl;
-        o << "    jmp    " << exit_true->label << endl;
+        o << "    cmpl $0, " << cfg->IR_reg_to_asm(test_var_name) << endl;
+        o << "    je " << exit_false->label << endl;
+        o << "    jmp " << exit_true->label << endl;
     }
 }
 

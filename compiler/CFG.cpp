@@ -47,7 +47,7 @@ string CFG::IR_reg_to_asm(const string & reg) {
 
 void CFG::gen_asm_prologue(ostream &o) {
     o << ".globl "<< cfg_name <<"\n" ;
-    o << ""<< cfg_name <<": \n" ;
+    o << cfg_name <<": \n" ;
     o << "    pushq %rbp\n" ;
     o << "    movq %rsp, %rbp\n" ;
     o << "    subq $"<< to_string(nextFreeSymbolIndex) << ", %rsp\n" ;
@@ -57,7 +57,7 @@ void CFG::gen_asm_prologue(ostream &o) {
 void CFG::gen_asm_epilogue(ostream &o) {
     o << "    movq %rbp, %rsp\n";
     o << "    popq %rbp\n" ;
-    o << "    ret\n " ;
+    o << "    ret\n" ;
 }
 
 void CFG::add_to_symbol_table(const string & name, Type t) {

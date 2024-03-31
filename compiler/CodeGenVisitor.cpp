@@ -17,7 +17,7 @@ antlrcpp::Any CodeGenVisitor::visitProg(ifccParser::ProgContext *ctx) {
     }
 
     std::cout<< "popq %rbp\n" ;
-    std::cout<< "ret\n " ;
+    std::cout<< "ret\n" ;
 
     return 0;
 }
