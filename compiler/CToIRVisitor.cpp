@@ -200,7 +200,7 @@ antlrcpp::Any CToIRVisitor::visitWhile_loop(ifccParser::While_loopContext *ctx) 
 
     pileBoucles.push(bbTest);
     cfg->current_bb = bbBloc;
-    visit(ctx->bloc());
+    visit(ctx->while_bloc());
     cfg->current_bb->exit_true = bbTest;
     pileBoucles.pop();
 
