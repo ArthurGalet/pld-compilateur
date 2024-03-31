@@ -159,6 +159,7 @@ jobs=sorted(unique_jobs)
 if args.debug:
     print("debug: list of test-cases after deduplication:"," ".join(jobs))
 
+passedTest = 0;
 
 ######################################################################################
 ## TEST step: actually compile all test-cases with both compilers
@@ -185,6 +186,7 @@ for jobname in jobs:
     if gccstatus != 0 and ifccstatus != 0:
         ## ifcc correctly rejects invalid program -> test-case ok
         print("TEST OK")
+        passedTest += 1
         continue
     elif gccstatus != 0 and ifccstatus == 0:
         ## ifcc wrongly accepts invalid program -> error
@@ -220,3 +222,6 @@ for jobname in jobs:
 
     ## last but not least
     print("TEST OK")
+    passedTest += 1
+
+print("----------------\nTest results :\n " + str(passedTest) + " passed | " + str(len(jobs) - passedTest) + " failed | total " + str(len(jobs)))
