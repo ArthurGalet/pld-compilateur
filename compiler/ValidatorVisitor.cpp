@@ -16,7 +16,6 @@ antlrcpp::Any ValidatorVisitor::visitAffectation(ifccParser::AffectationContext 
         get<0>(*findVariable(nom)) = max(1, get<0>(*findVariable(nom)));
     }
 
-    // ID = ID
     visit(ctx->expression());
 
     return 0;
@@ -26,13 +25,12 @@ antlrcpp::Any ValidatorVisitor::visitDeclaration(ifccParser::DeclarationContext 
 {
     string nom = ctx->ID()->getText();
 
-    if (findVariable(nom) != nullptr) {
+    if (declaredVariables->back()->find(nom) != declaredVariables->back()->end()) {
         cerr << "Redéfinition de la variable " << nom << "\n";
-        exit (1); // variable déjà déclarée
+        exit (1); // variable déjà déclarée dans le contexte actuel
     }
 
     if (ctx->expression() == nullptr) {
-        // int ID;
         declaredVariables->back()->insert(make_pair(nom, tuple(0, (declaredVariables->size() + 1) * 4)));
         return 0;
     }
@@ -76,8 +74,8 @@ antlrcpp::Any ValidatorVisitor::visitBloc(ifccParser::BlocContext *ctx) {
 }
 
 tuple<int,int>* ValidatorVisitor::findVariable(string nom) {
-    for (auto & blocVariables : *declaredVariables) {
-        for (auto & variable : *blocVariables) {
+    for (auto blocVariable = declaredVariables->rbegin(); blocVariable != declaredVariables->rend(); blocVariable++) {
+        for (auto & variable : **blocVariable) {
             if (variable.first == nom) {
                 return &variable.second;
             }
