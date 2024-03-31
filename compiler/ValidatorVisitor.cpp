@@ -1,6 +1,7 @@
 #include "ValidatorVisitor.h"
 
 ValidatorVisitor::ValidatorVisitor(){
+    declaredFunctions = new vector<string>();
     declaredVariables = new vector<map<string, tuple<int, int>>*>();
     declaredVariables->push_back(new map<string, tuple<int, int>>());
 }
@@ -94,5 +95,29 @@ antlrcpp::Any ValidatorVisitor::visitControl_flow_instruction(ifccParser::Contro
         }
         parent = parent->parent;
     }
+    return 0;
+}
+
+antlrcpp::Any ValidatorVisitor::visitProg(ifccParser::ProgContext *ctx){
+    visitChildren(ctx);
+    for (string declaredFunctionName : *declaredFunctions) {
+        if (declaredFunctionName == "main") {
+            return 0;
+        }
+    }
+    cerr << "Fonction main non déclarée\n";
+    exit(5);
+}
+
+antlrcpp::Any ValidatorVisitor::visitFunction(ifccParser::FunctionContext *ctx){
+    string functionName = ctx->ID()->getText();
+    for (string declaredFunctionName : *declaredFunctions) {
+        if (declaredFunctionName == functionName) {
+            cerr << "Fonction " << functionName << " déja déclarée\n";
+            exit(4);
+        }
+    }
+    declaredFunctions->push_back(functionName);
+    visitChildren(ctx);
     return 0;
 }
