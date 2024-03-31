@@ -27,7 +27,10 @@ typedef enum
     neg = 16,
     cmp_ne = 17,
     lnot = 18,
-    jump = 19
+    bwor = 19,
+    bwand = 20,
+    bwxor = 21,
+    jump = 22
 } Operation;
 
 #endif // PLD_COMP_OPERATION_H

@@ -136,6 +136,24 @@ void IRInstr::gen_asm(ostream &o)
         o << "    movzbl %al, %eax\n";
         o << "    movl %eax, " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
         break;
+    case bwor:
+        // P0 = P1 | P2
+        o << "    movl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", %eax\n";
+        o << "    orl    " << bb->cfg->IR_reg_to_asm(params[2]) << ", %eax\n";
+        o << "    movl    %eax," << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
+        break;
+    case bwand:
+        // P0 = P1 & P2
+        o << "    movl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", %eax\n";
+        o << "    andl    " << bb->cfg->IR_reg_to_asm(params[2]) << ", %eax\n";
+        o << "    movl    %eax," << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
+        break;
+    case bwxor:
+        // P0 = P1 ^ P2
+        o << "    movl    " << bb->cfg->IR_reg_to_asm(params[1]) << ", %eax\n";
+        o << "    xorl    " << bb->cfg->IR_reg_to_asm(params[2]) << ", %eax\n";
+        o << "    movl    %eax," << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
+        break;
     case jump:
         // jump P0;
         o << "    jmp " << params[0] << "\n";
