@@ -1,11 +1,24 @@
 #include "CFG.h"
 #include "BasicBlock.h"
 
-CFG::CFG() {
+CFG::CFG(string function_name) {
     nextFreeSymbolIndex = 4;
     current_bb = nullptr;
     nextBBnumber = 0;
     nextTmpVariableNumber = 0;
+    cfg_name = function_name;
+
+    string name_entry = new_BB_name();
+    string name_exit = new_BB_name();
+    auto entryBB = new BasicBlock(this, name_entry);
+    auto exitBB = new BasicBlock(this, name_exit);
+
+    add_bb(entryBB);
+    add_bb(exitBB);
+
+    entryBB->exit_true = exitBB;
+    
+    current_bb = entryBB;
 }
 
 void CFG::add_bb(BasicBlock *bb) {
@@ -33,12 +46,12 @@ string CFG::IR_reg_to_asm(const string & reg) {
 }
 
 void CFG::gen_asm_prologue(ostream &o) {
-    o << ".globl main\n" ;
-    o << "main: \n" ;
+    o << ".globl "<< cfg_name <<"\n" ;
+    o << ""<< cfg_name <<": \n" ;
     o << "    pushq %rbp\n" ;
     o << "    movq %rsp, %rbp\n" ;
     o << "    subq $"<< to_string(nextFreeSymbolIndex) << ", %rsp\n" ;
-    o << "    jmp bb0\n";
+    o << "    jmp "<< cfg_name<<"_bb0\n";
 }
 
 void CFG::gen_asm_epilogue(ostream &o) {
@@ -70,7 +83,7 @@ Type CFG::get_var_type(const string & name) {
 }
 
 string CFG::new_BB_name() {
-    string name = "bb";
+    string name = cfg_name + "_bb";
     name.append(to_string(nextBBnumber));
     nextBBnumber++;
     return name;

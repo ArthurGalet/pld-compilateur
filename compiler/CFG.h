@@ -26,7 +26,7 @@ using namespace std;
  */
 class CFG {
  public:
-	explicit CFG();
+	explicit CFG(string function_name);
 
 	void add_bb(BasicBlock* bb); 
 
@@ -52,6 +52,7 @@ class CFG {
 	int nextFreeSymbolIndex; /**< to allocate new symbols in the symbol table */
 	int nextBBnumber; /**< just for naming */
 	int nextTmpVariableNumber;
+	string cfg_name;
 	
 	vector <BasicBlock*> bbs; /**< all the basic blocks of this CFG*/
 };
