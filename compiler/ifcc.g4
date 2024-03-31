@@ -1,27 +1,22 @@
 grammar ifcc;
 
 axiom : prog EOF ;
-
 prog : function*;
-
 function : 'int' ID '(' ')' bloc ;
-
-commande: instruction | ifelse | while_loop;
-
-instruction: ( return_stmt | expression | declarations ) ';';
-return_stmt: RETURN expression;
 
 declarations: 'int' declaration (',' declaration)*;
 declaration: ID ('=' expression)?;
 
-valeur: ID | CONST | CONSTCHAR;
-
 bloc: '{' commande* '}';
+commande: instruction | ifelse | while_loop;
+instruction: ( return_stmt | expression | declarations | control_flow_instruction ) ';';
+return_stmt: RETURN expression;
+control_flow_instruction : ( BREAK | CONTINUE ) ;
 
 ifelse : 'if' '(' expression ')' ifelse_bloc (ELSE (ifelse | ifelse_bloc))?;
 ifelse_bloc : (return_stmt ';'| expression ';'| bloc) ;
 
-while_loop : 'while' '(' expression ')' bloc;
+while_loop : 'while' '(' expression ')' bloc ;
 
 expression: '(' expression ')'                                         #exprPARENS  |
             (PLUS|MINUS|LNOT|BWNOT) expression                         #exprUNAIRE  |
@@ -38,7 +33,9 @@ expression: '(' expression ')'                                         #exprPARE
             expression '?' expression ':' expression                   #exprCOND    |
             ID (EQ|PLUSEQ|MINUSEQ|MULTEQ|DIVEQ|MODEQ) expression #affectation |
             valeur                                                     #exprVAL     ;
-            
+
+valeur: ID | CONST | CONSTCHAR;
+
 ELSE : 'else' ;
 PLUS : '+' ;
 MINUS : '-' ;
@@ -65,6 +62,8 @@ MODEQ : '%=' ;
 LNOT : '!' ;
 BWNOT : '~';
 
+CONTINUE : 'continue' ;
+BREAK : 'break' ;
 RETURN : 'return' ;
 CONST : [0-9]+ ;
 ID : [a-zA-Z_][a-zA-Z0-9_]*;

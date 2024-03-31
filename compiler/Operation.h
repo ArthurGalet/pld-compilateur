@@ -30,7 +30,8 @@ typedef enum
     bwor = 19,
     bwand = 20,
     bwxor = 21,
-    bwnot = 22
+    bwnot = 22,
+    jump = 23
 } Operation;
 
 #endif // PLD_COMP_OPERATION_H

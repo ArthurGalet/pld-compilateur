@@ -157,5 +157,8 @@ void IRInstr::gen_asm(ostream &o)
         // P0 = ~P0
         o << "    not    " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
         break;
+    case jump:
+        // jump P0;
+        o << "    jmp " << params[0] << "\n";
     }
 }
