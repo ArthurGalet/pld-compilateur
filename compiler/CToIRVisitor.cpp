@@ -1,5 +1,10 @@
 #include "CToIRVisitor.h"
 
+void CToIRVisitor::add_cfg(CFG * newCfg) {
+    this->cfgs.push_back(newCfg);
+    this->cfg = newCfg;
+}
+
 antlrcpp::Any CToIRVisitor::visitFunction(ifccParser::FunctionContext *context) {
 
     string function_name = context->ID()->getText();
@@ -285,6 +290,7 @@ antlrcpp::Any CToIRVisitor::visitExprXOR(ifccParser::ExprXORContext *ctx) {
 
     return variableName;
 }
+
 antlrcpp::Any CToIRVisitor::visitExprPARENS(ifccParser::ExprPARENSContext *ctx) {
     return visit(ctx->expression());
 }
@@ -299,74 +305,68 @@ antlrcpp::Any CToIRVisitor::visitExprNOT(ifccParser::ExprNOTContext *ctx) {
     return variableName;
 }
 
-void CToIRVisitor::add_cfg(CFG * newCfg) {
-    this->cfgs.push_back(newCfg);
-    this->cfg = newCfg;
-}
-
 antlrcpp::Any CToIRVisitor::visitExprLAND(ifccParser::ExprLANDContext *ctx) {
-    string tmp0 = visit(ctx->expression()[0]);
-    cfg->current_bb->test_var_name = tmp0;
+    string leftResult = visit(ctx->expression()[0]);
+    cfg->current_bb->test_var_name = leftResult;
 
-    auto *bbTestTmp0 = cfg->current_bb;
-    auto *bbTmp0True = new BasicBlock(cfg, cfg->new_BB_name());
-    auto *bbCopyTemp0Tmp1 = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbTest = cfg->current_bb;
+    auto *bbTrue = new BasicBlock(cfg, cfg->new_BB_name());
     auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
     bbOut->exit_true = cfg->current_bb->exit_true;
     bbOut->exit_false = cfg->current_bb->exit_false;
 
-    bbTestTmp0->exit_true = bbTmp0True;
-    bbTestTmp0->exit_false = bbOut;
-
-    bbTmp0True->exit_true = bbCopyTemp0Tmp1;
-    bbCopyTemp0Tmp1->exit_true = bbOut;
-
-    cfg->add_bb(bbTmp0True);
-
-    cfg->current_bb = bbTmp0True;
-    string tmp1 = visit(ctx->expression()[1]);
-
-    bbCopyTemp0Tmp1->add_IRInstr(copyvar, {tmp0, tmp1});
-
-    cfg->add_bb(bbCopyTemp0Tmp1);
+    cfg->add_bb(bbTrue);
     cfg->add_bb(bbOut);
+
+    string result = cfg->create_new_tempvar(INT);
+    string tempVariable = cfg->create_new_tempvar(INT);
+    bbTest->add_IRInstr(ldconst, {tempVariable, "1"});
+    bbTest->exit_true = bbTrue;
+    bbTest->exit_false = bbOut;
+    bbTest->add_IRInstr(copyvar, {result, leftResult});
+    bbTest->add_IRInstr(bwand, {result, result, tempVariable});
+
+
+    bbTrue->exit_true =  bbOut;
+    cfg->current_bb = bbTrue;
+    string rightResult = visit(ctx->expression()[1]);
+    cfg->current_bb->add_IRInstr(copyvar, {result, rightResult});
+    cfg->current_bb->add_IRInstr(bwand, {result, result, tempVariable});
     cfg->current_bb = bbOut;
 
-    return tmp0;
+    return result;
 }
 
 antlrcpp::Any CToIRVisitor::visitExprLOR(ifccParser::ExprLORContext *ctx) {
+    string leftResult = visit(ctx->expression()[0]);
+    cfg->current_bb->test_var_name = leftResult;
 
-    string tmp0 = visit(ctx->expression()[0]);
-    cfg->current_bb->test_var_name = tmp0;
-
-    auto *bbTestTmp0 = cfg->current_bb;
-    auto *bbTmp0False = new BasicBlock(cfg, cfg->new_BB_name());
-    auto *bbCopyTemp0Tmp1 = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbTest = cfg->current_bb;
+    auto *bbFalse = new BasicBlock(cfg, cfg->new_BB_name());
     auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
     bbOut->exit_true = cfg->current_bb->exit_true;
     bbOut->exit_false = cfg->current_bb->exit_false;
 
-    bbTestTmp0->exit_true = bbOut;
-    bbTestTmp0->exit_false = bbTmp0False;
-
-    bbTmp0False->exit_true = bbCopyTemp0Tmp1;
-    bbCopyTemp0Tmp1->exit_true = bbOut;
-
-    cfg->add_bb(bbTmp0False);
-
-    cfg->current_bb = bbTmp0False;
-    string tmp1 = visit(ctx->expression()[1]);
-
-    bbCopyTemp0Tmp1->add_IRInstr(copyvar, {tmp0, tmp1});
-
-
-    cfg->add_bb(bbCopyTemp0Tmp1);
+    cfg->add_bb(bbFalse);
     cfg->add_bb(bbOut);
+
+    string result = cfg->create_new_tempvar(INT);
+    string tempVariable = cfg->create_new_tempvar(INT);
+    bbTest->add_IRInstr(ldconst, {tempVariable, "1"});
+    bbTest->exit_true = bbOut;
+    bbTest->exit_false = bbFalse;
+    bbTest->add_IRInstr(copyvar, {result, leftResult});
+    bbTest->add_IRInstr(bwand, {result, result, tempVariable});
+
+    bbFalse->exit_true = bbOut;
+    cfg->current_bb = bbFalse;
+    string rightResult = visit(ctx->expression()[1]);
+    cfg->current_bb->add_IRInstr(copyvar, {result, rightResult});
+    cfg->current_bb->add_IRInstr(bwand, {result, result, tempVariable});
+
     cfg->current_bb = bbOut;
 
-    return tmp0;
-
+    return result;
 }
 
 antlrcpp::Any CToIRVisitor::visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) {
