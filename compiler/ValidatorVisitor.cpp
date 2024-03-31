@@ -84,3 +84,15 @@ tuple<int,int>* ValidatorVisitor::findVariable(string nom) {
     }
     return nullptr;
 }
+
+antlrcpp::Any ValidatorVisitor::visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) {
+    antlr4::tree::ParseTree* parent = ctx->parent;
+    while(dynamic_cast<ifccParser::While_loopContext *>(parent) == nullptr) {
+        if (parent == nullptr) {
+            cerr << "Instruction " << ctx->getText() << " utilisée dans un contexte invalide\n";
+            exit(3);
+        }
+        parent = parent->parent;
+    }
+    return 0;
+}

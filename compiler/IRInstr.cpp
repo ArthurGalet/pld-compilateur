@@ -121,7 +121,8 @@ void IRInstr::gen_asm(ostream &o)
         break;
     case ret:
         // return P0
-        o << "    movl    " << bb->cfg->IR_reg_to_asm(params[0]) << ", %eax\n";
+        o << "    movl    " << bb->cfg->IR_reg_to_asm(params[0]) << ", %eax"
+          << "\n";
         break;
     case neg:
         // P0 = -P0
@@ -153,5 +154,8 @@ void IRInstr::gen_asm(ostream &o)
         o << "    xorl    " << bb->cfg->IR_reg_to_asm(params[2]) << ", %eax\n";
         o << "    movl    %eax," << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
         break;
+    case jump:
+        // jump P0;
+        o << "    jmp " << params[0] << "\n";
     }
 }

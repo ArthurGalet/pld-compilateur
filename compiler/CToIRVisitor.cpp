@@ -1,15 +1,11 @@
 #include "CToIRVisitor.h"
 
-CToIRVisitor::CToIRVisitor() {
-
-}
-
 antlrcpp::Any CToIRVisitor::visitFunction(ifccParser::FunctionContext *context) {
 
     string function_name = context->ID()->getText();
-    auto cfg = new CFG(function_name);
+    auto newCfg = new CFG(function_name);
 
-    add_cfg(cfg);
+    add_cfg(newCfg);
 
     visit(context->bloc());
 
@@ -142,14 +138,12 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
     auto *bbIf = cfg->current_bb;
     auto *bbTrue = new BasicBlock(cfg, cfg->new_BB_name());
     auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
-    bbOut->exit_true = cfg->current_bb->exit_true;
-    bbOut->exit_false = cfg->current_bb->exit_false;
     bbIf->exit_true = bbTrue;
-    bbTrue->exit_true = bbOut;
 
     cfg->add_bb(bbTrue);
     cfg->current_bb = bbTrue;
     visit(ctx->ifelse_bloc()[0]);
+    cfg->current_bb->exit_true = bbOut;
 
     if (ctx->ELSE() == nullptr) {
         bbIf->exit_false = bbOut;
@@ -187,14 +181,16 @@ antlrcpp::Any CToIRVisitor::visitWhile_loop(ifccParser::While_loopContext *ctx) 
     cfg->current_bb = bbTest;
     bbTest->exit_true = bbBloc;
     bbTest->exit_false = bbOut;
-    bbBloc->exit_true = bbTest;
 
     cfg->current_bb = bbTest;
     string variableName = visit(ctx->expression());
     cfg->current_bb->test_var_name = variableName;
 
+    pileBoucles.push(bbTest);
     cfg->current_bb = bbBloc;
     visit(ctx->bloc());
+    cfg->current_bb->exit_true = bbTest;
+    pileBoucles.pop();
 
     cfg->current_bb = bbOut;
 
@@ -282,7 +278,6 @@ antlrcpp::Any CToIRVisitor::visitExprPARENS(ifccParser::ExprPARENSContext *ctx) 
 }
 
 antlrcpp::Any CToIRVisitor::visitExprNOT(ifccParser::ExprNOTContext *ctx) {
-    
     string variableName = visit(ctx->expression());
 
     vector<string> params = vector<string>();
@@ -292,13 +287,12 @@ antlrcpp::Any CToIRVisitor::visitExprNOT(ifccParser::ExprNOTContext *ctx) {
     return variableName;
 }
 
-void CToIRVisitor::add_cfg(CFG * cfg) {
-    this->cfgs.push_back(cfg);
-    this->cfg = cfg;
+void CToIRVisitor::add_cfg(CFG * newCfg) {
+    this->cfgs.push_back(newCfg);
+    this->cfg = newCfg;
 }
 
 antlrcpp::Any CToIRVisitor::visitExprLAND(ifccParser::ExprLANDContext *ctx) {
-
     string tmp0 = visit(ctx->expression()[0]);
     cfg->current_bb->test_var_name = tmp0;
 
@@ -314,25 +308,19 @@ antlrcpp::Any CToIRVisitor::visitExprLAND(ifccParser::ExprLANDContext *ctx) {
 
     bbTmp0True->exit_true = bbCopyTemp0Tmp1;
     bbCopyTemp0Tmp1->exit_true = bbOut;
-    
-
 
     cfg->add_bb(bbTmp0True);
-    
-   
 
     cfg->current_bb = bbTmp0True;
     string tmp1 = visit(ctx->expression()[1]);
 
     bbCopyTemp0Tmp1->add_IRInstr(copyvar, {tmp0, tmp1});
 
-
     cfg->add_bb(bbCopyTemp0Tmp1);
     cfg->add_bb(bbOut);
     cfg->current_bb = bbOut;
 
     return tmp0;
-
 }
 
 antlrcpp::Any CToIRVisitor::visitExprLOR(ifccParser::ExprLORContext *ctx) {
@@ -352,12 +340,8 @@ antlrcpp::Any CToIRVisitor::visitExprLOR(ifccParser::ExprLORContext *ctx) {
 
     bbTmp0False->exit_true = bbCopyTemp0Tmp1;
     bbCopyTemp0Tmp1->exit_true = bbOut;
-    
-
 
     cfg->add_bb(bbTmp0False);
-    
-   
 
     cfg->current_bb = bbTmp0False;
     string tmp1 = visit(ctx->expression()[1]);
@@ -371,4 +355,17 @@ antlrcpp::Any CToIRVisitor::visitExprLOR(ifccParser::ExprLORContext *ctx) {
 
     return tmp0;
 
+}
+
+antlrcpp::Any CToIRVisitor::visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) {
+    vector<string> params = vector<string>();
+
+    if (ctx->BREAK() != nullptr) {
+        params.push_back(pileBoucles.top()->exit_false->label);
+    } else {
+        params.push_back(pileBoucles.top()->label);
+    }
+
+    cfg->current_bb->add_IRInstr(jump, params);
+    return 0;
 }
