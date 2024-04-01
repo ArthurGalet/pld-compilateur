@@ -62,8 +62,7 @@ void CFG::gen_asm_epilogue(ostream &o) {
 }
 
 void CFG::add_to_symbol_table(const string & name, Type t) {
-    auto mapEntry = make_pair(name, make_pair(t, nextFreeSymbolIndex));
-    Symbols->back()->insert(mapEntry);
+    Symbols->back()->insert(make_pair(name, make_pair(t, nextFreeSymbolIndex)));
     nextFreeSymbolIndex += 4;
 }
 
