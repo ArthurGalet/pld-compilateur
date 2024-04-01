@@ -130,7 +130,7 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
 
     cfg->add_bb(bbTrue);
     cfg->current_bb = bbTrue;
-    visit(ctx->ifelse_bloc()[0]);
+    visit(ctx->condition_bloc()[0]);
     cfg->current_bb->exit_true = bbOut;
 
     if (ctx->ELSE() == nullptr) {
@@ -145,7 +145,7 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
         if (ctx->ifelse() != nullptr) {
             visit(ctx->ifelse());
         } else {
-            visit(ctx->ifelse_bloc()[1]);
+            visit(ctx->condition_bloc()[1]);
         }
     }
     cfg->add_bb(bbOut);
@@ -176,7 +176,7 @@ antlrcpp::Any CToIRVisitor::visitWhile_loop(ifccParser::While_loopContext *ctx) 
 
     pileBoucles.push(bbTest);
     cfg->current_bb = bbBloc;
-    visit(ctx->while_bloc());
+    visit(ctx->condition_bloc());
     cfg->current_bb->exit_true = bbTest;
     pileBoucles.pop();
 
