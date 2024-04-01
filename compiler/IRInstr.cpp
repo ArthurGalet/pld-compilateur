@@ -12,14 +12,6 @@ IRInstr::IRInstr(BasicBlock *bb_, Operation op, vector<string> params)
 
 void IRInstr::gen_asm(ostream &o)
 {
-    // Useful debug lines
-    /*
-    cout << "; Generating assembly for instruction " << op << " with parameters ";
-    for (string param : params){
-        cout << param << " ";
-    }
-    cout << endl;
-    */
     switch (op)
     {
     case ldconst:
