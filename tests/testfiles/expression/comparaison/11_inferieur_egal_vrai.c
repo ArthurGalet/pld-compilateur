@@ -1,3 +1,3 @@
 int main() {
-    return 100 <= 10;
+    return 10 <= 10;
 }

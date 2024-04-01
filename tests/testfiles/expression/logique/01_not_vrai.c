@@ -1,3 +1,3 @@
 int main() {
-    return !224;
+    return !0;
 }
