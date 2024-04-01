@@ -7,7 +7,6 @@
 #include <initializer_list>
 #include <map>
 
-// Declarations from the parser -- replace with your own
 #include "Type.h"
 #include "BasicBlock.h"
 
@@ -41,14 +40,16 @@ class CFG {
 	string create_new_tempvar(Type t);
 	int get_var_index(const string & name);
 	Type get_var_type(const string & name);
+	void add_symbol_context();
+	void end_symbol_context();
 
 	// basic block management
 	string new_BB_name();
+	int currentContextNumber;
 	BasicBlock* current_bb;
 
  protected:
-	map <string, Type> SymbolType; /**< part of the symbol table  */
-	map <string, int> SymbolIndex; /**< part of the symbol table  */
+	vector<map <string, pair<Type,int>>*>* Symbols; /**< Symbol table  */
 	int nextFreeSymbolIndex; /**< to allocate new symbols in the symbol table */
 	int nextBBnumber; /**< just for naming */
 	int nextTmpVariableNumber;

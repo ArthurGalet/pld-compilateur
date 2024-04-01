@@ -32,10 +32,10 @@ class IRInstr;
         else if exit_false is a nullptr, 
           an unconditional jmp to the exit_true branch is generated
 				else (we have two successors, hence a branch)
-          an instruction comparing the value of test_var_name to true is generated,
+          an instruction comparing the value of tes_var_index to true is generated,
 					followed by a conditional branch to the exit_false branch,
 					followed by an unconditional branch to the exit_true branch
-	 The attribute test_var_name itself is defined when converting 
+	 The attribute test_var_index itself is defined when converting 
   the if, while, etc of the AST  to IR.
 
 Possible optimization:
@@ -56,7 +56,6 @@ public:
     string label; /**< label of the BB, also will be the label in the generated code */
     CFG* cfg; /** < the CFG where this block belongs */
     vector<IRInstr*> instrs; /** < the instructions themselves. */
-    string test_var_name;  /** < when generating IR code for an if(expr) or while(expr) etc,
-                                                 store here the name of the variable that holds the value of expr */
+    int test_var_index;
 protected:
 };
