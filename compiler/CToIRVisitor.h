@@ -36,5 +36,6 @@ public :
     void add_cfg(CFG * newCfg);
 
 protected:
+    string add_2op_instr(Operation op, antlr4::tree::ParseTree* left, antlr4::tree::ParseTree* right);
     stack<BasicBlock*> pileBoucles;
 };
