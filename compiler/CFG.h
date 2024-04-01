@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <vector>
 #include <string>
 #include <iostream>
@@ -45,7 +44,6 @@ class CFG {
 
 	// basic block management
 	string new_BB_name();
-	int currentContextNumber;
 	BasicBlock* current_bb;
 
  protected:
