@@ -19,7 +19,7 @@ Compilateur C fait maison
 | Définition de fonctions avec paramètres, et type de retour int ou void | O | En cours |
 | Vérification de la cohérence des appels de fonctions et leurs paramètres | O | Partiel |
 | Structure de blocs grâce à { et } | O | Terminé |
-| Support des portées de variables et du shadowing | O | En cours |
+| Support des portées de variables et du shadowing | O | Terminé |
 | Les structures de contrôle if, else, while | O | Terminé |
 | Support du return expression n’importe où | O | Terminé |
 | Vérification qu’une variable utilisée a été déclarée | O | Terminé |
