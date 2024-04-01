@@ -15,7 +15,7 @@ control_flow_instruction : ( BREAK | CONTINUE ) ;
 
 ifelse : 'if' '(' expression ')' condition_bloc (ELSE (ifelse | condition_bloc))?;
 while_loop : 'while' '(' expression ')' condition_bloc ;
-condition_bloc : ((return_stmt | expression)? ';'| bloc) ;
+condition_bloc : ((return_stmt | expression | control_flow_instruction)? ';'| bloc) ;
 
 expression: '(' expression ')'                                         #exprPARENS  |
             (PLUS|MINUS|LNOT|BWNOT) expression                         #exprUNAIRE  |
