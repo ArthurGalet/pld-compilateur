@@ -68,9 +68,85 @@ void IRInstr::gen_asm(ostream &o)
         exit(1);
         break;
     case call:
-        // P0 = call P1
+        // P0 = call P1(P2,...,Pn)
+        for (unsigned long i = 2; i<params.size(); i++) {
+            switch(i) {
+                case 2:
+                    o << "    pushq %rdi\n";
+                    o << "    movl    " << bb->cfg->IR_reg_to_asm(params[i]) << ", %edi\n";
+                break;
+
+                case 3:
+                    o << "    pushq %rsi\n";
+                    o << "    movl    " << bb->cfg->IR_reg_to_asm(params[i]) << ", %esi\n";
+                break;
+
+                case 4:
+                    o << "    pushq %rdx\n";
+                    o << "    movl    " << bb->cfg->IR_reg_to_asm(params[i]) << ", %edx\n";
+                break;
+
+                case 5:
+                    o << "    pushq %rcx\n";
+                    o << "    movl    " << bb->cfg->IR_reg_to_asm(params[i]) << ", %ecx\n";
+                break;
+
+                case 6:
+                    o << "    pushq %r8\n";
+                    o << "    movl    " << bb->cfg->IR_reg_to_asm(params[i]) << ", %r8d\n";
+                break;
+
+                case 7:
+                    o << "    pushq %r9\n";
+                    o << "    movl    " << bb->cfg->IR_reg_to_asm(params[i]) << ", %r9d\n";
+                break;
+
+                default:
+                    o << "    subq $"<< to_string(bb->cfg->get_type_size(bb->cfg->get_var_type((params[params.size()-1+8-i])))) <<", %rsp\n";
+                    o << "    movl " << bb->cfg->IR_reg_to_asm(params[params.size()-1+8-i]) << ", %eax\n";
+                    o << "    movl %eax, (%rsp)\n";
+                break;
+                
+            }
+            
+        }
+        
         o << "    call    " << params[1] << "\n";
         o << "    movl    %eax, " << bb->cfg->IR_reg_to_asm(params[0]) << "\n";
+
+        for(unsigned long i = params.size()-1; i>=2; i--) {
+            switch(i) {
+                case 2:
+                    o << "    popq %rdi\n";
+                break;
+
+                case 3:
+                    o << "    popq %rsi\n";
+                break;
+
+                case 4:
+                    o << "    popq %rdx\n";
+                break;
+
+                case 5:
+                    o << "    popq %rcx\n";
+                break;
+
+                case 6:
+                    o << "    popq %r8\n";
+                break;
+
+                case 7:
+                    o << "    popq %r9\n";
+                break;
+
+                default:
+                    o << "    addq $" << to_string(bb->cfg->get_type_size(bb->cfg->get_var_type((params[params.size()-1+8-i])))) << ", %rsp \n";
+                break;
+                
+            }    
+
+        }
         break;
     case cmp_eq:
         // P0 = (P1 == P2)

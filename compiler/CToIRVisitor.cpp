@@ -4,14 +4,19 @@ CToIRVisitor::CToIRVisitor() {
 
 }
 
-antlrcpp::Any CToIRVisitor::visitFunction(ifccParser::FunctionContext *context) {
+antlrcpp::Any CToIRVisitor::visitFunction(ifccParser::FunctionContext *ctx) {
 
-    string function_name = context->ID()->getText();
+    string function_name = ctx->ID()->getText();
     auto cfg = new CFG(function_name);
 
     add_cfg(cfg);
 
-    visit(context->bloc());
+    for(int i = 0; i < ctx->param().size(); i++) {
+        string paramName = ctx->param()[i]->ID()->getText();
+        cfg->add_param_to_symbol_table(paramName, INT,i);
+    }
+
+    visit(ctx->bloc());
 
     return 0;
 
@@ -69,6 +74,9 @@ antlrcpp::Any CToIRVisitor::visitAffectation(ifccParser::AffectationContext *ctx
 }
 
 antlrcpp::Any CToIRVisitor::visitExprVAL(ifccParser::ExprVALContext *ctx) {
+    if(ctx->valeur()->ID() != nullptr) {
+        return ctx->valeur()->ID()->getText();
+    }
     string variableName = cfg->create_new_tempvar(INT);
 
     vector<string> params = vector<string>();
@@ -77,9 +85,6 @@ antlrcpp::Any CToIRVisitor::visitExprVAL(ifccParser::ExprVALContext *ctx) {
     if (ctx->valeur()->CONST() != nullptr) {
         params.push_back(ctx->valeur()->CONST()->getText());
         cfg->current_bb->add_IRInstr(ldconst, params);
-    } else if (ctx->valeur()->ID() != nullptr){
-        params.push_back(ctx->valeur()->ID()->getText());
-        cfg->current_bb->add_IRInstr(copyvar, params);
     } else {
         int ascii_code = ctx->valeur()->CONSTCHAR()->getText()[1];
         params.push_back(to_string(ascii_code));
@@ -262,10 +267,17 @@ void CToIRVisitor::add_cfg(CFG * cfg) {
 antlrcpp::Any CToIRVisitor::visitExprCALL(ifccParser::ExprCALLContext *ctx) {
     string variableName = cfg->create_new_tempvar(INT);
     string function_name = ctx->ID()->getText();
-
+    
     vector<string> params = vector<string>();
     params.push_back(variableName);
-    params.push_back(function_name);    
+    params.push_back(function_name); 
+
+    for(auto expr : ctx->expression()) {
+        string param = visit(expr);
+        params.push_back(param);
+    }
+
+   
     cfg->current_bb->add_IRInstr(call, params);
 
     return variableName;

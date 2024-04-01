@@ -4,7 +4,10 @@ axiom : prog EOF ;
 
 prog : function*;
 
-function : 'int' ID '(' ')' bloc ;
+function : 'int' ID '(' ((param ',')* param)?  ')' bloc ;
+
+
+param : 'int' ID ; 
 
 commande: instruction | ifelse | while_loop;
 
@@ -36,9 +39,10 @@ expression: '(' expression ')'                                         #exprPARE
             expression LAZYAND expression                              #exprLAND    |
             expression LAZYOR expression                               #exprLOR     |
             expression '?' expression ':' expression                   #exprCOND    |
-            ID '(' ')'                 #exprCALL    |
+            ID '(' ((expression ',')* expression )? ')'                 #exprCALL    |
             ID (EQ|PLUSEQ|MINUSEQ|MULTEQ|DIVEQ|MODEQ) expression #affectation |
             valeur                                                     #exprVAL     ;
+
             
 ELSE : 'else' ;
 PLUS : '+' ;

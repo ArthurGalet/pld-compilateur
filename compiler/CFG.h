@@ -38,9 +38,11 @@ class CFG {
 
 	// symbol table methods
 	void add_to_symbol_table(const string & name, Type t);
+	void add_param_to_symbol_table(const string & name, Type t, int param_index);
 	string create_new_tempvar(Type t);
 	int get_var_index(const string & name);
 	Type get_var_type(const string & name);
+	size_t get_type_size(Type t);
 
 	// basic block management
 	string new_BB_name();
@@ -49,7 +51,9 @@ class CFG {
  protected:
 	map <string, Type> SymbolType; /**< part of the symbol table  */
 	map <string, int> SymbolIndex; /**< part of the symbol table  */
+	map <string, int> ParamNumber; /**< param number for the first 6 params*/
 	int nextFreeSymbolIndex; /**< to allocate new symbols in the symbol table */
+	int nextFreeParamIndex;
 	int nextBBnumber; /**< just for naming */
 	int nextTmpVariableNumber;
 	string cfg_name;
