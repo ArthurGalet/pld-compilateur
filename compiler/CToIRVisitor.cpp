@@ -8,14 +8,12 @@ void CToIRVisitor::add_cfg(CFG * newCfg) {
 string CToIRVisitor::add_2op_instr(Operation op, antlr4::tree::ParseTree* left, antlr4::tree::ParseTree* right) {
     string variableName = cfg->create_new_tempvar(INT);
     string variableIndex = to_string(cfg->get_var_index(variableName));
-    string leftOperand = visit(left);
-    string leftOperandIndex = to_string(cfg->get_var_index(leftOperand));
-    string rightOperand = visit(right);
-    string rightOperandIndex = to_string(cfg->get_var_index(rightOperand));
+    string leftOperandIndex = visit(left);
+    string rightOperandIndex = visit(right);
 
     cfg->current_bb->add_IRInstr(op, {variableIndex, leftOperandIndex, rightOperandIndex});
 
-    return variableName;
+    return variableIndex;
 }
 
 antlrcpp::Any CToIRVisitor::visitFunction(ifccParser::FunctionContext *context) {
@@ -28,10 +26,9 @@ antlrcpp::Any CToIRVisitor::visitFunction(ifccParser::FunctionContext *context) 
 }
 
 antlrcpp::Any CToIRVisitor::visitReturn_stmt(ifccParser::Return_stmtContext *ctx) {
-    string variableName = visit(ctx->expression());
-    string variableIndex = to_string(cfg->get_var_index(variableName));
+    string variableIndex = visit(ctx->expression());
     cfg->current_bb->add_IRInstr(ret, {variableIndex});
-    return variableName;
+    return variableIndex;
 }
 
 antlrcpp::Any CToIRVisitor::visitDeclaration(ifccParser::DeclarationContext *ctx) {
@@ -40,8 +37,7 @@ antlrcpp::Any CToIRVisitor::visitDeclaration(ifccParser::DeclarationContext *ctx
     string variableIndex = to_string(cfg->get_var_index(variableName));
 
     if (ctx->expression() != nullptr) {
-        string value = visit(ctx->expression());
-        string valueIndex = to_string(cfg->get_var_index(value));
+        string valueIndex = visit(ctx->expression());
         cfg->current_bb->add_IRInstr(copyvar, {variableIndex, valueIndex});
     }
 
@@ -51,8 +47,7 @@ antlrcpp::Any CToIRVisitor::visitDeclaration(ifccParser::DeclarationContext *ctx
 antlrcpp::Any CToIRVisitor::visitAffectation(ifccParser::AffectationContext *ctx) {
     string variableName = ctx->ID()->getText();
     string variableIndex = to_string(cfg->get_var_index(variableName));
-    string operandVariable = visit(ctx->expression());
-    string operandVariableIndex = to_string(cfg->get_var_index(operandVariable));
+    string operandVariableIndex = visit(ctx->expression());
     vector<string> params = {variableIndex, operandVariableIndex};
 
     if (ctx->EQ() != nullptr) {
@@ -73,7 +68,7 @@ antlrcpp::Any CToIRVisitor::visitAffectation(ifccParser::AffectationContext *ctx
         cfg->current_bb->add_IRInstr(modulo, params);
     }
 
-    return variableName;
+    return variableIndex;
 }
 
 antlrcpp::Any CToIRVisitor::visitExprVAL(ifccParser::ExprVALContext *ctx) {
@@ -95,7 +90,7 @@ antlrcpp::Any CToIRVisitor::visitExprVAL(ifccParser::ExprVALContext *ctx) {
         cfg->current_bb->add_IRInstr(ldconst, params);
     }
 
-    return variableName;
+    return variableIndex;
 }
 
 antlrcpp::Any CToIRVisitor::visitExprMDM(ifccParser::ExprMDMContext *ctx) {
@@ -117,8 +112,7 @@ antlrcpp::Any CToIRVisitor::visitExprAS(ifccParser::ExprASContext *ctx) {
 }
 
 antlrcpp::Any CToIRVisitor::visitExprUNAIRE(ifccParser::ExprUNAIREContext *ctx) {
-    string variableName = visit(ctx->expression());
-    string variableIndex = to_string(cfg->get_var_index(variableName));
+    string variableIndex = visit(ctx->expression());
     vector<string> params = {variableIndex};
 
     if (ctx->MINUS() != nullptr) {
@@ -129,13 +123,12 @@ antlrcpp::Any CToIRVisitor::visitExprUNAIRE(ifccParser::ExprUNAIREContext *ctx) 
         cfg->current_bb->add_IRInstr(lnot, params);
     }
 
-    return variableName;
+    return variableIndex;
 }
 
 antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
-    string variableName = visit(ctx->expression());
-    string variableIndex = to_string(cfg->get_var_index(variableName));
-    cfg->current_bb->test_var_index = cfg->get_var_index(variableName);
+    string variableIndex = visit(ctx->expression());
+    cfg->current_bb->test_var_index = stoi(variableIndex);
 
     auto *bbIf = cfg->current_bb;
     auto *bbTrue = new BasicBlock(cfg, cfg->new_BB_name());
@@ -185,9 +178,8 @@ antlrcpp::Any CToIRVisitor::visitWhile_loop(ifccParser::While_loopContext *ctx) 
     bbTest->exit_false = bbOut;
 
     cfg->current_bb = bbTest;
-    string variableName = visit(ctx->expression());
-    string variableIndex = to_string(cfg->get_var_index(variableName));
-    cfg->current_bb->test_var_index = cfg->get_var_index(variableName);
+    string variableIndex = visit(ctx->expression());
+    cfg->current_bb->test_var_index = stoi(variableIndex);
 
     pileBoucles.push(bbTest);
     cfg->current_bb = bbBloc;
@@ -237,16 +229,14 @@ antlrcpp::Any CToIRVisitor::visitExprPARENS(ifccParser::ExprPARENSContext *ctx) 
 }
 
 antlrcpp::Any CToIRVisitor::visitExprNOT(ifccParser::ExprNOTContext *ctx) {
-    string variableName = visit(ctx->expression());
-    string variableIndex = to_string(cfg->get_var_index(variableName));
+    string variableIndex = visit(ctx->expression());
     cfg->current_bb->add_IRInstr(lnot, {variableIndex});
-    return variableName;
+    return variableIndex;
 }
 
 antlrcpp::Any CToIRVisitor::visitExprLAND(ifccParser::ExprLANDContext *ctx) {
-    string leftResult = visit(ctx->expression()[0]);
-    string leftResultIndex = to_string(cfg->get_var_index(leftResult));
-    cfg->current_bb->test_var_index = cfg->get_var_index(leftResult);
+    string leftResultIndex = visit(ctx->expression()[0]);
+    cfg->current_bb->test_var_index = stoi(leftResultIndex);
 
     auto *bbTest = cfg->current_bb;
     auto *bbTrue = new BasicBlock(cfg, cfg->new_BB_name());
@@ -270,19 +260,17 @@ antlrcpp::Any CToIRVisitor::visitExprLAND(ifccParser::ExprLANDContext *ctx) {
 
     bbTrue->exit_true =  bbOut;
     cfg->current_bb = bbTrue;
-    string rightResult = visit(ctx->expression()[1]);
-    string rightResultIndex = to_string(cfg->get_var_index(rightResult));
+    string rightResultIndex = visit(ctx->expression()[1]);
     cfg->current_bb->add_IRInstr(copyvar, {resultIndex, rightResultIndex});
     cfg->current_bb->add_IRInstr(bwand, {resultIndex, resultIndex, tempVariableIndex});
     cfg->current_bb = bbOut;
 
-    return result;
+    return resultIndex;
 }
 
 antlrcpp::Any CToIRVisitor::visitExprLOR(ifccParser::ExprLORContext *ctx) {
-    string leftResult = visit(ctx->expression()[0]);
-    string leftResultIndex = to_string(cfg->get_var_index(leftResult));
-    cfg->current_bb->test_var_index = cfg->get_var_index(leftResult);
+    string leftResultIndex = visit(ctx->expression()[0]);
+    cfg->current_bb->test_var_index = stoi(leftResultIndex);
 
     auto *bbTest = cfg->current_bb;
     auto *bbFalse = new BasicBlock(cfg, cfg->new_BB_name());
@@ -305,14 +293,13 @@ antlrcpp::Any CToIRVisitor::visitExprLOR(ifccParser::ExprLORContext *ctx) {
 
     bbFalse->exit_true = bbOut;
     cfg->current_bb = bbFalse;
-    string rightResult = visit(ctx->expression()[1]);
-    string rightResultIndex = to_string(cfg->get_var_index(rightResult));
+    string rightResultIndex = visit(ctx->expression()[1]);
     cfg->current_bb->add_IRInstr(copyvar, {resultIndex, rightResultIndex});
     cfg->current_bb->add_IRInstr(bwand, {resultIndex, resultIndex, tempVariableIndex});
 
     cfg->current_bb = bbOut;
 
-    return result;
+    return resultIndex;
 }
 
 antlrcpp::Any CToIRVisitor::visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) {
