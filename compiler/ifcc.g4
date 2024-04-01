@@ -2,7 +2,11 @@ grammar ifcc;
 
 axiom : prog EOF ;
 prog : function+;
-function : 'int' ID '(' ')' bloc ;
+
+function : 'int' ID '(' ((param ',')* param)?  ')' bloc ;
+
+
+param : 'int' ID ;
 
 declarations: 'int' declaration (',' declaration)*;
 declaration: ID ('=' expression)?;
@@ -33,11 +37,13 @@ expression: '(' expression ')'                                                  
             expression LAZYAND expression                                                             #exprLAND    |
             expression LAZYOR expression                                                              #exprLOR     |
             expression '?' expression ':' expression                                                  #exprCOND    |
-            ID '(' ')'                 #exprCALL    |
+            ID '(' ((expression ',')* expression )? ')'                 #exprCALL    |
             ID (EQ|PLUSEQ|MINUSEQ|MULTEQ|DIVEQ|MODEQ|BWANDEQ|BWOREQ|BWXOREQ|BWSLEQ|BWSREQ) expression #affectation |
             valeur                                                                                    #exprVAL     ;
 
+
 valeur: ID | CONST | CONSTCHAR;
+
 
 ELSE : 'else' ;
 PLUS : '+' ;

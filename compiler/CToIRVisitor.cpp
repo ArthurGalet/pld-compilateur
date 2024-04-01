@@ -16,10 +16,20 @@ string CToIRVisitor::add_2op_instr(Operation op, antlr4::tree::ParseTree* left, 
     return variableIndex;
 }
 
-antlrcpp::Any CToIRVisitor::visitFunction(ifccParser::FunctionContext *context) {
-    add_cfg(new CFG(context->ID()->getText()));
 
-    visit(context->bloc());
+antlrcpp::Any CToIRVisitor::visitFunction(ifccParser::FunctionContext *ctx) {
+
+    string function_name = ctx->ID()->getText();
+    auto cfg = new CFG(function_name);
+
+    add_cfg(cfg);
+
+    for(int i = 0; i < ctx->param().size(); i++) {
+        string paramName = ctx->param()[i]->ID()->getText();
+        cfg->add_param_to_symbol_table(paramName, INT,i);
+    }
+
+    visit(ctx->bloc());
 
     return 0;
 
@@ -377,12 +387,20 @@ antlrcpp::Any CToIRVisitor::visitExprBWSHIFT(ifccParser::ExprBWSHIFTContext *ctx
 }
 antlrcpp::Any CToIRVisitor::visitExprCALL(ifccParser::ExprCALLContext *ctx) {
     string variableName = cfg->create_new_tempvar(INT);
+    string variableIndex = to_string(cfg->get_var_index(variableName));
     string function_name = ctx->ID()->getText();
-
+    
     vector<string> params = vector<string>();
-    params.push_back(variableName);
-    params.push_back(function_name);    
+    params.push_back(variableIndex);
+    params.push_back(function_name); 
+
+    for(auto expr : ctx->expression()) {
+        string param = visit(expr);
+        params.push_back(param);
+    }
+
+   
     cfg->current_bb->add_IRInstr(call, params);
 
-    return variableName;
+    return variableIndex;
 }
