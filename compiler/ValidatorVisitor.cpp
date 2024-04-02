@@ -1,6 +1,7 @@
 #include "ValidatorVisitor.h"
 
 ValidatorVisitor::ValidatorVisitor(){
+    declaredFunctions = new vector<string>();
     declaredVariables = new vector<map<string, tuple<int, int>>*>();
     declaredVariables->push_back(new map<string, tuple<int, int>>());
 }
@@ -15,7 +16,6 @@ antlrcpp::Any ValidatorVisitor::visitAffectation(ifccParser::AffectationContext 
         get<0>(*findVariable(nom)) = max(1, get<0>(*findVariable(nom)));
     }
 
-    // ID = ID
     visit(ctx->expression());
 
     return 0;
@@ -25,13 +25,12 @@ antlrcpp::Any ValidatorVisitor::visitDeclaration(ifccParser::DeclarationContext 
 {
     string nom = ctx->ID()->getText();
 
-    if (findVariable(nom) != nullptr) {
+    if (declaredVariables->back()->find(nom) != declaredVariables->back()->end()) {
         cerr << "Redéfinition de la variable " << nom << "\n";
-        exit (1); // variable déjà déclarée
+        exit (1); // variable déjà déclarée dans le contexte actuel
     }
 
     if (ctx->expression() == nullptr) {
-        // int ID;
         declaredVariables->back()->insert(make_pair(nom, tuple(0, (declaredVariables->size() + 1) * 4)));
         return 0;
     }
@@ -75,8 +74,8 @@ antlrcpp::Any ValidatorVisitor::visitBloc(ifccParser::BlocContext *ctx) {
 }
 
 tuple<int,int>* ValidatorVisitor::findVariable(string nom) {
-    for (auto & blocVariables : *declaredVariables) {
-        for (auto & variable : *blocVariables) {
+    for (auto blocVariable = declaredVariables->rbegin(); blocVariable != declaredVariables->rend(); blocVariable++) {
+        for (auto & variable : **blocVariable) {
             if (variable.first == nom) {
                 return &variable.second;
             }
@@ -94,5 +93,29 @@ antlrcpp::Any ValidatorVisitor::visitControl_flow_instruction(ifccParser::Contro
         }
         parent = parent->parent;
     }
+    return 0;
+}
+
+antlrcpp::Any ValidatorVisitor::visitProg(ifccParser::ProgContext *ctx){
+    visitChildren(ctx);
+    for (string declaredFunctionName : *declaredFunctions) {
+        if (declaredFunctionName == "main") {
+            return 0;
+        }
+    }
+    cerr << "Fonction main non déclarée\n";
+    exit(5);
+}
+
+antlrcpp::Any ValidatorVisitor::visitFunction(ifccParser::FunctionContext *ctx){
+    string functionName = ctx->ID()->getText();
+    for (string declaredFunctionName : *declaredFunctions) {
+        if (declaredFunctionName == functionName) {
+            cerr << "Fonction " << functionName << " déja déclarée\n";
+            exit(4);
+        }
+    }
+    declaredFunctions->push_back(functionName);
+    visitChildren(ctx);
     return 0;
 }

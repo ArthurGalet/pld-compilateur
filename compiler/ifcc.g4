@@ -1,7 +1,7 @@
 grammar ifcc;
 
 axiom : prog EOF ;
-prog : function*;
+prog : function+;
 function : 'int' ID '(' ')' bloc ;
 
 declarations: 'int' declaration (',' declaration)*;
@@ -9,17 +9,16 @@ declaration: ID ('=' expression)?;
 
 bloc: '{' commande* '}';
 commande: instruction | ifelse | while_loop;
-instruction: ( return_stmt | expression | declarations | control_flow_instruction ) ';';
+instruction: ( return_stmt | expression | declarations | control_flow_instruction )? ';';
 return_stmt: RETURN expression;
 control_flow_instruction : ( BREAK | CONTINUE ) ;
 
-ifelse : 'if' '(' expression ')' ifelse_bloc (ELSE (ifelse | ifelse_bloc))?;
-ifelse_bloc : (return_stmt ';'| expression ';'| bloc) ;
-
-while_loop : 'while' '(' expression ')' bloc ;
+ifelse : 'if' '(' expression ')' condition_bloc (ELSE (ifelse | condition_bloc))?;
+while_loop : 'while' '(' expression ')' condition_bloc ;
+condition_bloc : ((return_stmt | expression | control_flow_instruction)? ';'| bloc) ;
 
 expression: '(' expression ')'                                         #exprPARENS  |
-            MINUS expression                                           #exprNEG     |
+            (PLUS|MINUS|LNOT|BWNOT) expression                         #exprUNAIRE  |
             '!' expression                                             #exprNOT     |
             expression (MULT|DIV|MOD) expression                       #exprMDM     |
             expression (PLUS|MINUS) expression                         #exprAS      |
@@ -31,7 +30,7 @@ expression: '(' expression ')'                                         #exprPARE
             expression LAZYAND expression                              #exprLAND    |
             expression LAZYOR expression                               #exprLOR     |
             expression '?' expression ':' expression                   #exprCOND    |
-            ID (EQ|PLUSEQ|MINUSEQ|MULTEQ|DIVEQ|MODEQ) expression #affectation |
+            ID (EQ|PLUSEQ|MINUSEQ|MULTEQ|DIVEQ|MODEQ) expression       #affectation |
             valeur                                                     #exprVAL     ;
 
 valeur: ID | CONST | CONSTCHAR;
@@ -59,6 +58,8 @@ PLUSEQ : '+=' ;
 MULTEQ : '*=' ;
 DIVEQ : '/=' ;
 MODEQ : '%=' ;
+LNOT : '!' ;
+BWNOT : '~';
 
 CONTINUE : 'continue' ;
 BREAK : 'break' ;

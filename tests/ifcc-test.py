@@ -60,6 +60,8 @@ argparser.add_argument('-v','--verbose',action="count",default=0,
                        help='Increase verbosity level. You can use this option multiple times.')
 argparser.add_argument('-w','--wrapper',metavar='PATH',
                        help='Invoke your compiler through the shell script at PATH. (default: `ifcc-wrapper.sh`)')
+argparser.add_argument('--ok', action=argparse.BooleanOptionalAction, default=False,
+                       help='Print the names of the test-cases that passed successfully. (use --no-ok to hide them)')
 
 args=argparser.parse_args()
 
@@ -159,14 +161,13 @@ jobs=sorted(unique_jobs)
 if args.debug:
     print("debug: list of test-cases after deduplication:"," ".join(jobs))
 
+passedTest = 0;
 
 ######################################################################################
 ## TEST step: actually compile all test-cases with both compilers
 
 for jobname in jobs:
     os.chdir(orig_cwd)
-
-    print('TEST-CASE: '+jobname)
     os.chdir(jobname)
     
     ## Reference compiler = GCC
@@ -184,14 +185,19 @@ for jobname in jobs:
     
     if gccstatus != 0 and ifccstatus != 0:
         ## ifcc correctly rejects invalid program -> test-case ok
-        print("TEST OK")
+        if args.ok:
+            print('TEST-CASE: '+jobname)
+            print("TEST OK")
+        passedTest += 1
         continue
     elif gccstatus != 0 and ifccstatus == 0:
         ## ifcc wrongly accepts invalid program -> error
+        print('TEST-CASE: '+jobname)
         print("TEST FAIL (your compiler accepts an invalid program)")
         continue
     elif gccstatus == 0 and ifccstatus != 0:
         ## ifcc wrongly rejects valid program -> error
+        print('TEST-CASE: '+jobname)
         print("TEST FAIL (your compiler rejects a valid program)")
         if args.verbose:
             dumpfile("ifcc-compile.txt")
@@ -200,6 +206,7 @@ for jobname in jobs:
         ## ifcc accepts to compile valid program -> let's link it
         ldstatus=command("gcc -o exe-ifcc asm-ifcc.s", "ifcc-link.txt")
         if ldstatus:
+            print('TEST-CASE: '+jobname)
             print("TEST FAIL (your compiler produces incorrect assembly)")
             if args.verbose:
                 dumpfile("ifcc-link.txt")
@@ -210,6 +217,7 @@ for jobname in jobs:
         
     command("./exe-ifcc","ifcc-execute.txt")
     if open("gcc-execute.txt").read() != open("ifcc-execute.txt").read() :
+        print('TEST-CASE: '+jobname)
         print("TEST FAIL (different results at execution)")
         if args.verbose:
             print("GCC:")
@@ -219,4 +227,9 @@ for jobname in jobs:
         continue
 
     ## last but not least
-    print("TEST OK")
+    if args.ok:
+        print('TEST-CASE: '+jobname)
+        print("TEST OK")
+    passedTest += 1
+
+print("----------------\nTest results :\n " + str(passedTest) + " passed | " + str(len(jobs) - passedTest) + " failed | total " + str(len(jobs)))
