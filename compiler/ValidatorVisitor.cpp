@@ -129,3 +129,12 @@ antlrcpp::Any ValidatorVisitor::visitParam(ifccParser::ParamContext *context) {
 
     return 0;
 }
+
+antlrcpp::Any ValidatorVisitor::visitExprCALL(ifccParser::ExprCALLContext *context) {
+    string nom = context->ID()->getText();
+    if(findVariable(nom) != nullptr) {
+        cerr << "function name same as local var\n";
+        exit(1);
+    }
+    return 0;
+}
