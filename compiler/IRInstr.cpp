@@ -72,37 +72,37 @@ void IRInstr::gen_asm(ostream &o)
             switch(i) {
                 case 2:
                     o << "    pushq %rdi\n";
-                    o << "    movl    " << params[i] << ", %edi\n";
+                    o << "    movl    " << params[i] << "(%rbp), %edi\n";
                 break;
 
                 case 3:
                     o << "    pushq %rsi\n";
-                    o << "    movl    " << params[i] << ", %esi\n";
+                    o << "    movl    " << params[i] << "(%rbp), %esi\n";
                 break;
 
                 case 4:
                     o << "    pushq %rdx\n";
-                    o << "    movl    " << params[i] << ", %edx\n";
+                    o << "    movl    " << params[i] << "(%rbp), %edx\n";
                 break;
 
                 case 5:
                     o << "    pushq %rcx\n";
-                    o << "    movl    " << params[i] << ", %ecx\n";
+                    o << "    movl    " << params[i] << "(%rbp), %ecx\n";
                 break;
 
                 case 6:
                     o << "    pushq %r8\n";
-                    o << "    movl    " << params[i] << ", %r8d\n";
+                    o << "    movl    " << params[i] << "(%rbp), %r8d\n";
                 break;
 
                 case 7:
                     o << "    pushq %r9\n";
-                    o << "    movl    " << params[i] << ", %r9d\n";
+                    o << "    movl    " << params[i] << "(%rbp), %r9d\n";
                 break;
 
                 default:
                     o << "    subq $4" <<", %rsp\n";
-                    o << "    movl " << params[params.size()-1+8-i] << ", %eax\n";
+                    o << "    movl " << params[params.size()-1+8-i] << "(%rbp), %eax\n";
                     o << "    movl %eax, (%rsp)\n";
                 break;
                 

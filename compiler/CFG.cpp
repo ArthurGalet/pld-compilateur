@@ -2,6 +2,7 @@
 
 CFG::CFG(string function_name) {
     Symbols = new vector<map<string, pair<Type, int>>*>();
+    add_symbol_context();
     nextFreeSymbolIndex = -4;
     nextFreeParamIndex = 16;
     current_bb = nullptr;
@@ -72,6 +73,33 @@ void CFG::gen_asm_prologue(ostream &o) {
     o << "    pushq %rbp\n" ;
     o << "    movq %rsp, %rbp\n" ;
     o << "    subq $"<< to_string(-nextFreeSymbolIndex) << ", %rsp\n" ;
+    for(const auto& pair : ParamNumber) {
+        string paramName = pair.first;
+        int paramNumber = pair.second;
+        int symbolTableIndex = get_var_index(paramName);
+        switch(paramNumber) {
+            case 0:
+                o << "    movl %edi, " << symbolTableIndex << "(%rbp)\n";
+                break;
+            case 1:
+                o << "    movl %esi, " << symbolTableIndex << "(%rbp)\n";
+                break;
+            case 2:
+                o << "    movl %edx, " << symbolTableIndex << "(%rbp)\n";
+                break;
+            case 3:
+                o << "    movl %ecx, " << symbolTableIndex << "(%rbp)\n";
+                break;
+            case 4:
+                o << "    movl %r8d, " << symbolTableIndex << "(%rbp)\n";
+                break;
+            case 5:
+                o << "    movl %r9d, " << symbolTableIndex << "(%rbp)\n";
+                break;
+            default:
+                throw runtime_error("Unknown parameter number");
+        }
+    }
     o << "    jmp "<< cfg_name<<"_bb0\n";
 }
 
@@ -98,7 +126,7 @@ size_t CFG::get_type_size(Type t) {
 
 void CFG::add_param_to_symbol_table(const string & name, Type t, int paramNumber) {
     if(paramNumber < 6) {
-        Symbols->back()->insert(make_pair(name, make_pair(t, 0)));
+        add_to_symbol_table(name, t);
         ParamNumber.insert(make_pair(name, paramNumber));
         return;
     }
