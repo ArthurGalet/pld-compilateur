@@ -7,11 +7,12 @@ BasicBlock::BasicBlock(CFG* cfg, string entry_label){
     label = entry_label;
     exit_true = nullptr;
     exit_false = nullptr;
+    instrs = new vector<IRInstr*>;
 }
 
-void BasicBlock::gen_asm(ostream &o){
+void BasicBlock::gen_asm(ostream &o) const{
     o << this->label << ":\n";
-    for (IRInstr* instr : instrs){
+    for (IRInstr* instr : *instrs){
         instr->gen_asm(o);
     }
     
@@ -30,5 +31,5 @@ void BasicBlock::gen_asm(ostream &o){
 
 
 void BasicBlock::add_IRInstr(Operation op, vector<string> params) {
-    instrs.push_back(new IRInstr(this, op, std::move(params)));
+    instrs->push_back(new IRInstr(this, op, std::move(params)));
 }

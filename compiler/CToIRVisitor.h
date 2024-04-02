@@ -8,9 +8,11 @@ using namespace std;
 
 class CToIRVisitor : public ifccBaseVisitor  {
 public :
-    vector<CFG*> cfgs;
+    vector<CFG*>* cfgs;
     //current cfg
     CFG * cfg;
+
+    CToIRVisitor();
 
     antlrcpp::Any visitReturn_stmt(ifccParser::Return_stmtContext *ctx) override;
     antlrcpp::Any visitDeclaration(ifccParser::DeclarationContext *ctx) override;

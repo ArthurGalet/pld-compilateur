@@ -7,6 +7,7 @@ CFG::CFG(string function_name) {
     nextBBnumber = 0;
     nextTmpVariableNumber = 0;
     cfg_name = function_name;
+    bbs = new vector<BasicBlock*>;
 
     string name_entry = new_BB_name();
     string name_exit = new_BB_name();
@@ -21,14 +22,14 @@ CFG::CFG(string function_name) {
     current_bb = entryBB;
 }
 
-void CFG::add_bb(BasicBlock *bb) {
-    bbs.push_back(bb);
+void CFG::add_bb(BasicBlock *bb) const {
+    bbs->push_back(bb);
 }
 
 void CFG::gen_asm(std::ostream &o) {
     gen_asm_prologue(o);
 
-    for (auto& bb : bbs) {
+    for (auto& bb : *bbs) {
         bb->gen_asm(o);
     }
 }

@@ -1,7 +1,12 @@
 #include "CToIRVisitor.h"
 
+CToIRVisitor::CToIRVisitor() {
+    cfgs = new vector<CFG*>();
+    cfg = nullptr;
+}
+
 void CToIRVisitor::add_cfg(CFG * newCfg) {
-    this->cfgs.push_back(newCfg);
+    this->cfgs->push_back(newCfg);
     this->cfg = newCfg;
 }
 
@@ -80,8 +85,8 @@ antlrcpp::Any CToIRVisitor::visitExprVAL(ifccParser::ExprVALContext *ctx) {
         params.push_back(ctx->valeur()->CONST()->getText());
         cfg->current_bb->add_IRInstr(ldconst, params);
     } else if (ctx->valeur()->ID() != nullptr){
-        string variableName = ctx->valeur()->ID()->getText();
-        string variableIndex = to_string(cfg->get_var_index(variableName));
+        variableName = ctx->valeur()->ID()->getText();
+        variableIndex = to_string(cfg->get_var_index(variableName));
         params.push_back(variableIndex);
         cfg->current_bb->add_IRInstr(copyvar, params);
     } else {
