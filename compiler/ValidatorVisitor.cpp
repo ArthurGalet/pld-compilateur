@@ -84,3 +84,12 @@ tuple<int,int>* ValidatorVisitor::findVariable(string nom) {
     }
     return nullptr;
 }
+
+antlrcpp::Any ValidatorVisitor::visitParam(ifccParser::ParamContext *context) {
+
+    string nom = context->ID()->getText();
+    
+    declaredVariables->back()->insert(make_pair(nom, tuple(0, (declaredVariables->size() + 1) * 4)));
+
+    return 0;
+}
