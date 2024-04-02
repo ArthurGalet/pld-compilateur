@@ -165,23 +165,31 @@ void IROptimizer::constantOptimization() {
                                            new IRInstr(bb, ldconst, {instr3->params[0], to_string(value)}));
                     }
                     i -= 1;
-                } else if (instr1->op == ldconst) {
-                    int const1 = stoi(instr1->params[1]);
-
-                    switch (instr2->op) {
-                    case neg:
-                        bb->instrs->erase(bb->instrs->begin() + i-1, bb->instrs->begin() + i+1);
-                        bb->instrs->insert(bb->instrs->begin() + i-1,new IRInstr(bb, ldconst, {instr2->params[0], to_string(const1 * -1)}));
-                        break;
-                    case lnot:
-                        bb->instrs->erase(bb->instrs->begin() + i-1, bb->instrs->begin() + i+1);
-                        bb->instrs->insert(bb->instrs->begin() + i-1,new IRInstr(bb, ldconst, {instr2->params[0], to_string(!const1)}));
-                        break;
-                    case bwnot:
-                        bb->instrs->erase(bb->instrs->begin() + i-1, bb->instrs->begin() + i+1);
-                        bb->instrs->insert(bb->instrs->begin() + i-1,new IRInstr(bb, ldconst, {instr2->params[0], to_string(~const1)}));
+                } else if (instr1->op == ldconst and instr2->op == copyvar and instr1->params[0] == instr2->params[1]) {
+                    if (++i >= bb->instrs->size()) {
                         break;
                     }
+
+                    IRInstr *instr3 = (*(bb->instrs))[i];
+                    int const1 = stoi(instr1->params[1]);
+
+                    if ( (instr2->op == neg, instr2->op == lnot or instr2->op == bwnot));
+
+                    switch (instr3->op) {
+                    case neg:
+                        bb->instrs->erase(bb->instrs->begin() + i-2, bb->instrs->begin() + i+1);
+                        bb->instrs->insert(bb->instrs->begin() + i-2,new IRInstr(bb, ldconst, {instr3->params[0], to_string(const1 * -1)}));
+                        break;
+                    case lnot:
+                        bb->instrs->erase(bb->instrs->begin() + i-2, bb->instrs->begin() + i+1);
+                        bb->instrs->insert(bb->instrs->begin() + i-2,new IRInstr(bb, ldconst, {instr3->params[0], to_string(!const1)}));
+                        break;
+                    case bwnot:
+                        bb->instrs->erase(bb->instrs->begin() + i-2, bb->instrs->begin() + i+1);
+                        bb->instrs->insert(bb->instrs->begin() + i-2,new IRInstr(bb, ldconst, {instr3->params[0], to_string(~const1)}));
+                        break;
+                    }
+                    i -= 1;
                 }
             }
         }
