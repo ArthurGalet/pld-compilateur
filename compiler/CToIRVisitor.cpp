@@ -74,7 +74,7 @@ antlrcpp::Any CToIRVisitor::visitAffectation(ifccParser::AffectationContext *ctx
 antlrcpp::Any CToIRVisitor::visitExprVAL(ifccParser::ExprVALContext *ctx) {
 
     if(ctx->valeur()->ID() != nullptr) {
-        return ctx->valeur()->ID()->getText();
+        return to_string(cfg->get_var_index(ctx->valeur()->ID()->getText()));
     }
     string variableName = cfg->create_new_tempvar(INT);
     string variableIndex = to_string(cfg->get_var_index(variableName));
