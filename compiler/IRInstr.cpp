@@ -160,5 +160,13 @@ void IRInstr::gen_asm(ostream &o)
         // jump P0;
         o << "    jmp " << params[0] << "\n";
         break;
+    case incr:
+        // P0 = P0 + 1
+        o << "    incl -" << params[0] << "(%rbp)\n";
+        break;
+    case decr:
+        // P0 = P0 - 1
+        o << "    decl -" << params[0] << "(%rbp)\n";
+        break;
     }
 }
