@@ -12,5 +12,5 @@ void callee_start(ostream &o) {
 void callee_end(ostream &o) {
     o << "movq %rbp, %rsp\n" ;
     o << "popq %rbp\n" ;
-    o << "ret\n " ;
+    o << "ret\n" ;
 }

@@ -15,9 +15,12 @@ public:
     antlrcpp::Any visitValeur(ifccParser::ValeurContext *ctx) override;
     antlrcpp::Any visitBloc(ifccParser::BlocContext *ctx) override;
     antlrcpp::Any visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) override;
+    antlrcpp::Any visitProg(ifccParser::ProgContext *ctx) override;
+    antlrcpp::Any visitFunction(ifccParser::FunctionContext *ctx) override;
 
 protected:
     vector<map<string, tuple<int, int>>*>* declaredVariables;
+    vector<string>* declaredFunctions;
     tuple<int, int>* findVariable(string nom);
     // Ligne de vecteur : bloc où la variable est déclarée
     // K : nom de la variable, V : (statut, index)
