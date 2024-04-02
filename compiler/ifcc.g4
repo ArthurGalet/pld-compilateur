@@ -17,21 +17,23 @@ ifelse : 'if' '(' expression ')' condition_bloc (ELSE (ifelse | condition_bloc))
 while_loop : 'while' '(' expression ')' condition_bloc ;
 condition_bloc : ((return_stmt | expression | control_flow_instruction)? ';'| bloc) ;
 
-expression: '(' expression ')'                                         #exprPARENS  |
-            (PLUS|MINUS|LNOT|BWNOT) expression                         #exprUNAIRE  |
-            '!' expression                                             #exprNOT     |
-            expression (MULT|DIV|MOD) expression                       #exprMDM     |
-            expression (PLUS|MINUS) expression                         #exprAS      |
-            expression (GT|LT|GE|LE) expression                        #exprNE      |
-            expression (EQEQ|NEQ) expression                           #exprEQ      |
-            expression BWAND expression                                #exprAND     |
-            expression BWXOR expression                                #exprXOR     |
-            expression BWOR expression                                 #exprOR      |
-            expression LAZYAND expression                              #exprLAND    |
-            expression LAZYOR expression                               #exprLOR     |
-            expression '?' expression ':' expression                   #exprCOND    |
-            ID (EQ|PLUSEQ|MINUSEQ|MULTEQ|DIVEQ|MODEQ) expression       #affectation |
-            valeur                                                     #exprVAL     ;
+expression: '(' expression ')'                                              #exprPARENS  |
+            ID (PLUSPLUS|MOINSMOINS)                                        #exprPOSTFIX |
+            (PLUSPLUS|MOINSMOINS) ID                                        #exprPREFIX  |
+            (PLUS|MINUS|LNOT|BWNOT) expression                              #exprUNAIRE  |
+            '!' expression                                                  #exprNOT     |
+            expression (MULT|DIV|MOD) expression                            #exprMDM     |
+            expression (PLUS|MINUS) expression                              #exprAS      |
+            expression (GT|LT|GE|LE) expression                             #exprNE      |
+            expression (EQEQ|NEQ) expression                                #exprEQ      |
+            expression BWAND expression                                     #exprAND     |
+            expression BWXOR expression                                     #exprXOR     |
+            expression BWOR expression                                      #exprOR      |
+            expression LAZYAND expression                                   #exprLAND    |
+            expression LAZYOR expression                                    #exprLOR     |
+            expression '?' expression ':' expression                        #exprCOND    |
+            ID (EQ|PLUSEQ|MINUSEQ|MULTEQ|DIVEQ|MODEQ) expression            #affectation |
+            valeur                                                          #exprVAL     ;
 
 valeur: ID | CONST | CONSTCHAR;
 
@@ -60,6 +62,8 @@ DIVEQ : '/=' ;
 MODEQ : '%=' ;
 LNOT : '!' ;
 BWNOT : '~';
+PLUSPLUS : '++';
+MOINSMOINS : '--';
 
 CONTINUE : 'continue' ;
 BREAK : 'break' ;

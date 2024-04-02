@@ -322,3 +322,48 @@ antlrcpp::Any CToIRVisitor::visitBloc(ifccParser::BlocContext *ctx) {
     cfg->end_symbol_context();
     return 0;
 }
+
+antlrcpp::Any CToIRVisitor::visitExprPREFIX(ifccParser::ExprPREFIXContext *ctx) {
+    string variableName = ctx->ID()->getText();
+    string variableIndex = to_string(cfg->get_var_index(variableName));
+
+    string tempVariable = cfg->create_new_tempvar(INT);
+    string tempVariableIndex = to_string(cfg->get_var_index(tempVariable));
+
+    string const1 = cfg->create_new_tempvar(INT);
+    string const1Index = to_string(cfg->get_var_index(const1));
+    cfg->current_bb->add_IRInstr(ldconst, {const1Index, "1"});
+
+    vector<string> params = {tempVariableIndex, variableIndex};
+
+    if (ctx->PLUSPLUS() != nullptr) {
+        cfg->current_bb->add_IRInstr(add, {variableIndex, variableIndex, const1Index});
+    } else {
+        cfg->current_bb->add_IRInstr(sub, {variableIndex, variableIndex, const1Index});
+    }
+    cfg->current_bb->add_IRInstr(copyvar, params);
+
+    return tempVariableIndex;
+}
+
+antlrcpp::Any CToIRVisitor::visitExprPOSTFIX(ifccParser::ExprPOSTFIXContext *ctx) {
+    string variableName = ctx->ID()->getText();
+    string variableIndex = to_string(cfg->get_var_index(variableName));
+
+    string result = cfg->create_new_tempvar(INT);
+    string resultIndex = to_string(cfg->get_var_index(result));
+
+    vector<string> params = {resultIndex, variableIndex};
+
+    string const1 = cfg->create_new_tempvar(INT);
+    string const1Index = to_string(cfg->get_var_index(const1));
+    cfg->current_bb->add_IRInstr(ldconst, {const1Index, "1"});
+
+    cfg->current_bb->add_IRInstr(copyvar, params);
+    if (ctx->PLUSPLUS() != nullptr) {
+        cfg->current_bb->add_IRInstr(add, {variableIndex, variableIndex, const1Index});
+    } else {
+        cfg->current_bb->add_IRInstr(sub, {variableIndex, variableIndex, const1Index});
+    }
+    return resultIndex;
+}
