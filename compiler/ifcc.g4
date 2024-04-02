@@ -41,9 +41,7 @@ expression: '(' expression ')'                                                  
             ID (EQ|PLUSEQ|MINUSEQ|MULTEQ|DIVEQ|MODEQ|BWANDEQ|BWOREQ|BWXOREQ|BWSLEQ|BWSREQ) expression #affectation |
             valeur                                                                                    #exprVAL     ;
 
-
 valeur: ID | CONST | CONSTCHAR;
-
 
 ELSE : 'else' ;
 PLUS : '+' ;
