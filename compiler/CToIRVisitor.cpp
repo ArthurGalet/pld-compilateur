@@ -66,6 +66,16 @@ antlrcpp::Any CToIRVisitor::visitAffectation(ifccParser::AffectationContext *ctx
         cfg->current_bb->add_IRInstr(divide, params);
     } else if (ctx->MODEQ() != nullptr) {
         cfg->current_bb->add_IRInstr(modulo, params);
+    } else if (ctx->BWANDEQ() != nullptr) {
+        cfg->current_bb->add_IRInstr(bwand, params);
+    } else if (ctx->BWXOREQ() != nullptr) {
+        cfg->current_bb->add_IRInstr(bwxor, params);
+    } else if (ctx->BWOREQ() != nullptr) {
+        cfg->current_bb->add_IRInstr(bwor, params);
+    } else if (ctx->BWSLEQ() != nullptr) {
+        cfg->current_bb->add_IRInstr(bwsl, params);
+    } else if (ctx->BWSREQ() != nullptr) {
+        cfg->current_bb->add_IRInstr(bwsr, params);
     }
 
     return variableIndex;
@@ -356,4 +366,12 @@ antlrcpp::Any CToIRVisitor::visitExprPOSTFIX(ifccParser::ExprPOSTFIXContext *ctx
         cfg->current_bb->add_IRInstr(decr, {variableIndex});
     }
     return resultIndex;
+}
+
+antlrcpp::Any CToIRVisitor::visitExprBWSHIFT(ifccParser::ExprBWSHIFTContext *ctx) {
+    if (ctx->BWSL() != nullptr) {
+        return add_2op_instr(bwsl, ctx->expression()[0], ctx->expression()[1]);
+    } else {
+        return add_2op_instr(bwsr, ctx->expression()[0], ctx->expression()[1]);
+    }
 }

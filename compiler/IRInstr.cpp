@@ -168,5 +168,19 @@ void IRInstr::gen_asm(ostream &o)
         // P0 = P0 - 1
         o << "    decl -" << params[0] << "(%rbp)\n";
         break;
+    case bwsl:
+        // P0 = P1 << P2
+        o << "    movl -" << params[1] << "(%rbp), %eax\n";
+        o << "    movl -" << params[2] << "(%rbp), %ecx\n";
+        o << "    sall %cl, %eax\n";
+        o << "    movl %eax, -" << params[0] << "(%rbp)\n";
+        break;
+    case bwsr:
+        // P0 = P1 >> P2
+        o << "    movl -" << params[1] << "(%rbp), %eax\n";
+        o << "    movl -" << params[2] << "(%rbp), %ecx\n";
+        o << "    sarl %cl, %eax\n";
+        o << "    movl %eax, -" << params[0] << "(%rbp)\n";
+        break;
     }
 }
