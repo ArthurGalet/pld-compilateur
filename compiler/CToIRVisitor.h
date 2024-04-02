@@ -18,7 +18,7 @@ public :
     antlrcpp::Any visitExprVAL(ifccParser::ExprVALContext *ctx) override;
     antlrcpp::Any visitExprMDM(ifccParser::ExprMDMContext *ctx) override;
     antlrcpp::Any visitExprAS(ifccParser::ExprASContext *ctx) override;
-    antlrcpp::Any visitExprNEG(ifccParser::ExprNEGContext *ctx) override;
+    antlrcpp::Any visitExprUNAIRE(ifccParser::ExprUNAIREContext *ctx) override;
     antlrcpp::Any visitIfelse(ifccParser::IfelseContext *ctx) override;
     antlrcpp::Any visitWhile_loop(ifccParser::While_loopContext *ctx)  override;
     antlrcpp::Any visitExprEQ(ifccParser::ExprEQContext *ctx) override;
@@ -32,9 +32,11 @@ public :
     antlrcpp::Any visitExprLAND(ifccParser::ExprLANDContext *context) override;
     antlrcpp::Any visitExprLOR(ifccParser::ExprLORContext *context) override;
     antlrcpp::Any visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) override;
+    antlrcpp::Any visitBloc(ifccParser::BlocContext *ctx) override;
 
     void add_cfg(CFG * newCfg);
 
 protected:
+    string add_2op_instr(Operation op, antlr4::tree::ParseTree* left, antlr4::tree::ParseTree* right);
     stack<BasicBlock*> pileBoucles;
 };
