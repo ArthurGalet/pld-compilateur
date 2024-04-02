@@ -112,7 +112,13 @@ antlrcpp::Any CToIRVisitor::visitExprAS(ifccParser::ExprASContext *ctx) {
 
 antlrcpp::Any CToIRVisitor::visitExprUNAIRE(ifccParser::ExprUNAIREContext *ctx) {
     string variableIndex = visit(ctx->expression());
-    vector<string> params = {variableIndex};
+
+    string tempVariable = cfg->create_new_tempvar(INT);
+    string tempVariableIndex = to_string(cfg->get_var_index(tempVariable));
+    vector<string> params = {tempVariableIndex, variableIndex};
+
+    cfg->current_bb->add_IRInstr(copyvar, params);
+    params = {tempVariableIndex};
 
     if (ctx->MINUS() != nullptr) {
         cfg->current_bb->add_IRInstr(neg, params);
@@ -122,7 +128,7 @@ antlrcpp::Any CToIRVisitor::visitExprUNAIRE(ifccParser::ExprUNAIREContext *ctx) 
         cfg->current_bb->add_IRInstr(lnot, params);
     }
 
-    return variableIndex;
+    return tempVariableIndex;
 }
 
 antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
