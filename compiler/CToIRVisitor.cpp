@@ -77,6 +77,10 @@ antlrcpp::Any CToIRVisitor::visitAffectation(ifccParser::AffectationContext *ctx
 }
 
 antlrcpp::Any CToIRVisitor::visitExprVAL(ifccParser::ExprVALContext *ctx) {
+
+    if(ctx->valeur()->ID() != nullptr) {
+        return to_string(cfg->get_var_index(ctx->valeur()->ID()->getText()));
+    }
     string variableName = cfg->create_new_tempvar(INT);
     string variableIndex = to_string(cfg->get_var_index(variableName));
     vector<string> params = {variableIndex};
@@ -84,11 +88,6 @@ antlrcpp::Any CToIRVisitor::visitExprVAL(ifccParser::ExprVALContext *ctx) {
     if (ctx->valeur()->CONST() != nullptr) {
         params.push_back(ctx->valeur()->CONST()->getText());
         cfg->current_bb->add_IRInstr(ldconst, params);
-    } else if (ctx->valeur()->ID() != nullptr){
-        variableName = ctx->valeur()->ID()->getText();
-        variableIndex = to_string(cfg->get_var_index(variableName));
-        params.push_back(variableIndex);
-        cfg->current_bb->add_IRInstr(copyvar, params);
     } else {
         int ascii_code = ctx->valeur()->CONSTCHAR()->getText()[1];
         params.push_back(to_string(ascii_code));
@@ -118,7 +117,13 @@ antlrcpp::Any CToIRVisitor::visitExprAS(ifccParser::ExprASContext *ctx) {
 
 antlrcpp::Any CToIRVisitor::visitExprUNAIRE(ifccParser::ExprUNAIREContext *ctx) {
     string variableIndex = visit(ctx->expression());
-    vector<string> params = {variableIndex};
+
+    string tempVariable = cfg->create_new_tempvar(INT);
+    string tempVariableIndex = to_string(cfg->get_var_index(tempVariable));
+    vector<string> params = {tempVariableIndex, variableIndex};
+
+    cfg->current_bb->add_IRInstr(copyvar, params);
+    params = {tempVariableIndex};
 
     if (ctx->MINUS() != nullptr) {
         cfg->current_bb->add_IRInstr(neg, params);
@@ -128,7 +133,7 @@ antlrcpp::Any CToIRVisitor::visitExprUNAIRE(ifccParser::ExprUNAIREContext *ctx) 
         cfg->current_bb->add_IRInstr(lnot, params);
     }
 
-    return variableIndex;
+    return tempVariableIndex;
 }
 
 antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
