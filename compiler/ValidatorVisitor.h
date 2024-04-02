@@ -17,6 +17,7 @@ public:
     antlrcpp::Any visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) override;
     antlrcpp::Any visitProg(ifccParser::ProgContext *ctx) override;
     antlrcpp::Any visitFunction(ifccParser::FunctionContext *ctx) override;
+    antlrcpp::Any visitParam(ifccParser::ParamContext *context) override;
 
 protected:
     vector<map<string, tuple<int, int>>*>* declaredVariables;

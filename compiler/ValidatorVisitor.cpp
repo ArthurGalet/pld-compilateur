@@ -84,6 +84,7 @@ tuple<int,int>* ValidatorVisitor::findVariable(string nom) {
     return nullptr;
 }
 
+
 antlrcpp::Any ValidatorVisitor::visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) {
     antlr4::tree::ParseTree* parent = ctx->parent;
     while(dynamic_cast<ifccParser::While_loopContext *>(parent) == nullptr) {
@@ -117,5 +118,14 @@ antlrcpp::Any ValidatorVisitor::visitFunction(ifccParser::FunctionContext *ctx){
     }
     declaredFunctions->push_back(functionName);
     visitChildren(ctx);
+    return 0;
+}
+
+antlrcpp::Any ValidatorVisitor::visitParam(ifccParser::ParamContext *context) {
+
+    string nom = context->ID()->getText();
+    
+    declaredVariables->back()->insert(make_pair(nom, tuple(0, (declaredVariables->size() + 1) * 4)));
+
     return 0;
 }
