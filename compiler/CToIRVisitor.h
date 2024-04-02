@@ -18,6 +18,8 @@ public :
     antlrcpp::Any visitExprVAL(ifccParser::ExprVALContext *ctx) override;
     antlrcpp::Any visitExprMDM(ifccParser::ExprMDMContext *ctx) override;
     antlrcpp::Any visitExprAS(ifccParser::ExprASContext *ctx) override;
+    antlrcpp::Any visitExprPREFIX(ifccParser::ExprPREFIXContext *ctx) override;
+    antlrcpp::Any visitExprPOSTFIX(ifccParser::ExprPOSTFIXContext *ctx) override;
     antlrcpp::Any visitExprUNAIRE(ifccParser::ExprUNAIREContext *ctx) override;
     antlrcpp::Any visitIfelse(ifccParser::IfelseContext *ctx) override;
     antlrcpp::Any visitWhile_loop(ifccParser::While_loopContext *ctx)  override;
@@ -33,6 +35,7 @@ public :
     antlrcpp::Any visitExprLOR(ifccParser::ExprLORContext *context) override;
     antlrcpp::Any visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) override;
     antlrcpp::Any visitBloc(ifccParser::BlocContext *ctx) override;
+    antlrcpp::Any visitExprBWSHIFT(ifccParser::ExprBWSHIFTContext *ctx) override;
 
     void add_cfg(CFG * newCfg);
 

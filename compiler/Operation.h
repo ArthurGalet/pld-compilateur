@@ -5,7 +5,6 @@
 #ifndef PLD_COMP_OPERATION_H
 #define PLD_COMP_OPERATION_H
 
-/** The instructions themselves -- feel free to subclass instead */
 typedef enum
 {
     ldconst = 0,
@@ -31,7 +30,11 @@ typedef enum
     bwand = 20,
     bwxor = 21,
     bwnot = 22,
-    jump = 23
+    jump = 23,
+    incr = 24,
+    decr = 25,
+    bwsl = 26,
+    bwsr = 27,
 } Operation;
 
 #endif // PLD_COMP_OPERATION_H
