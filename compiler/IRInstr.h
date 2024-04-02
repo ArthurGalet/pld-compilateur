@@ -8,6 +8,7 @@
 
 #include "Type.h"
 #include "Operation.h"
+#include "Target.h"
 
 class BasicBlock;
 class CFG;
@@ -20,7 +21,7 @@ class IRInstr {
    public:
 
 	/**  constructor */
-	IRInstr(BasicBlock* bb_, Operation op, string target, vector<string> params);
+	IRInstr(BasicBlock* bb_, Operation op, Target target, vector<string> params);
 	
 	/** Actual code generation */
 	void gen_asm(ostream &o); /**< x86 assembly code generation for this IR instruction */
