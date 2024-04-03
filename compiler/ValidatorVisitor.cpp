@@ -2,8 +2,10 @@
 
 ValidatorVisitor::ValidatorVisitor(){
     declaredFunctions = new vector<string>();
+    declaredVariables_list = new vector<vector<map<string, tuple<int, int>>*>*>();
     declaredVariables = new vector<map<string, tuple<int, int>>*>();
     declaredVariables->push_back(new map<string, tuple<int, int>>());
+    declaredVariables_list->push_back(declaredVariables);
 }
 
 antlrcpp::Any ValidatorVisitor::visitAffectation(ifccParser::AffectationContext *ctx) {
@@ -28,6 +30,11 @@ antlrcpp::Any ValidatorVisitor::visitDeclaration(ifccParser::DeclarationContext 
     if (declaredVariables->back()->find(nom) != declaredVariables->back()->end()) {
         cerr << "Redéfinition de la variable " << nom << "\n";
         exit (1); // variable déjà déclarée dans le contexte actuel
+    }
+
+    if(declaredVariables->size() == 2 && declaredVariables->front()->find(nom) != declaredVariables->front()->end() )  {
+            cerr << "Nom de variable existe déjà comme paramètre\n";
+            exit(1);
     }
 
     if (ctx->expression() == nullptr) {
@@ -116,6 +123,12 @@ antlrcpp::Any ValidatorVisitor::visitFunction(ifccParser::FunctionContext *ctx){
             exit(4);
         }
     }
+
+    declaredVariables = new vector<map<string, tuple<int, int>>*>();
+    declaredVariables->push_back(new map<string, tuple<int, int>>());
+    declaredVariables_list->push_back(declaredVariables);
+
+
     declaredFunctions->push_back(functionName);
     visitChildren(ctx);
     return 0;
@@ -124,9 +137,16 @@ antlrcpp::Any ValidatorVisitor::visitFunction(ifccParser::FunctionContext *ctx){
 antlrcpp::Any ValidatorVisitor::visitParam(ifccParser::ParamContext *context) {
 
     string nom = context->ID()->getText();
+
+    if(declaredVariables->back()->find(nom) != declaredVariables->back()->end() )  {
+            cerr << "Parameter defined more than once\n";
+            exit(1);
+    }
     
     declaredVariables->back()->insert(make_pair(nom, tuple(0, (declaredVariables->size() + 1) * 4)));
     get<0>(*findVariable(nom)) = 1;
+
+ 
 
     return 0;
 }
