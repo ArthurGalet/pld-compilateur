@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <vector>
 #include <string>
 #include <iostream>
@@ -14,16 +13,11 @@ class CFG;
 
 using namespace std;
 
-//! The class for one 3-address instruction
 class IRInstr {
  
    public:
-
-	/**  constructor */
-	IRInstr(BasicBlock* bb_, Operation op, vector<string> params);
-	
-	/** Actual code generation */
-	void gen_asm(ostream &o); /**< x86 assembly code generation for this IR instruction */
+    IRInstr(BasicBlock* bb_, Operation op, vector<string> params);
+    void gen_asm(ostream &o); /**< x86 assembly code generation for this IR instruction */
 	
  private:
 	BasicBlock* bb; /**< The BB this instruction belongs to, which provides a pointer to the CFG this instruction belong to */

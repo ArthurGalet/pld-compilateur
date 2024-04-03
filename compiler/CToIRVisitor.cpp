@@ -16,15 +16,13 @@ string CToIRVisitor::add_2op_instr(Operation op, antlr4::tree::ParseTree* left, 
     return variableIndex;
 }
 
-
 antlrcpp::Any CToIRVisitor::visitFunction(ifccParser::FunctionContext *ctx) {
-
     string function_name = ctx->ID()->getText();
     auto cfg = new CFG(function_name);
 
     add_cfg(cfg);
 
-    for(int i = 0; i < ctx->param().size(); i++) {
+    for(unsigned long i = 0; i < ctx->param().size(); i++) {
         string paramName = ctx->param()[i]->ID()->getText();
         cfg->add_param_to_symbol_table(paramName, INT,i);
     }
@@ -32,7 +30,6 @@ antlrcpp::Any CToIRVisitor::visitFunction(ifccParser::FunctionContext *ctx) {
     visit(ctx->bloc());
 
     return 0;
-
 }
 
 antlrcpp::Any CToIRVisitor::visitReturn_stmt(ifccParser::Return_stmtContext *ctx) {
@@ -92,7 +89,6 @@ antlrcpp::Any CToIRVisitor::visitAffectation(ifccParser::AffectationContext *ctx
 }
 
 antlrcpp::Any CToIRVisitor::visitExprVAL(ifccParser::ExprVALContext *ctx) {
-
     if(ctx->valeur()->ID() != nullptr) {
         return to_string(cfg->get_var_index(ctx->valeur()->ID()->getText()));
     }
@@ -282,7 +278,6 @@ antlrcpp::Any CToIRVisitor::visitExprLAND(ifccParser::ExprLANDContext *ctx) {
     bbTest->add_IRInstr(copyvar, {resultIndex, leftResultIndex});
     bbTest->add_IRInstr(bwand, {resultIndex, resultIndex, tempVariableIndex});
 
-
     bbTrue->exit_true =  bbOut;
     cfg->current_bb = bbTrue;
     string rightResultIndex = visit(ctx->expression()[1]);
@@ -385,6 +380,7 @@ antlrcpp::Any CToIRVisitor::visitExprBWSHIFT(ifccParser::ExprBWSHIFTContext *ctx
         return add_2op_instr(bwsr, ctx->expression()[0], ctx->expression()[1]);
     }
 }
+
 antlrcpp::Any CToIRVisitor::visitExprCALL(ifccParser::ExprCALLContext *ctx) {
     string variableName = cfg->create_new_tempvar(INT);
     string variableIndex = to_string(cfg->get_var_index(variableName));
@@ -398,8 +394,6 @@ antlrcpp::Any CToIRVisitor::visitExprCALL(ifccParser::ExprCALLContext *ctx) {
         string param = visit(expr);
         params.push_back(param);
     }
-
-   
     cfg->current_bb->add_IRInstr(call, params);
 
     return variableIndex;

@@ -4,8 +4,6 @@ axiom : prog EOF ;
 prog : function+;
 
 function : 'int' ID '(' ((param ',')* param)?  ')' bloc ;
-
-
 param : 'int' ID ;
 
 declarations: 'int' declaration (',' declaration)*;

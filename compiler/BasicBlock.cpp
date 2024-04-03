@@ -30,7 +30,6 @@ void BasicBlock::gen_asm(ostream &o){
     }
 }
 
-
 void BasicBlock::add_IRInstr(Operation op, vector<string> params) {
     instrs.push_back(new IRInstr(this, op, std::move(params)));
 }

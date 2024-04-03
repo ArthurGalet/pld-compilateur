@@ -91,7 +91,6 @@ tuple<int,int>* ValidatorVisitor::findVariable(string nom) {
     return nullptr;
 }
 
-
 antlrcpp::Any ValidatorVisitor::visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) {
     antlr4::tree::ParseTree* parent = ctx->parent;
     while(dynamic_cast<ifccParser::While_loopContext *>(parent) == nullptr) {
@@ -127,26 +126,22 @@ antlrcpp::Any ValidatorVisitor::visitFunction(ifccParser::FunctionContext *ctx){
     declaredVariables = new vector<map<string, tuple<int, int>>*>();
     declaredVariables->push_back(new map<string, tuple<int, int>>());
     declaredVariables_list->push_back(declaredVariables);
-
-
     declaredFunctions->push_back(functionName);
+
     visitChildren(ctx);
+
     return 0;
 }
 
 antlrcpp::Any ValidatorVisitor::visitParam(ifccParser::ParamContext *context) {
-
     string nom = context->ID()->getText();
 
     if(declaredVariables->back()->find(nom) != declaredVariables->back()->end() )  {
             cerr << "Parameter defined more than once\n";
             exit(1);
     }
-    
     declaredVariables->back()->insert(make_pair(nom, tuple(0, (declaredVariables->size() + 1) * 4)));
     get<0>(*findVariable(nom)) = 1;
-
- 
 
     return 0;
 }

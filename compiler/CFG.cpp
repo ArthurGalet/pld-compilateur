@@ -35,38 +35,6 @@ void CFG::gen_asm(std::ostream &o) {
     }
 }
 
-string CFG::IR_reg_to_asm(const string & reg) {
-    string res = "";
-    int index = get_var_index(reg);
-    if (index == -1) {
-        throw runtime_error("Unknown variable name");
-    } else {
-        if((index == 0)) {
-            int paramNumber = ParamNumber[reg];
-            switch(paramNumber) {
-                case 0:
-                    return "%edi";
-                case 1:
-                    return "%esi";
-                case 2:
-                    return "%edx";
-                case 3:
-                    return "%ecx";
-                case 4:
-                    return "%r8d";
-                case 5:
-                    return "%r9d";
-                default:
-                throw runtime_error("Unknown parameter number");
-            }
-        }
-        res.append(to_string(index));
-    }
-
-    res.append("(%rbp)");
-    return res;
-}
-
 void CFG::gen_asm_prologue(ostream &o) {
     o << ".globl "<< cfg_name <<"\n" ;
     o << cfg_name <<": \n" ;
@@ -122,7 +90,6 @@ size_t CFG::get_type_size(Type t) {
             throw runtime_error("Unknown type");
     }
 }
-
 
 void CFG::add_param_to_symbol_table(const string & name, Type t, int paramNumber) {
     if(paramNumber < 6) {
