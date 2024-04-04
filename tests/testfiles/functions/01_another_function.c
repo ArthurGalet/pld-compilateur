@@ -3,6 +3,5 @@ int another_function() {
 }
 
 int main(){
-
     return 1;
 }

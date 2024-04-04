@@ -2,13 +2,15 @@ grammar ifcc;
 
 axiom : prog EOF ;
 prog : function+;
-function : 'int' ID '(' ')' bloc ;
+
+function : 'int' ID '(' ((param ',')* param)?  ')' bloc ;
+param : 'int' ID ;
 
 declarations: 'int' declaration (',' declaration)*;
 declaration: ID ('=' expression)?;
 
 bloc: '{' commande* '}';
-commande: instruction | ifelse | while_loop;
+commande: instruction | ifelse | while_loop | bloc;
 instruction: ( return_stmt | expression | declarations | control_flow_instruction )? ';';
 return_stmt: RETURN expression;
 control_flow_instruction : ( BREAK | CONTINUE ) ;
@@ -17,21 +19,25 @@ ifelse : 'if' '(' expression ')' condition_bloc (ELSE (ifelse | condition_bloc))
 while_loop : 'while' '(' expression ')' condition_bloc ;
 condition_bloc : ((return_stmt | expression | control_flow_instruction)? ';'| bloc) ;
 
-expression: '(' expression ')'                                         #exprPARENS  |
-            (PLUS|MINUS|LNOT|BWNOT) expression                         #exprUNAIRE  |
-            '!' expression                                             #exprNOT     |
-            expression (MULT|DIV|MOD) expression                       #exprMDM     |
-            expression (PLUS|MINUS) expression                         #exprAS      |
-            expression (GT|LT|GE|LE) expression                        #exprNE      |
-            expression (EQEQ|NEQ) expression                           #exprEQ      |
-            expression BWAND expression                                #exprAND     |
-            expression BWXOR expression                                #exprXOR     |
-            expression BWOR expression                                 #exprOR      |
-            expression LAZYAND expression                              #exprLAND    |
-            expression LAZYOR expression                               #exprLOR     |
-            expression '?' expression ':' expression                   #exprCOND    |
-            ID (EQ|PLUSEQ|MINUSEQ|MULTEQ|DIVEQ|MODEQ) expression       #affectation |
-            valeur                                                     #exprVAL     ;
+expression: '(' expression ')'                                                                        #exprPARENS  |
+            ID (PLUSPLUS|MOINSMOINS)                                                                  #exprPOSTFIX |
+            (PLUSPLUS|MOINSMOINS) ID                                                                  #exprPREFIX  |
+            (PLUS|MINUS|LNOT|BWNOT) expression                                                        #exprUNAIRE  |
+            '!' expression                                                                            #exprNOT     |
+            expression (MULT|DIV|MOD) expression                                                      #exprMDM     |
+            expression (PLUS|MINUS) expression                                                        #exprAS      |
+            expression (BWSL|BWSR) expression                                                         #exprBWSHIFT |
+            expression (GT|LT|GE|LE) expression                                                       #exprNE      |
+            expression (EQEQ|NEQ) expression                                                          #exprEQ      |
+            expression BWAND expression                                                               #exprAND     |
+            expression BWXOR expression                                                               #exprXOR     |
+            expression BWOR expression                                                                #exprOR      |
+            expression LAZYAND expression                                                             #exprLAND    |
+            expression LAZYOR expression                                                              #exprLOR     |
+            expression '?' expression ':' expression                                                  #exprCOND    |
+            ID '(' ((expression ',')* expression )? ')'                 #exprCALL    |
+            ID (EQ|PLUSEQ|MINUSEQ|MULTEQ|DIVEQ|MODEQ|BWANDEQ|BWOREQ|BWXOREQ|BWSLEQ|BWSREQ) expression #affectation |
+            valeur                                                                                    #exprVAL     ;
 
 valeur: ID | CONST | CONSTCHAR;
 
@@ -44,6 +50,8 @@ MOD : '%' ;
 BWAND : '&';
 BWOR : '|';
 BWXOR : '^';
+BWSL : '<<';
+BWSR : '>>';
 LAZYAND : '&&';
 LAZYOR : '||';
 GT : '>' ;
@@ -59,7 +67,14 @@ MULTEQ : '*=' ;
 DIVEQ : '/=' ;
 MODEQ : '%=' ;
 LNOT : '!' ;
+BWANDEQ : '&=';
+BWOREQ : '|=';
+BWXOREQ : '^=';
+BWSLEQ : '<<=';
+BWSREQ : '>>=';
 BWNOT : '~';
+PLUSPLUS : '++';
+MOINSMOINS : '--';
 
 CONTINUE : 'continue' ;
 BREAK : 'break' ;

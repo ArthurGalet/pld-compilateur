@@ -21,13 +21,20 @@ string CToIRVisitor::add_2op_instr(Operation op, antlr4::tree::ParseTree* left, 
     return variableIndex;
 }
 
-antlrcpp::Any CToIRVisitor::visitFunction(ifccParser::FunctionContext *context) {
-    add_cfg(new CFG(context->ID()->getText()));
+antlrcpp::Any CToIRVisitor::visitFunction(ifccParser::FunctionContext *ctx) {
+    string function_name = ctx->ID()->getText();
+    auto cfg = new CFG(function_name);
 
-    visit(context->bloc());
+    add_cfg(cfg);
+
+    for(unsigned long i = 0; i < ctx->param().size(); i++) {
+        string paramName = ctx->param()[i]->ID()->getText();
+        cfg->add_param_to_symbol_table(paramName, INT,i);
+    }
+
+    visit(ctx->bloc());
 
     return 0;
-
 }
 
 antlrcpp::Any CToIRVisitor::visitReturn_stmt(ifccParser::Return_stmtContext *ctx) {
@@ -71,13 +78,22 @@ antlrcpp::Any CToIRVisitor::visitAffectation(ifccParser::AffectationContext *ctx
         cfg->current_bb->add_IRInstr(divide, params);
     } else if (ctx->MODEQ() != nullptr) {
         cfg->current_bb->add_IRInstr(modulo, params);
+    } else if (ctx->BWANDEQ() != nullptr) {
+        cfg->current_bb->add_IRInstr(bwand, params);
+    } else if (ctx->BWXOREQ() != nullptr) {
+        cfg->current_bb->add_IRInstr(bwxor, params);
+    } else if (ctx->BWOREQ() != nullptr) {
+        cfg->current_bb->add_IRInstr(bwor, params);
+    } else if (ctx->BWSLEQ() != nullptr) {
+        cfg->current_bb->add_IRInstr(bwsl, params);
+    } else if (ctx->BWSREQ() != nullptr) {
+        cfg->current_bb->add_IRInstr(bwsr, params);
     }
 
     return variableIndex;
 }
 
 antlrcpp::Any CToIRVisitor::visitExprVAL(ifccParser::ExprVALContext *ctx) {
-
     if(ctx->valeur()->ID() != nullptr) {
         return to_string(cfg->get_var_index(ctx->valeur()->ID()->getText()));
     }
@@ -267,7 +283,6 @@ antlrcpp::Any CToIRVisitor::visitExprLAND(ifccParser::ExprLANDContext *ctx) {
     bbTest->add_IRInstr(copyvar, {resultIndex, leftResultIndex});
     bbTest->add_IRInstr(bwand, {resultIndex, resultIndex, tempVariableIndex});
 
-
     bbTrue->exit_true =  bbOut;
     cfg->current_bb = bbTrue;
     string rightResultIndex = visit(ctx->expression()[1]);
@@ -326,4 +341,65 @@ antlrcpp::Any CToIRVisitor::visitBloc(ifccParser::BlocContext *ctx) {
     visitChildren(ctx);
     cfg->end_symbol_context();
     return 0;
+}
+
+antlrcpp::Any CToIRVisitor::visitExprPREFIX(ifccParser::ExprPREFIXContext *ctx) {
+    string variableName = ctx->ID()->getText();
+    string variableIndex = to_string(cfg->get_var_index(variableName));
+
+    string tempVariable = cfg->create_new_tempvar(INT);
+    string tempVariableIndex = to_string(cfg->get_var_index(tempVariable));
+
+    if (ctx->PLUSPLUS() != nullptr) {
+        cfg->current_bb->add_IRInstr(incr, {variableIndex});
+    } else {
+        cfg->current_bb->add_IRInstr(decr, {variableIndex});
+    }
+    vector<string> params = {tempVariableIndex, variableIndex};
+    cfg->current_bb->add_IRInstr(copyvar, params);
+
+    return tempVariableIndex;
+}
+
+antlrcpp::Any CToIRVisitor::visitExprPOSTFIX(ifccParser::ExprPOSTFIXContext *ctx) {
+    string variableName = ctx->ID()->getText();
+    string variableIndex = to_string(cfg->get_var_index(variableName));
+
+    string result = cfg->create_new_tempvar(INT);
+    string resultIndex = to_string(cfg->get_var_index(result));
+
+    vector<string> params = {resultIndex, variableIndex};
+    cfg->current_bb->add_IRInstr(copyvar, params);
+    if (ctx->PLUSPLUS() != nullptr) {
+        cfg->current_bb->add_IRInstr(incr, {variableIndex});
+    } else {
+        cfg->current_bb->add_IRInstr(decr, {variableIndex});
+    }
+    return resultIndex;
+}
+
+antlrcpp::Any CToIRVisitor::visitExprBWSHIFT(ifccParser::ExprBWSHIFTContext *ctx) {
+    if (ctx->BWSL() != nullptr) {
+        return add_2op_instr(bwsl, ctx->expression()[0], ctx->expression()[1]);
+    } else {
+        return add_2op_instr(bwsr, ctx->expression()[0], ctx->expression()[1]);
+    }
+}
+
+antlrcpp::Any CToIRVisitor::visitExprCALL(ifccParser::ExprCALLContext *ctx) {
+    string variableName = cfg->create_new_tempvar(INT);
+    string variableIndex = to_string(cfg->get_var_index(variableName));
+    string function_name = ctx->ID()->getText();
+    
+    vector<string> params = vector<string>();
+    params.push_back(variableIndex);
+    params.push_back(function_name); 
+
+    for(auto expr : ctx->expression()) {
+        string param = visit(expr);
+        params.push_back(param);
+    }
+    cfg->current_bb->add_IRInstr(call, params);
+
+    return variableIndex;
 }

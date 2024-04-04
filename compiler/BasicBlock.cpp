@@ -20,15 +20,16 @@ void BasicBlock::gen_asm(ostream &o) const{
         cfg->gen_asm_epilogue(o);
     }
     else if (exit_false == nullptr){
-        o << "    jmp " << exit_true->label << endl;
+        IRInstr exit_instr = IRInstr(this, jump, {exit_true->label});
+        exit_instr.gen_asm(o);
     }
     else{
-        o << "    cmpl $0, -" << test_var_index << "(%rbp)" << endl;
+        o << "    cmpl $0, " << test_var_index << "(%rbp)" << endl;
         o << "    je " << exit_false->label << endl;
-        o << "    jmp " << exit_true->label << endl;
+        IRInstr exit_instr = IRInstr(this, jump, {exit_true->label});
+        exit_instr.gen_asm(o);
     }
 }
-
 
 void BasicBlock::add_IRInstr(Operation op, vector<string> params) {
     instrs->push_back(new IRInstr(this, op, std::move(params)));
