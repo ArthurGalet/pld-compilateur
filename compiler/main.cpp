@@ -51,7 +51,7 @@ int main(int argn, const char **argv)
   ValidatorVisitor vv;
   vv.visit(tree);
 
-  CToIRVisitor v;
+  CToIRVisitor v(vv.definedFunctions);
   v.visit(tree);
   
   for (auto cfg : v.cfgs)

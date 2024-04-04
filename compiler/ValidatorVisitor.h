@@ -19,11 +19,12 @@ public:
     antlrcpp::Any visitParam(ifccParser::ParamContext *context) override;
     antlrcpp::Any visitExprCALL(ifccParser::ExprCALLContext *context) override;
 
+    vector<string>* definedFunctions;
+
 protected:
     vector<vector<map<string, tuple<int, int>>*>*>* declaredVariables_list;
     vector<map<string, tuple<int, int>>*>* declaredVariables;
 
-    vector<string>* definedFunctions;
     tuple<int, int>* findVariable(string nom);
     // Ligne de vecteur : bloc où la variable est déclarée
     // K : nom de la variable, V : (statut, index)
