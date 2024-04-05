@@ -198,6 +198,9 @@ void IRInstr::gen_asm(ostream &o)
     case ret:
         // return P0
         o << "    movl " << params[0] << "(%rbp), %eax\n";
+        o << "    movq %rbp, %rsp\n";
+        o << "    popq %rbp\n" ;
+        o << "    ret\n" ;
         break;
     case neg:
         // P0 = -P0
