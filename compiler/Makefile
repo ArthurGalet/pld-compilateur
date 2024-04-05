@@ -22,6 +22,7 @@ OBJECTS=build/ifccBaseVisitor.o \
 	build/CFG.o \
 	build/ValidatorVisitor.o \
 	build/CToIRVisitor.o \
+	build/IROptimizer.o \
 	build/main.o
 
 ifcc: $(OBJECTS)
