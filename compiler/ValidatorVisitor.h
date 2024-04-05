@@ -37,8 +37,8 @@ public:
     vector<tuple<Type,string>>* definedFunctions;
 
 protected:
-    vector<vector<map<string, tuple<int, int>>*>*>* declaredVariables_list;
-    vector<map<string, tuple<int, int>>*>* declaredVariables;
+    vector<vector<map<string, tuple<int, int>>*>*>* declaredVariables_list = new vector<vector<map<string, tuple<int, int>>*>*>();
+    vector<map<string, tuple<int, int>>*>* declaredVariables = new vector<map<string, tuple<int, int>>*>();
 
     tuple<int, int>* findVariable(string nom);
     // Ligne de vecteur : bloc où la variable est déclarée

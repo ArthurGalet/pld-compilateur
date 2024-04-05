@@ -103,9 +103,9 @@ antlrcpp::Any ValidatorVisitor::visitBloc(ifccParser::BlocContext *ctx) {
 
 tuple<int,int>* ValidatorVisitor::findVariable(string nom) {
     for (auto blocVariable = declaredVariables->rbegin(); blocVariable != declaredVariables->rend(); blocVariable++) {
-        for (auto & variable : **blocVariable) {
-            if (variable.first == nom) {
-                return &variable.second;
+        for (auto & [nomVariable,informations] : **blocVariable) {
+            if (nomVariable == nom) {
+                return &informations;
             }
         }
     }
