@@ -8,10 +8,10 @@ using namespace std;
 class IROptimizer {
 public:
     explicit IROptimizer(vector<CFG*>* cfgList);
-    void optimize();
+    void optimize() const;
 
 protected:
-    void constantOptimization();
+    void constantOptimization() const;
     vector<CFG*>* cfgs;
 };
 

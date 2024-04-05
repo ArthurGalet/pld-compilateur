@@ -1,5 +1,5 @@
 #pragma once
 
-typedef enum {
+typedef enum{
     INT = 0
 } Type;

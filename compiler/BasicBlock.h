@@ -50,10 +50,10 @@ public:
 
     void add_IRInstr(Operation op, vector<string> params);
 
-    BasicBlock* exit_true;  /**< pointer to the next basic block, true branch. If nullptr, return from procedure */
-    BasicBlock* exit_false; /**< pointer to the next basic block, false branch. If null_ptr, the basic block ends with an unconditional jump */
+    BasicBlock* exit_true = nullptr;  /**< pointer to the next basic block, true branch. If nullptr, return from procedure */
+    BasicBlock* exit_false = nullptr; /**< pointer to the next basic block, false branch. If null_ptr, the basic block ends with an unconditional jump */
     string label; /**< label of the BB, also will be the label in the generated code */
     CFG* cfg; /** < the CFG where this block belongs */
-    vector<IRInstr*>* instrs; /** < the instructions themselves. */
+    vector<IRInstr*>* instrs = new vector<IRInstr*>; /** < the instructions themselves. */
     int test_var_index;
 };

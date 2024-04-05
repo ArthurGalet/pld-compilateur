@@ -1,9 +1,6 @@
 #include "ValidatorVisitor.h"
 
 ValidatorVisitor::ValidatorVisitor(){
-    declaredFunctions = new vector<string>();
-    declaredVariables_list = new vector<vector<map<string, tuple<int, int>>*>*>();
-    declaredVariables = new vector<map<string, tuple<int, int>>*>();
     declaredVariables->push_back(new map<string, tuple<int, int>>());
     declaredVariables_list->push_back(declaredVariables);
 }
@@ -82,9 +79,9 @@ antlrcpp::Any ValidatorVisitor::visitBloc(ifccParser::BlocContext *ctx) {
 
 tuple<int,int>* ValidatorVisitor::findVariable(string nom) {
     for (auto blocVariable = declaredVariables->rbegin(); blocVariable != declaredVariables->rend(); blocVariable++) {
-        for (auto & variable : **blocVariable) {
-            if (variable.first == nom) {
-                return &variable.second;
+        for (auto & [nomVariable,informations] : **blocVariable) {
+            if (nomVariable == nom) {
+                return &informations;
             }
         }
     }

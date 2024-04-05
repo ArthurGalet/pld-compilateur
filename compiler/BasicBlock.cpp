@@ -2,13 +2,9 @@
 
 #include <utility>
 
-BasicBlock::BasicBlock(CFG* cfg, string entry_label){
-    this->cfg = cfg;
-    label = entry_label;
-    exit_true = nullptr;
-    exit_false = nullptr;
-    instrs = new vector<IRInstr*>;
-}
+BasicBlock::BasicBlock(CFG* cfg, string entry_label) :
+    label(std::move(entry_label)),
+    cfg(cfg) {}
 
 void BasicBlock::gen_asm(ostream &o) const{
     o << this->label << ":\n";

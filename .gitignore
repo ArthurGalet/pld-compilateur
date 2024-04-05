@@ -44,3 +44,4 @@ tests/ifcc-test-output/
 compiler/.antlr/*
 /tests/ifcc-test-output/
 tests/unit_testing/build/*
+.idea/

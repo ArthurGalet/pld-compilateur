@@ -1,16 +1,9 @@
 #include "CFG.h"
 
-CFG::CFG(string function_name) {
-    Symbols = new vector<map<string, pair<Type, int>>*>();
+CFG::CFG(string function_name) :
+    cfg_name(function_name)
+    {
     add_symbol_context();
-    nextFreeSymbolIndex = -4;
-    nextFreeParamIndex = 16;
-    current_bb = nullptr;
-    nextBBnumber = 0;
-    nextTmpVariableNumber = 0;
-    cfg_name = function_name;
-    bbs = new vector<BasicBlock*>;
-
     string name_entry = new_BB_name();
     string name_exit = new_BB_name();
     auto entryBB = new BasicBlock(this, name_entry);
@@ -24,7 +17,7 @@ CFG::CFG(string function_name) {
     current_bb = entryBB;
 }
 
-void CFG::add_bb(BasicBlock *bb) const {
+void CFG::add_bb(BasicBlock *bb) {
     bbs->push_back(bb);
 }
 
@@ -36,7 +29,7 @@ void CFG::gen_asm(std::ostream &o) {
     }
 }
 
-void CFG::gen_asm_prologue(ostream &o) {
+void CFG::gen_asm_prologue(ostream &o) const {
     o << ".globl "<< cfg_name <<"\n" ;
     o << cfg_name <<": \n" ;
     o << "    pushq %rbp\n" ;
@@ -72,7 +65,7 @@ void CFG::gen_asm_prologue(ostream &o) {
     o << "    jmp "<< cfg_name<<"_bb0\n";
 }
 
-void CFG::gen_asm_epilogue(ostream &o) {
+void CFG::gen_asm_epilogue(ostream &o) const{
     o << "    movq %rbp, %rsp\n";
     o << "    popq %rbp\n" ;
     o << "    ret\n" ;
@@ -83,7 +76,7 @@ void CFG::add_to_symbol_table(const string & name, Type t) {
     nextFreeSymbolIndex -= get_type_size(t);
 }
 
-size_t CFG::get_type_size(Type t) {
+size_t CFG::get_type_size(Type t) const {
     switch(t) {
         case Type::INT:
             return 4;
@@ -110,7 +103,7 @@ string CFG::create_new_tempvar(Type t) {
     return name;
 }
 
-int CFG::get_var_index(const string & name) {
+int CFG::get_var_index(const string & name) const {
     for (auto itContext = Symbols->rbegin(); itContext != Symbols->rend(); itContext++) {
         auto it = (*itContext)->find(name);
         if (it != (*itContext)->end()) {
@@ -120,7 +113,7 @@ int CFG::get_var_index(const string & name) {
     return -1;
 }
 
-Type CFG::get_var_type(const string & name) {
+Type CFG::get_var_type(const string & name) const {
     for (auto itContext = Symbols->rbegin(); itContext != Symbols->rend(); itContext++) {
         auto it = (*itContext)->find(name);
         if (it != (*itContext)->end()) {

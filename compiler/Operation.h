@@ -30,11 +30,11 @@ typedef enum
     cmp_ne  = 20,
     call    = 21,
     jump    = 22,
-    ret     = 23
-    incr = 24,
-    decr = 25,
-    bwsl = 26,
-    bwsr = 27,
+    ret     = 23,
+    incr    = 24,
+    decr    = 25,
+    bwsl    = 26,
+    bwsr    = 27,
 } Operation;
 
 #endif // PLD_COMP_OPERATION_H

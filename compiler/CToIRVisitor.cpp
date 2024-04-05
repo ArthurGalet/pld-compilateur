@@ -1,10 +1,5 @@
 #include "CToIRVisitor.h"
 
-CToIRVisitor::CToIRVisitor() {
-    cfgs = new vector<CFG*>();
-    cfg = nullptr;
-}
-
 void CToIRVisitor::add_cfg(CFG * newCfg) {
     this->cfgs->push_back(newCfg);
     this->cfg = newCfg;
@@ -23,13 +18,13 @@ string CToIRVisitor::add_2op_instr(Operation op, antlr4::tree::ParseTree* left, 
 
 antlrcpp::Any CToIRVisitor::visitFunction(ifccParser::FunctionContext *ctx) {
     string function_name = ctx->ID()->getText();
-    auto cfg = new CFG(function_name);
+    auto newCfg = new CFG(function_name);
 
-    add_cfg(cfg);
+    add_cfg(newCfg);
 
     for(unsigned long i = 0; i < ctx->param().size(); i++) {
         string paramName = ctx->param()[i]->ID()->getText();
-        cfg->add_param_to_symbol_table(paramName, INT,i);
+        newCfg->add_param_to_symbol_table(paramName, INT,i);
     }
 
     visit(ctx->bloc());

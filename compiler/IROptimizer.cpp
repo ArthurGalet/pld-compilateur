@@ -1,14 +1,14 @@
 #include "IROptimizer.h"
 
-IROptimizer::IROptimizer(vector<CFG *> *cfgList) {
-    cfgs = cfgList;
-}
+IROptimizer::IROptimizer(vector<CFG *> *cfgList) :
+    cfgs(cfgList) {}
 
-void IROptimizer::optimize() {
+void IROptimizer::optimize() const{
     constantOptimization();
+
 }
 
-void IROptimizer::constantOptimization() {
+void IROptimizer::constantOptimization() const {
     for (int j=0; j<5; j++ )
     for (auto cfg: *cfgs) {
         for (auto bb: *cfg->bbs) {
@@ -18,9 +18,7 @@ void IROptimizer::constantOptimization() {
 
                 // 2 ldconst consécutifs => regardons si l'IRInstr suivante peut être simplifiée
                 if (instr1->op == ldconst and instr2->op == ldconst) {
-                    if (++i >= bb->instrs->size()) {
-                        break;
-                    }
+                    if (++i >= bb->instrs->size()) break;
 
                     IRInstr *instr3 = (*(bb->instrs))[i];
                     int const1 = stoi(instr1->params[1]);
@@ -90,6 +88,14 @@ void IROptimizer::constantOptimization() {
                                 break;
                             case cmp_ne:
                                 value = const1 != const2;
+                                isSimplifiable = true;
+                                break;
+                            case incr:
+                                value = const1 + 1;
+                                isSimplifiable = true;
+                                break;
+                            case decr:
+                                value = const1 - 1;
                                 isSimplifiable = true;
                                 break;
                         }
@@ -173,8 +179,6 @@ void IROptimizer::constantOptimization() {
                     IRInstr *instr3 = (*(bb->instrs))[i];
                     int const1 = stoi(instr1->params[1]);
 
-                    if ( (instr2->op == neg, instr2->op == lnot or instr2->op == bwnot));
-
                     switch (instr3->op) {
                     case neg:
                         bb->instrs->erase(bb->instrs->begin() + i-2, bb->instrs->begin() + i+1);
@@ -187,6 +191,14 @@ void IROptimizer::constantOptimization() {
                     case bwnot:
                         bb->instrs->erase(bb->instrs->begin() + i-2, bb->instrs->begin() + i+1);
                         bb->instrs->insert(bb->instrs->begin() + i-2,new IRInstr(bb, ldconst, {instr3->params[0], to_string(~const1)}));
+                        break;
+                    case copyvar:
+                        IRInstr* instr4 = (*(bb->instrs))[i+1];
+                        if (instr4->op != neg && instr4->op != lnot && instr4->op != bwnot) {
+                            bb->instrs->erase(bb->instrs->begin() + i - 2, bb->instrs->begin() + i);
+                            bb->instrs->insert(bb->instrs->begin() + i - 2,
+                                               new IRInstr(bb, ldconst, {instr2->params[0], instr1->params[1]}));
+                        }
                         break;
                     }
                     i -= 1;
