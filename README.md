@@ -15,9 +15,9 @@ Compilateur C fait maison
 | Opérations unaires : ! et -                                                                                          | O        | Terminé        |
 | Déclaration de variables n’importe où                                                                                | O        | Terminé        |
 | Affectation (qui, en C, retourne aussi une valeur)                                                                   | O        | Terminé        |
-| Utilisation des fonctions standard putchar et getchar pour les entrées-sorties                                       | O        | Non implémenté |
-| Définition de fonctions avec paramètres, et type de retour int ou void                                               | O        | En cours       |
-| Vérification de la cohérence des appels de fonctions et leurs paramètres                                             | O        | Partiel        |
+| Utilisation des fonctions standard putchar et getchar pour les entrées-sorties                                       | O        | Terminé        |
+| Définition de fonctions avec paramètres, et type de retour int ou void                                               | O        | Terminé        |
+| Vérification de la cohérence des appels de fonctions et leurs paramètres                                             | O        | Terminé        |
 | Structure de blocs grâce à { et }                                                                                    | O        | Terminé        |
 | Support des portées de variables et du shadowing                                                                     | O        | Terminé        |
 | Les structures de contrôle if, else, while                                                                           | O        | Terminé        |
