@@ -2,6 +2,7 @@
 
 #include "antlr4-runtime.h"
 #include "generated/ifccBaseVisitor.h"
+#include "Type.h"
 
 using namespace std;
 
@@ -19,7 +20,7 @@ public:
     antlrcpp::Any visitParam(ifccParser::ParamContext *context) override;
     antlrcpp::Any visitExprCALL(ifccParser::ExprCALLContext *context) override;
 
-    vector<string>* definedFunctions;
+    vector<tuple<Type,string>>* definedFunctions;
 
 protected:
     vector<vector<map<string, tuple<int, int>>*>*>* declaredVariables_list;

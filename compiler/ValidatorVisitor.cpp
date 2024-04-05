@@ -1,7 +1,7 @@
 #include "ValidatorVisitor.h"
 
 ValidatorVisitor::ValidatorVisitor(){
-    definedFunctions = new vector<string>();
+    definedFunctions = new vector<tuple<Type,string>>();
     declaredVariables_list = new vector<vector<map<string, tuple<int, int>>*>*>();
     declaredVariables = new vector<map<string, tuple<int, int>>*>();
     declaredVariables->push_back(new map<string, tuple<int, int>>());
@@ -105,28 +105,30 @@ antlrcpp::Any ValidatorVisitor::visitControl_flow_instruction(ifccParser::Contro
 
 antlrcpp::Any ValidatorVisitor::visitProg(ifccParser::ProgContext *ctx){
     visitChildren(ctx);
-    for (string declaredFunctionName : *definedFunctions) {
-        if (declaredFunctionName == "main") {
+    for (tuple<Type,string> definedFunction : *definedFunctions) {
+        if (get<1>(definedFunction) == "main") {
             return 0;
         }
     }
-    cerr << "Fonction main non déclarée\n";
+    cerr << "Fonction main not defined\n";
     exit(5);
 }
 
 antlrcpp::Any ValidatorVisitor::visitFunction(ifccParser::FunctionContext *ctx){
     string functionName = ctx->ID()->getText();
-    for (string declaredFunctionName : *definedFunctions) {
-        if (declaredFunctionName == functionName) {
-            cerr << "Fonction " << functionName << " déja déclarée\n";
+    for (tuple<Type,string> definedFunction : *definedFunctions) {
+        if (get<1>(definedFunction) == functionName) {
+            cerr << "Fonction " << functionName << " already defined\n";
             exit(4);
         }
     }
 
+    Type functionType = ctx->type()->getText() == "int"? Type::INT : Type::VOID;
+
     declaredVariables = new vector<map<string, tuple<int, int>>*>();
     declaredVariables->push_back(new map<string, tuple<int, int>>());
     declaredVariables_list->push_back(declaredVariables);
-    definedFunctions->push_back(functionName);
+    definedFunctions->push_back(std::make_tuple(functionType,functionName));
 
     visitChildren(ctx);
 

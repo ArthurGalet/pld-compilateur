@@ -3,12 +3,13 @@
 #include "antlr4-runtime.h"
 #include "generated/ifccBaseVisitor.h"
 #include "CFG.h"
+#include "Type.h"
 
 using namespace std;
 
 class CToIRVisitor : public ifccBaseVisitor  {
 public :
-    CToIRVisitor(vector<string>* definedFunctions);
+    CToIRVisitor(vector<tuple<Type,string>>* definedFunctions);
     vector<CFG*> cfgs;
     //current cfg
     CFG * cfg;
@@ -44,5 +45,5 @@ public :
 protected:
     string add_2op_instr(Operation op, antlr4::tree::ParseTree* left, antlr4::tree::ParseTree* right);
     stack<BasicBlock*> pileBoucles;
-    vector<string>* definedFunctions;
+    vector<tuple<Type,string>>* definedFunctions;
 };
