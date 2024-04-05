@@ -5,14 +5,12 @@ IROptimizer::IROptimizer(vector<CFG *> *cfgList) :
 
 void IROptimizer::optimize() const{
     constantOptimization();
-
 }
 
 void IROptimizer::constantOptimization() const {
     for (auto cfg: *cfgs)
-        for (int i=0; i<5; i++)
-            for (auto bb: *cfg->bbs)
-                optimizeBB(bb);
+        for (auto bb: *cfg->bbs)
+            optimizeBB(bb);
 }
 
 
@@ -86,10 +84,6 @@ void IROptimizer::optimizeBB(BasicBlock *bb) {
                     continue;
                 }
 
-            /*} else if (instr1->op == ldconst and instr2->op == ret and instr1->params[0] == instr2->params[0]) {
-                bb->instrs->erase(bb->instrs->begin() + i-1, bb->instrs->begin() + i+1);
-                bb->instrs->insert(bb->instrs->begin() + i-1,new IRInstr(bb, ret, {instr1->params[1]}));
-                i -= 1;*/
             } else if (instr1->op == ldconst and instr2->op == copyvar and instr1->params[0] == instr2->params[1]) {
                 if (i + 2 >= bb->instrs->size()) {
                     break;
@@ -115,6 +109,11 @@ void IROptimizer::optimizeBB(BasicBlock *bb) {
                         }
                         break;
                 }
+            }
+
+            if ((instr1->op == jump or instr1->op == ret)) {
+                bb->instrs->erase(bb->instrs->begin() +i+1, bb->instrs->begin() +i+2);
+                hasChanged = true;
             }
         }
     }
