@@ -8,6 +8,19 @@ ValidatorVisitor::ValidatorVisitor(){
     declaredVariables_list->push_back(declaredVariables);
 }
 
+bool ValidatorVisitor::callingVoidFunctionInChildren(antlr4::ParserRuleContext * ctx) {
+    for(auto child : ctx->children) {
+        if(auto expr = dynamic_cast<ifccParser::ExprCALLContext*>(child)) {
+            string functionName = expr->ID()->getText();
+            for (tuple<Type,string> definedFunction : *definedFunctions) {
+                if (get<1>(definedFunction) == functionName && get<0>(definedFunction) == VOID)
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
 antlrcpp::Any ValidatorVisitor::visitAffectation(ifccParser::AffectationContext *ctx) {
     string nom = ctx->ID()->getText();
 

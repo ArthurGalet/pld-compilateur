@@ -30,5 +30,7 @@ protected:
     // Ligne de vecteur : bloc où la variable est déclarée
     // K : nom de la variable, V : (statut, index)
     // statut : 0=déclarée, 1=initialisée, 2=utilisée
+
+    bool callingVoidFunctionInChildren(antlr4::ParserRuleContext * ctx);
 };
 
