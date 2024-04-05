@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "antlr4-runtime.h"
 #include "generated/ifccBaseVisitor.h"
 
@@ -17,9 +16,13 @@ public:
     antlrcpp::Any visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) override;
     antlrcpp::Any visitProg(ifccParser::ProgContext *ctx) override;
     antlrcpp::Any visitFunction(ifccParser::FunctionContext *ctx) override;
+    antlrcpp::Any visitParam(ifccParser::ParamContext *context) override;
+    antlrcpp::Any visitExprCALL(ifccParser::ExprCALLContext *context) override;
 
 protected:
+    vector<vector<map<string, tuple<int, int>>*>*>* declaredVariables_list;
     vector<map<string, tuple<int, int>>*>* declaredVariables;
+
     vector<string>* declaredFunctions;
     tuple<int, int>* findVariable(string nom);
     // Ligne de vecteur : bloc où la variable est déclarée

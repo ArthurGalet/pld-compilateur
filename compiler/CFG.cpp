@@ -2,7 +2,9 @@
 
 CFG::CFG(string function_name) {
     Symbols = new vector<map<string, pair<Type, int>>*>();
-    nextFreeSymbolIndex = 4;
+    add_symbol_context();
+    nextFreeSymbolIndex = -4;
+    nextFreeParamIndex = 16;
     current_bb = nullptr;
     nextBBnumber = 0;
     nextTmpVariableNumber = 0;
@@ -33,25 +35,39 @@ void CFG::gen_asm(std::ostream &o) {
     }
 }
 
-string CFG::IR_reg_to_asm(const string & reg) {
-    string res = "-";
-    int index = get_var_index(reg);
-    if (index == -1){
-        return "%"+reg;
-    } else {
-        res.append(to_string(index));
-    }
-
-    res.append("(%rbp)");
-    return res;
-}
-
 void CFG::gen_asm_prologue(ostream &o) {
     o << ".globl "<< cfg_name <<"\n" ;
     o << cfg_name <<": \n" ;
     o << "    pushq %rbp\n" ;
     o << "    movq %rsp, %rbp\n" ;
-    o << "    subq $"<< to_string(nextFreeSymbolIndex) << ", %rsp\n" ;
+    o << "    subq $"<< to_string(-nextFreeSymbolIndex) << ", %rsp\n" ;
+    for(const auto& pair : ParamNumber) {
+        string paramName = pair.first;
+        int paramNumber = pair.second;
+        int symbolTableIndex = get_var_index(paramName);
+        switch(paramNumber) {
+            case 0:
+                o << "    movl %edi, " << symbolTableIndex << "(%rbp)\n";
+                break;
+            case 1:
+                o << "    movl %esi, " << symbolTableIndex << "(%rbp)\n";
+                break;
+            case 2:
+                o << "    movl %edx, " << symbolTableIndex << "(%rbp)\n";
+                break;
+            case 3:
+                o << "    movl %ecx, " << symbolTableIndex << "(%rbp)\n";
+                break;
+            case 4:
+                o << "    movl %r8d, " << symbolTableIndex << "(%rbp)\n";
+                break;
+            case 5:
+                o << "    movl %r9d, " << symbolTableIndex << "(%rbp)\n";
+                break;
+            default:
+                throw runtime_error("Unknown parameter number");
+        }
+    }
     o << "    jmp "<< cfg_name<<"_bb0\n";
 }
 
@@ -63,7 +79,26 @@ void CFG::gen_asm_epilogue(ostream &o) {
 
 void CFG::add_to_symbol_table(const string & name, Type t) {
     Symbols->back()->insert(make_pair(name, make_pair(t, nextFreeSymbolIndex)));
-    nextFreeSymbolIndex += 4;
+    nextFreeSymbolIndex -= get_type_size(t);
+}
+
+size_t CFG::get_type_size(Type t) {
+    switch(t) {
+        case Type::INT:
+            return 4;
+        default:
+            throw runtime_error("Unknown type");
+    }
+}
+
+void CFG::add_param_to_symbol_table(const string & name, Type t, int paramNumber) {
+    if(paramNumber < 6) {
+        add_to_symbol_table(name, t);
+        ParamNumber.insert(make_pair(name, paramNumber));
+        return;
+    }
+    Symbols->back()->insert(make_pair(name, make_pair(t, nextFreeParamIndex)));
+    nextFreeParamIndex += get_type_size(t);
 }
 
 string CFG::create_new_tempvar(Type t) {
