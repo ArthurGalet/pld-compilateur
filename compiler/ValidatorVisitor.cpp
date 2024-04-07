@@ -90,7 +90,11 @@ tuple<int,int>* ValidatorVisitor::findVariable(string nom) {
 
 antlrcpp::Any ValidatorVisitor::visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) {
     antlr4::tree::ParseTree* parent = ctx->parent;
-    while(dynamic_cast<ifccParser::While_loopContext *>(parent) == nullptr) {
+    while(
+            dynamic_cast<ifccParser::While_loopContext *>(parent) == nullptr &&
+            dynamic_cast<ifccParser::For_loopContext *>(parent) == nullptr &&
+            dynamic_cast<ifccParser::Do_while_loopContext *>(parent) == nullptr
+    ) {
         if (parent == nullptr) {
             cerr << "Instruction " << ctx->getText() << " utilisée dans un contexte invalide\n";
             exit(3);
@@ -149,5 +153,17 @@ antlrcpp::Any ValidatorVisitor::visitExprCALL(ifccParser::ExprCALLContext *conte
         cerr << "function name same as local var\n";
         exit(1);
     }
+    return 0;
+}
+
+antlrcpp::Any ValidatorVisitor::visitFor_loop(ifccParser::For_loopContext *ctx) {
+    declaredVariables->push_back(new map<string, tuple<int, int>>());
+    visitChildren(ctx);
+    for (auto & variable : *(declaredVariables->back())) {
+        if (get<0>(variable.second) < 2) {
+            cerr << "Variable " << variable.first << " inutilisée\n";
+        }
+    }
+    declaredVariables->pop_back();
     return 0;
 }

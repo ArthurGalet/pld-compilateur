@@ -6,6 +6,11 @@
 
 using namespace std;
 
+typedef enum {
+    WHILE = 0,
+    FOR = 1,
+} boucleType;
+
 class CToIRVisitor : public ifccBaseVisitor  {
 public :
     vector<CFG*>* cfgs = new vector<CFG*>();
@@ -36,10 +41,16 @@ public :
     antlrcpp::Any visitBloc(ifccParser::BlocContext *ctx) override;
     antlrcpp::Any visitExprBWSHIFT(ifccParser::ExprBWSHIFTContext *ctx) override;
     antlrcpp::Any visitExprCALL(ifccParser::ExprCALLContext *ctx) override;
+    antlrcpp::Any visitFor_loop(ifccParser::For_loopContext *ctx) override;
+    antlrcpp::Any visitDo_while_loop(ifccParser::Do_while_loopContext *ctx) override;
+    antlrcpp::Any visitFor_test(ifccParser::For_testContext *ctx) override;
 
     void add_cfg(CFG * newCfg);
 
 protected:
     string add_2op_instr(Operation op, antlr4::tree::ParseTree* left, antlr4::tree::ParseTree* right);
-    stack<BasicBlock*> pileBoucles;
+    stack<pair<BasicBlock*, BasicBlock*>*> pileBoucles;
+    // first -> continue, second -> break
+
+
 };
