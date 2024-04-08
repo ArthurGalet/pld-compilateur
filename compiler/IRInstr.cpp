@@ -105,32 +105,8 @@ void IRInstr::gen_asm(ostream &o)
         o << "    call    " << params[1] << "\n";
         o << "    movl    %eax, " << params[0] << "(%rbp)\n";
 
-        for(unsigned long i = params.size()-1; i>=2; i--) {
-            switch(i) {
-                case 2:
-                break;
-
-                case 3:
-                break;
-
-                case 4:
-                break;
-
-                case 5:
-                break;
-
-                case 6:
-                break;
-
-                case 7:
-                break;
-
-                default:
-                    o << "    addq $4" << ", %rsp \n";
-                break;
-                
-            }    
-
+        for(unsigned long i = params.size()-1; i>=8; i--) {
+            o << "    addq $4" << ", %rsp \n";
         }
         break;
     case cmp_eq:
