@@ -1,5 +1,10 @@
 #include "CToIRVisitor.h"
 
+CToIRVisitor::CToIRVisitor(vector<tuple<Type,string>>* definedFunctions) {
+    this->definedFunctions = definedFunctions;
+    this->cfgs = new vector<CFG*>();
+}
+
 void CToIRVisitor::add_cfg(CFG * newCfg) {
     this->cfgs->push_back(newCfg);
     this->cfg = newCfg;
@@ -385,6 +390,12 @@ antlrcpp::Any CToIRVisitor::visitExprCALL(ifccParser::ExprCALLContext *ctx) {
     string variableName = cfg->create_new_tempvar(INT);
     string variableIndex = to_string(cfg->get_var_index(variableName));
     string function_name = ctx->ID()->getText();
+
+if(std::find_if(definedFunctions->begin(), definedFunctions->end(), 
+    [&function_name](const std::tuple<Type, std::string>& e) { return std::get<1>(e) == function_name; }) == definedFunctions->end())
+{
+    function_name.append("@PLT");
+}
     
     vector<string> params = vector<string>();
     params.push_back(variableIndex);
