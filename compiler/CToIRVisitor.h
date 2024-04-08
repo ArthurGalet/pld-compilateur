@@ -3,13 +3,15 @@
 #include "antlr4-runtime.h"
 #include "generated/ifccBaseVisitor.h"
 #include "CFG.h"
+#include "Type.h"
 
 using namespace std;
 
 class CToIRVisitor : public ifccBaseVisitor  {
 public :
-    vector<CFG*>* cfgs = new vector<CFG*>();
-    CFG * cfg = nullptr; //current cfg
+    CToIRVisitor(vector<tuple<Type,string>>* definedFunctions);
+    vector<CFG*>* cfgs; //current cfg
+    CFG * cfg = nullptr;
 
     antlrcpp::Any visitReturn_stmt(ifccParser::Return_stmtContext *ctx) override;
     antlrcpp::Any visitDeclaration(ifccParser::DeclarationContext *ctx) override;
@@ -36,10 +38,15 @@ public :
     antlrcpp::Any visitBloc(ifccParser::BlocContext *ctx) override;
     antlrcpp::Any visitExprBWSHIFT(ifccParser::ExprBWSHIFTContext *ctx) override;
     antlrcpp::Any visitExprCALL(ifccParser::ExprCALLContext *ctx) override;
+    antlrcpp::Any visitFor_loop(ifccParser::For_loopContext *ctx) override;
+    antlrcpp::Any visitDo_while_loop(ifccParser::Do_while_loopContext *ctx) override;
+    antlrcpp::Any visitFor_test(ifccParser::For_testContext *ctx) override;
 
     void add_cfg(CFG * newCfg);
 
 protected:
     string add_2op_instr(Operation op, antlr4::tree::ParseTree* left, antlr4::tree::ParseTree* right);
-    stack<BasicBlock*> pileBoucles;
+    stack<pair<BasicBlock*, BasicBlock*>*> pileBoucles;
+    // first -> continue, second -> break
+    vector<tuple<Type,string>>* definedFunctions;
 };

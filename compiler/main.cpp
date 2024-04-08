@@ -47,8 +47,9 @@ int main(int argn, const char **argv)
     ValidatorVisitor vv;
     vv.visit(tree);
 
-    CToIRVisitor v;
+    CToIRVisitor v(vv.definedFunctions);
     v.visit(tree);
+  
 
     IROptimizer iro(v.cfgs);
     iro.optimize();
