@@ -19,6 +19,7 @@ public:
     antlrcpp::Any visitFunction(ifccParser::FunctionContext *ctx) override;
     antlrcpp::Any visitParam(ifccParser::ParamContext *context) override;
     antlrcpp::Any visitExprCALL(ifccParser::ExprCALLContext *context) override;
+    antlrcpp::Any visitFor_loop(ifccParser::For_loopContext *ctx) override;
     antlrcpp::Any visitReturn_stmt(ifccParser::Return_stmtContext *context)override;
     antlrcpp::Any visitIfelse(ifccParser::IfelseContext *context)override;
     antlrcpp::Any visitWhile_loop(ifccParser::While_loopContext *context)override;

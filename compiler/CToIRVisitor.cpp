@@ -196,8 +196,6 @@ antlrcpp::Any CToIRVisitor::visitWhile_loop(ifccParser::While_loopContext *ctx) 
     cfg->add_bb(bbBloc);
     cfg->add_bb(bbOut);
 
-    bbOut->exit_true = cfg->current_bb->exit_true;
-    bbOut->exit_false = cfg->current_bb->exit_false;
     cfg->current_bb->exit_true = bbTest;
     cfg->current_bb = bbTest;
     bbTest->exit_true = bbBloc;
@@ -207,7 +205,7 @@ antlrcpp::Any CToIRVisitor::visitWhile_loop(ifccParser::While_loopContext *ctx) 
     string variableIndex = visit(ctx->expression());
     cfg->current_bb->test_var_index = stoi(variableIndex);
 
-    pileBoucles.push(bbTest);
+    pileBoucles.push(new pair<BasicBlock*, BasicBlock*>(bbTest, bbOut));
     cfg->current_bb = bbBloc;
     visit(ctx->condition_bloc());
     cfg->current_bb->exit_true = bbTest;
@@ -329,9 +327,9 @@ antlrcpp::Any CToIRVisitor::visitExprLOR(ifccParser::ExprLORContext *ctx) {
 
 antlrcpp::Any CToIRVisitor::visitControl_flow_instruction(ifccParser::Control_flow_instructionContext *ctx) {
     if (ctx->BREAK() != nullptr) {
-        cfg->current_bb->add_IRInstr(jump, {pileBoucles.top()->exit_false->label});
+        cfg->current_bb->add_IRInstr(jump, {pileBoucles.top()->second->label});
     } else {
-        cfg->current_bb->add_IRInstr(jump, {pileBoucles.top()->label});
+        cfg->current_bb->add_IRInstr(jump, {pileBoucles.top()->first->label});
     }
     return 0;
 }
@@ -409,3 +407,86 @@ if(std::find_if(definedFunctions->begin(), definedFunctions->end(),
 
     return variableIndex;
 }
+
+antlrcpp::Any CToIRVisitor::visitFor_loop(ifccParser::For_loopContext *ctx) {
+    cfg->add_symbol_context();
+    if (ctx->for_init() != nullptr)
+        visit(ctx->for_init());
+    auto *bbTest = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbBloc = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
+
+    cfg->add_bb(bbTest);
+    cfg->add_bb(bbBloc);
+    cfg->add_bb(bbOut);
+
+    cfg->current_bb->exit_true = bbTest;
+    cfg->current_bb = bbTest;
+    bbTest->exit_true = bbBloc;
+    bbTest->exit_false = bbOut;
+
+    cfg->current_bb = bbTest;
+    if (ctx->for_test() != nullptr){
+        string variableIndex = visit(ctx->for_test());
+        cfg->current_bb->test_var_index = stoi(variableIndex);
+    } else {
+        bbTest->exit_false = nullptr;
+    }
+
+    if (ctx->for_after() != nullptr){
+        auto *bbAfterBloc = new BasicBlock(cfg, cfg->new_BB_name());
+        cfg->add_bb(bbAfterBloc);
+
+        pileBoucles.push(new pair<BasicBlock*, BasicBlock*>(bbAfterBloc, bbOut));
+        cfg->current_bb = bbBloc;
+        visit(ctx->condition_bloc());
+        pileBoucles.pop();
+
+
+        cfg->current_bb->exit_true = bbAfterBloc;
+        cfg->current_bb = bbAfterBloc;
+        visit(ctx->for_after());
+        cfg->current_bb->exit_true = bbTest;
+    } else {
+        pileBoucles.push(new pair<BasicBlock*, BasicBlock*>(bbTest, bbOut));
+        cfg->current_bb = bbBloc;
+        visit(ctx->condition_bloc());
+        pileBoucles.pop();
+        cfg->current_bb->exit_true = bbTest;
+    }
+    cfg->current_bb = bbOut;
+    cfg->end_symbol_context();
+    return 0;
+}
+
+antlrcpp::Any CToIRVisitor::visitDo_while_loop(ifccParser::Do_while_loopContext *ctx) {
+    auto *bbTest = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbBloc = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
+
+    cfg->add_bb(bbTest);
+    cfg->add_bb(bbBloc);
+    cfg->add_bb(bbOut);
+
+    cfg->current_bb->exit_true = bbBloc;
+    cfg->current_bb = bbTest;
+    bbTest->exit_true = bbBloc;
+    bbTest->exit_false = bbOut;
+
+    pileBoucles.push(new pair<BasicBlock*, BasicBlock*>(bbTest, bbOut));
+    cfg->current_bb = bbBloc;
+    visit(ctx->condition_bloc());
+    cfg->current_bb->exit_true = bbTest;
+    pileBoucles.pop();
+
+    cfg->current_bb = bbTest;
+    string variableIndex = visit(ctx->expression());
+    cfg->current_bb->test_var_index = stoi(variableIndex);
+
+    cfg->current_bb = bbOut;
+    return 0;
+}
+
+antlrcpp::Any CToIRVisitor::visitFor_test(ifccParser::For_testContext *ctx) {
+    return visit(ctx->expression());
+};

@@ -11,15 +11,20 @@ type : 'int' | 'void' ;
 declarations: 'int' declaration (',' declaration)*;
 declaration: ID ('=' expression)?;
 
-bloc: '{' commande* '}';
-commande: instruction | ifelse | while_loop | bloc;
-instruction: ( return_stmt | expression | declarations | control_flow_instruction )? ';';
+bloc: '{' (instruction | not_instruction)* '}';
+instruction: ( return_stmt | expression | declarations | control_flow_instruction | do_while_loop)? ';';
+not_instruction : ifelse | while_loop | for_loop | bloc;
 return_stmt: RETURN expression;
 control_flow_instruction : ( BREAK | CONTINUE ) ;
 
 ifelse : 'if' '(' expression ')' condition_bloc (ELSE (ifelse | condition_bloc))?;
+do_while_loop : 'do' condition_bloc 'while' '(' expression ')';
 while_loop : 'while' '(' expression ')' condition_bloc ;
-condition_bloc : ((return_stmt | expression | control_flow_instruction)? ';'| bloc) ;
+for_loop : 'for' '(' (for_init)? ';' (for_test)? ';' (for_after)? ')' condition_bloc ;
+for_init : (declarations | expression) ;
+for_test : expression ;
+for_after : expression ;
+condition_bloc : ((return_stmt | expression | control_flow_instruction | do_while_loop)? ';'| not_instruction) ;
 
 expression: '(' expression ')'                                                                        #exprPARENS  |
             ID (PLUSPLUS|MOINSMOINS)                                                                  #exprPOSTFIX |
@@ -37,7 +42,7 @@ expression: '(' expression ')'                                                  
             expression LAZYAND expression                                                             #exprLAND    |
             expression LAZYOR expression                                                              #exprLOR     |
             expression '?' expression ':' expression                                                  #exprCOND    |
-            ID '(' ((expression ',')* expression )? ')'                 #exprCALL    |
+            ID '(' ((expression ',')* expression )? ')'                                               #exprCALL    |
             ID (EQ|PLUSEQ|MINUSEQ|MULTEQ|DIVEQ|MODEQ|BWANDEQ|BWOREQ|BWXOREQ|BWSLEQ|BWSREQ) expression #affectation |
             valeur                                                                                    #exprVAL     ;
 

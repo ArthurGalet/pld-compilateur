@@ -5,12 +5,15 @@ IROptimizer::IROptimizer(vector<CFG *> *cfgList) :
 
 void IROptimizer::optimize() const{
     constantOptimization();
+    for (auto cfg : *cfgs)
+        optimizeCFG(cfg);
 }
 
 void IROptimizer::constantOptimization() const {
-    for (auto cfg: *cfgs)
+    for (auto cfg: *cfgs){
         for (auto bb: *cfg->bbs)
             optimizeBB(bb);
+    }
 }
 
 
@@ -126,4 +129,36 @@ bool IROptimizer::reduce(BasicBlock *bb, int indexFirst, int indexLast, int valu
     bb->instrs->insert(bb->instrs->begin() + indexFirst, newInstr);
 
     return true;
+}
+
+void IROptimizer::optimizeCFG(CFG* cfg){
+    bool hasChanged = true;
+    while (hasChanged){
+        hasChanged = false;
+        for (auto bb: *cfg->bbs){
+            if (bb->exit_true != nullptr && bb->exit_true->instrs->size() == 0 && bb->exit_true->exit_false == nullptr){
+                hasChanged = true;
+                bb->exit_true = bb->exit_true->exit_true;
+            }
+        }
+    }
+    for (int i = 1; i + 1 < cfg->bbs->size(); i++){
+        bool toRemove = true;
+        BasicBlock* bb = (*cfg->bbs)[i];
+        for (auto bb2 : *cfg->bbs){
+            if (bb2->exit_true == bb || bb2->exit_false == bb) {
+                toRemove = false;
+                break;
+            }
+            for (auto instr : *bb2->instrs){
+                if(instr->op == jump && instr->params[0] == bb->label){
+                    toRemove=false;
+                    break;
+                }
+            }
+            if (!toRemove) break;
+        }
+        if (toRemove)
+            cfg->bbs->erase(cfg->bbs->begin()+i);
+    }
 }
