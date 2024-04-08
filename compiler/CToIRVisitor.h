@@ -6,11 +6,6 @@
 
 using namespace std;
 
-typedef enum {
-    WHILE = 0,
-    FOR = 1,
-} boucleType;
-
 class CToIRVisitor : public ifccBaseVisitor  {
 public :
     vector<CFG*>* cfgs = new vector<CFG*>();
@@ -51,6 +46,4 @@ protected:
     string add_2op_instr(Operation op, antlr4::tree::ParseTree* left, antlr4::tree::ParseTree* right);
     stack<pair<BasicBlock*, BasicBlock*>*> pileBoucles;
     // first -> continue, second -> break
-
-
 };

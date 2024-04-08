@@ -5,13 +5,14 @@ IROptimizer::IROptimizer(vector<CFG *> *cfgList) :
 
 void IROptimizer::optimize() const{
     constantOptimization();
+    for (auto cfg : *cfgs)
+        optimizeCFG(cfg);
 }
 
 void IROptimizer::constantOptimization() const {
     for (auto cfg: *cfgs){
         for (auto bb: *cfg->bbs)
             optimizeBB(bb);
-        optimizeCFG(cfg);
     }
 }
 

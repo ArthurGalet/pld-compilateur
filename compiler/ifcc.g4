@@ -9,8 +9,7 @@ param : 'int' ID ;
 declarations: 'int' declaration (',' declaration)*;
 declaration: ID ('=' expression)?;
 
-bloc: '{' commande* '}';
-commande: instruction | not_instruction;
+bloc: '{' (instruction | not_instruction)* '}';
 instruction: ( return_stmt | expression | declarations | control_flow_instruction | do_while_loop)? ';';
 not_instruction : ifelse | while_loop | for_loop | bloc;
 return_stmt: RETURN expression;
