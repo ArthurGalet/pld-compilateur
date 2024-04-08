@@ -1,5 +1,6 @@
 #pragma once
 
-typedef enum{
-    INT = 0
+typedef enum {
+    VOID = 0,
+    INT = 1
 } Type;

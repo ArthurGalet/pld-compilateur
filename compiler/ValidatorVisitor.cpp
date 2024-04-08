@@ -1,11 +1,31 @@
 #include "ValidatorVisitor.h"
 
 ValidatorVisitor::ValidatorVisitor(){
+    definedFunctions = new vector<tuple<Type,string>>();
+    declaredVariables_list = new vector<vector<map<string, tuple<int, int>>*>*>();
+    declaredVariables = new vector<map<string, tuple<int, int>>*>();
     declaredVariables->push_back(new map<string, tuple<int, int>>());
     declaredVariables_list->push_back(declaredVariables);
 }
 
+bool ValidatorVisitor::callingVoidFunctionInChildren(antlr4::ParserRuleContext * ctx) {
+    for(auto child : ctx->children) {
+        if(auto expr = dynamic_cast<ifccParser::ExprCALLContext*>(child)) {
+            string functionName = expr->ID()->getText();
+            for (tuple<Type,string> definedFunction : *definedFunctions) {
+                if (get<1>(definedFunction) == functionName && get<0>(definedFunction) == VOID)
+                    return true;
+            }
+        }
+    }
+    return false;
+}
+
 antlrcpp::Any ValidatorVisitor::visitAffectation(ifccParser::AffectationContext *ctx) {
+    if(callingVoidFunctionInChildren(ctx)) {
+        cerr << "Void function called in expression\n";
+        exit(1);
+    }
     string nom = ctx->ID()->getText();
 
     if (findVariable(nom) == nullptr) {
@@ -22,6 +42,10 @@ antlrcpp::Any ValidatorVisitor::visitAffectation(ifccParser::AffectationContext 
 
 antlrcpp::Any ValidatorVisitor::visitDeclaration(ifccParser::DeclarationContext *ctx)
 {
+    if(callingVoidFunctionInChildren(ctx)) {
+        cerr << "Void function called in expression\n";
+        exit(1);
+    }
     string nom = ctx->ID()->getText();
 
     if (declaredVariables->back()->find(nom) != declaredVariables->back()->end()) {
@@ -106,28 +130,30 @@ antlrcpp::Any ValidatorVisitor::visitControl_flow_instruction(ifccParser::Contro
 
 antlrcpp::Any ValidatorVisitor::visitProg(ifccParser::ProgContext *ctx){
     visitChildren(ctx);
-    for (string declaredFunctionName : *declaredFunctions) {
-        if (declaredFunctionName == "main") {
+    for (tuple<Type,string> definedFunction : *definedFunctions) {
+        if (get<1>(definedFunction) == "main") {
             return 0;
         }
     }
-    cerr << "Fonction main non déclarée\n";
+    cerr << "Fonction main not defined\n";
     exit(5);
 }
 
 antlrcpp::Any ValidatorVisitor::visitFunction(ifccParser::FunctionContext *ctx){
     string functionName = ctx->ID()->getText();
-    for (string declaredFunctionName : *declaredFunctions) {
-        if (declaredFunctionName == functionName) {
-            cerr << "Fonction " << functionName << " déja déclarée\n";
+    for (tuple<Type,string> definedFunction : *definedFunctions) {
+        if (get<1>(definedFunction) == functionName) {
+            cerr << "Fonction " << functionName << " already defined\n";
             exit(4);
         }
     }
 
+    Type functionType = ctx->type()->getText() == "int"? Type::INT : Type::VOID;
+
     declaredVariables = new vector<map<string, tuple<int, int>>*>();
     declaredVariables->push_back(new map<string, tuple<int, int>>());
     declaredVariables_list->push_back(declaredVariables);
-    declaredFunctions->push_back(functionName);
+    definedFunctions->push_back(std::make_tuple(functionType,functionName));
 
     visitChildren(ctx);
 
@@ -148,6 +174,10 @@ antlrcpp::Any ValidatorVisitor::visitParam(ifccParser::ParamContext *context) {
 }
 
 antlrcpp::Any ValidatorVisitor::visitExprCALL(ifccParser::ExprCALLContext *context) {
+    if(callingVoidFunctionInChildren(context)) {
+        cerr << "Void function called in expression\n";
+        exit(1);
+    }
     string nom = context->ID()->getText();
     if(findVariable(nom) != nullptr) {
         cerr << "function name same as local var\n";
@@ -165,5 +195,132 @@ antlrcpp::Any ValidatorVisitor::visitFor_loop(ifccParser::For_loopContext *ctx) 
         }
     }
     declaredVariables->pop_back();
+    return 0;
+}
+
+antlrcpp::Any ValidatorVisitor::visitReturn_stmt(ifccParser::Return_stmtContext *context)
+{
+    if(callingVoidFunctionInChildren(context)) {
+        cerr << "Void function called in expression\n";
+        exit(1);
+    }
+    visitChildren(context);
+    return 0;
+}
+antlrcpp::Any ValidatorVisitor::visitIfelse(ifccParser::IfelseContext *context)
+{
+    if(callingVoidFunctionInChildren(context)) {
+        cerr << "Void function called in expression\n";
+        exit(1);
+    }
+    visitChildren(context);
+    return 0;
+}
+antlrcpp::Any ValidatorVisitor::visitWhile_loop(ifccParser::While_loopContext *context)
+{
+    if(callingVoidFunctionInChildren(context)) {
+        cerr << "Void function called in expression\n";
+        exit(1);
+    }
+    visitChildren(context);
+    return 0;
+}
+antlrcpp::Any ValidatorVisitor::visitExprLOR(ifccParser::ExprLORContext *context)
+{
+    if(callingVoidFunctionInChildren(context)) {
+        cerr << "Void function called in expression\n";
+        exit(1);
+    }
+    visitChildren(context);
+    return 0;
+}
+antlrcpp::Any ValidatorVisitor::visitExprUNAIRE(ifccParser::ExprUNAIREContext *context)
+{
+    if(callingVoidFunctionInChildren(context)) {
+        cerr << "Void function called in expression\n";
+        exit(1);
+    }
+    visitChildren(context);
+    return 0;
+}
+antlrcpp::Any ValidatorVisitor::visitExprNE(ifccParser::ExprNEContext *context)
+{
+    if(callingVoidFunctionInChildren(context)) {
+        cerr << "Void function called in expression\n";
+        exit(1);
+    }
+    visitChildren(context);
+    return 0;
+}
+antlrcpp::Any ValidatorVisitor::visitExprEQ(ifccParser::ExprEQContext *context)
+{
+    if(callingVoidFunctionInChildren(context)) {
+        cerr << "Void function called in expression\n";
+        exit(1);
+    }
+    visitChildren(context);
+    return 0;
+}
+antlrcpp::Any ValidatorVisitor::visitExprLAND(ifccParser::ExprLANDContext *context)
+{
+    if(callingVoidFunctionInChildren(context)) {
+        cerr << "Void function called in expression\n";
+        exit(1);
+    }
+    visitChildren(context);
+    return 0;
+}
+antlrcpp::Any ValidatorVisitor::visitExprAS(ifccParser::ExprASContext *context)
+{
+    if(callingVoidFunctionInChildren(context)) {
+        cerr << "Void function called in expression\n";
+        exit(1);
+    }
+    visitChildren(context);
+    return 0;
+}
+antlrcpp::Any ValidatorVisitor::visitExprOR(ifccParser::ExprORContext *context)
+{
+    if(callingVoidFunctionInChildren(context)) {
+        cerr << "Void function called in expression\n";
+        exit(1);
+    }
+    visitChildren(context);
+    return 0;
+}
+antlrcpp::Any ValidatorVisitor::visitExprAND(ifccParser::ExprANDContext *context)
+{
+    if(callingVoidFunctionInChildren(context)) {
+        cerr << "Void function called in expression\n";
+        exit(1);
+    }
+    visitChildren(context);
+    return 0;
+}
+antlrcpp::Any ValidatorVisitor::visitExprBWSHIFT(ifccParser::ExprBWSHIFTContext *context)
+{
+    if(callingVoidFunctionInChildren(context)) {
+        cerr << "Void function called in expression\n";
+        exit(1);
+    }
+    visitChildren(context);
+    return 0;
+}
+antlrcpp::Any ValidatorVisitor::visitExprMDM(ifccParser::ExprMDMContext *context)
+{
+    if(callingVoidFunctionInChildren(context)) {
+        cerr << "Void function called in expression\n";
+        exit(1);
+    }
+    visitChildren(context);
+    return 0;
+}
+antlrcpp::Any ValidatorVisitor::visitExprXOR(ifccParser::ExprXORContext *context)
+{
+    if(callingVoidFunctionInChildren(context)) {
+        cerr << "Void function called in expression\n";
+        exit(1);
+    }
+    visitChildren(context);
     return 0;
 }

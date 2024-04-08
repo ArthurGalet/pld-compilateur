@@ -3,8 +3,10 @@ grammar ifcc;
 axiom : prog EOF ;
 prog : function+;
 
-function : 'int' ID '(' ((param ',')* param)?  ')' bloc ;
+function : type ID '(' ((param ',')* param)?  ')' bloc ;
 param : 'int' ID ;
+
+type : 'int' | 'void' ;
 
 declarations: 'int' declaration (',' declaration)*;
 declaration: ID ('=' expression)?;
