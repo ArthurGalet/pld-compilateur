@@ -157,8 +157,8 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
     cfg->current_bb->test_var_index = stoi(variableIndex);
 
     auto *bbIf = cfg->current_bb;
-    auto *bbTrue = new BasicBlock(cfg, cfg->new_BB_name());
-    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbTrue = new BasicBlock(cfg, cfg->new_BB_name("if_true"));
+    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name("if_out"));
     bbIf->exit_true = bbTrue;
 
     cfg->add_bb(bbTrue);
@@ -169,7 +169,7 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
     if (ctx->ELSE() == nullptr) {
         bbIf->exit_false = bbOut;
     } else {
-        auto *bbFalse = new BasicBlock(cfg, cfg->new_BB_name());
+        auto *bbFalse = new BasicBlock(cfg, cfg->new_BB_name("if_false"));
         bbFalse->exit_true = bbOut;
         bbIf->exit_false = bbFalse;
 
@@ -188,9 +188,9 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
 }
 
 antlrcpp::Any CToIRVisitor::visitWhile_loop(ifccParser::While_loopContext *ctx) {
-    auto *bbTest = new BasicBlock(cfg, cfg->new_BB_name());
-    auto *bbBloc = new BasicBlock(cfg, cfg->new_BB_name());
-    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbTest = new BasicBlock(cfg, cfg->new_BB_name("while_test"));
+    auto *bbBloc = new BasicBlock(cfg, cfg->new_BB_name("while_bloc"));
+    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name("while_out"));
 
     cfg->add_bb(bbTest);
     cfg->add_bb(bbBloc);
@@ -263,8 +263,8 @@ antlrcpp::Any CToIRVisitor::visitExprLAND(ifccParser::ExprLANDContext *ctx) {
     cfg->current_bb->test_var_index = stoi(leftResultIndex);
 
     auto *bbTest = cfg->current_bb;
-    auto *bbTrue = new BasicBlock(cfg, cfg->new_BB_name());
-    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbTrue = new BasicBlock(cfg, cfg->new_BB_name("land_true"));
+    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name("land_out"));
     bbOut->exit_true = cfg->current_bb->exit_true;
     bbOut->exit_false = cfg->current_bb->exit_false;
 
@@ -296,8 +296,8 @@ antlrcpp::Any CToIRVisitor::visitExprLOR(ifccParser::ExprLORContext *ctx) {
     cfg->current_bb->test_var_index = stoi(leftResultIndex);
 
     auto *bbTest = cfg->current_bb;
-    auto *bbFalse = new BasicBlock(cfg, cfg->new_BB_name());
-    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbFalse = new BasicBlock(cfg, cfg->new_BB_name("lor_false"));
+    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name("lor_out"));
     bbOut->exit_true = cfg->current_bb->exit_true;
     bbOut->exit_false = cfg->current_bb->exit_false;
 
@@ -412,9 +412,9 @@ antlrcpp::Any CToIRVisitor::visitFor_loop(ifccParser::For_loopContext *ctx) {
     cfg->add_symbol_context();
     if (ctx->for_init() != nullptr)
         visit(ctx->for_init());
-    auto *bbTest = new BasicBlock(cfg, cfg->new_BB_name());
-    auto *bbBloc = new BasicBlock(cfg, cfg->new_BB_name());
-    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbTest = new BasicBlock(cfg, cfg->new_BB_name("for_test"));
+    auto *bbBloc = new BasicBlock(cfg, cfg->new_BB_name("for_bloc"));
+    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name("for_out"));
 
     cfg->add_bb(bbTest);
     cfg->add_bb(bbBloc);
@@ -434,7 +434,7 @@ antlrcpp::Any CToIRVisitor::visitFor_loop(ifccParser::For_loopContext *ctx) {
     }
 
     if (ctx->for_after() != nullptr){
-        auto *bbAfterBloc = new BasicBlock(cfg, cfg->new_BB_name());
+        auto *bbAfterBloc = new BasicBlock(cfg, cfg->new_BB_name("for_after"));
         cfg->add_bb(bbAfterBloc);
 
         pileBoucles.push(new pair<BasicBlock*, BasicBlock*>(bbAfterBloc, bbOut));
@@ -460,9 +460,9 @@ antlrcpp::Any CToIRVisitor::visitFor_loop(ifccParser::For_loopContext *ctx) {
 }
 
 antlrcpp::Any CToIRVisitor::visitDo_while_loop(ifccParser::Do_while_loopContext *ctx) {
-    auto *bbTest = new BasicBlock(cfg, cfg->new_BB_name());
-    auto *bbBloc = new BasicBlock(cfg, cfg->new_BB_name());
-    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name());
+    auto *bbTest = new BasicBlock(cfg, cfg->new_BB_name("do_while_test"));
+    auto *bbBloc = new BasicBlock(cfg, cfg->new_BB_name("do_while_bloc"));
+    auto *bbOut = new BasicBlock(cfg, cfg->new_BB_name("do_while_out"));
 
     cfg->add_bb(bbTest);
     cfg->add_bb(bbBloc);

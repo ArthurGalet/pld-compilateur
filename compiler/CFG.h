@@ -46,6 +46,7 @@ class CFG {
 
         // basic block management
         string new_BB_name();
+        string new_BB_name(string partOfName);
         BasicBlock* current_bb = nullptr;
 
     protected:
