@@ -42,7 +42,7 @@ Le fichier `dev-manual.md` décrit plus en détail le projet.
 | Reciblage vers plusieurs architectures : x86, MSP430, ARM                                                            | F        | Non implémenté |
 | Support des double avec toutes les conversions implicites                                                            | F        | Non implémenté |
 | Propagation de constantes simple                                                                                     | F        | Terminé        |
-| Propagation de variables constantes (avec analyse du data-flow)                                                      | F        | Non implémenté |
+| Propagation de variables constantes (avec analyse du data-flow)                                                      | F        | Terminé        |
 | Tableaux (à une dimension)                                                                                           | F        | Non implémenté |
 | Pointeurs                                                                                                            | F        | Non implémenté |
 | break et continue                                                                                                    | F        | Terminé        |
