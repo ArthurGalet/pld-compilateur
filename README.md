@@ -10,7 +10,10 @@ Il dispose des targets suivantes :
 - `clean` : supprime les fichiers
 - `test` : exécute tout les tests du dossier `tests/testfiles`. /!\ La target ifcc est une dépendance de cette target.
 
-Un autre fichier README, `dev-manual.md` décrit plus en détail le projet.
+Pour compiler un programme, il suffit d'utilisater la commande suivante : `./ifcc <fichier.c>`.
+Le compilateur ne dispose pas d'options en ligne de commande.
+
+Le fichier `dev-manual.md` décrit plus en détail le projet.
 
 ## Liste des fonctionnalités
 
