@@ -15,7 +15,7 @@ protected:
     static void unusedVariables(CFG* cfg);
     static void deadCodeRemoval(BasicBlock* bb);
     static void optimizeCFG(CFG *cfg);
-    static bool reduce(BasicBlock* bb, int index, int value);
+    static bool reduce(BasicBlock *bb, int index, int value, IRInstr* instr, map<string, string>* constVars);
     vector<CFG*>* cfgs;
 
 
