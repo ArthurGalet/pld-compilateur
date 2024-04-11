@@ -29,6 +29,9 @@ ifcc: $(OBJECTS)
 	@mkdir -p build
 	$(CC) $(LDFLAGS) build/*.o $(ANTLRLIB) -o ifcc
 
+test: ifcc
+	python3 ../tests/ifcc-test.py ../tests/testfiles/
+
 ##########################################
 # compile our hand-writen C++ code: main(), CodeGenVisitor, etc.
 build/%.o: %.cpp generated/ifccParser.cpp
