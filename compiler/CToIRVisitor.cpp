@@ -170,7 +170,6 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
         bbIf->exit_false = bbOut;
     } else {
         auto *bbFalse = new BasicBlock(cfg, cfg->new_BB_name("if_false"));
-        bbFalse->exit_true = bbOut;
         bbIf->exit_false = bbFalse;
 
         cfg->add_bb(bbFalse);
@@ -180,6 +179,7 @@ antlrcpp::Any CToIRVisitor::visitIfelse(ifccParser::IfelseContext *ctx) {
         } else {
             visit(ctx->condition_bloc()[1]);
         }
+        cfg->current_bb->exit_true = bbOut;
     }
     cfg->add_bb(bbOut);
     cfg->current_bb = bbOut;
