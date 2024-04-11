@@ -145,3 +145,10 @@ void CFG::add_symbol_context() {
 void CFG::end_symbol_context() {
     Symbols->pop_back();
 }
+
+BasicBlock* CFG::find_bb_by_name(string name){
+    for(auto bb : *bbs)
+        if (bb->label == name)
+            return bb;
+    return nullptr;
+}

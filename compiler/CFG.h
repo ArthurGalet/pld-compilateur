@@ -59,4 +59,5 @@ class CFG {
         string cfg_name;
 
         vector <BasicBlock*>* bbs = new vector<BasicBlock*>; /**< all the basic blocks of this CFG*/
+    BasicBlock *find_bb_by_name(string name);
 };

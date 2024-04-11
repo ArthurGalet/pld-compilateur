@@ -17,5 +17,8 @@ protected:
     static void optimizeCFG(CFG *cfg);
     static bool reduce(BasicBlock* bb, int index, int value);
     vector<CFG*>* cfgs;
+
+
+    void replaceJumpInstructions() const;
 };
 
