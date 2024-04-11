@@ -51,7 +51,7 @@ void IROptimizer::optimizeCFG(CFG* cfg){
             }
         }
     }
-    for (long unsigned i = 1; i + 1 < cfg->bbs->size(); i++) {
+    for (long unsigned i = 1; i < cfg->bbs->size(); i++) {
         bool toRemove = true;
         BasicBlock *bb = (*cfg->bbs)[i];
         for (auto bb2: *cfg->bbs) {
