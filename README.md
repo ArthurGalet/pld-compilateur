@@ -2,6 +2,17 @@
 
 Compilateur C fait maison
 
+## Utilisation
+
+Un Makefile est disponible dans le dossier `compiler`
+Il dispose des targets suivantes :
+- `ifcc` ou `all` (règle par défaut) : compile le compilateur
+- `clean` : supprime les fichiers
+- `test` : exécute tout les tests du dossier `tests/testfiles`. /!\ La target ifcc est une dépendance de cette target.
+
+Un autre fichier README, `dev-manual.md` décrit plus en détail le projet.
+
+## Liste des fonctionnalités
 
 | Fonctionnalité                                                                                                       | Priorité | Développement  |
 |----------------------------------------------------------------------------------------------------------------------|----------|----------------|
@@ -27,7 +38,7 @@ Compilateur C fait maison
 | Vérification qu’une variable déclarée est utilisée                                                                   | O        | Terminé        |
 | Reciblage vers plusieurs architectures : x86, MSP430, ARM                                                            | F        | Non implémenté |
 | Support des double avec toutes les conversions implicites                                                            | F        | Non implémenté |
-| Propagation de constantes simple                                                                                     | F        | Non implémenté |
+| Propagation de constantes simple                                                                                     | F        | Terminé        |
 | Propagation de variables constantes (avec analyse du data-flow)                                                      | F        | Non implémenté |
 | Tableaux (à une dimension)                                                                                           | F        | Non implémenté |
 | Pointeurs                                                                                                            | F        | Non implémenté |
@@ -40,13 +51,15 @@ Compilateur C fait maison
 | Opérateurs d’affectation +=, -= etc., d’incrémentation ++ et décrémentation --                                       | F        | Terminé        |
 | Les variables globales                                                                                               | NP       | Non implémenté |
 | Les autres types de inttypes.h, les double                                                                           | NP       | Non implémenté |
-| Le support dans les moindres détails de tous les autres opérateurs arithmétiques et logiques : <=, >=, << et >> etc. | NP       | Partiel        |
-| Les autres structures de contrôle : for, do...while                                                                  | NP       | Non implémenté |
+| Le support dans les moindres détails de tous les autres opérateurs arithmétiques et logiques : <=, >=, << et >> etc. | NP       | Terminé        |
+| Les autres structures de contrôle : for, do...while                                                                  | NP       | Terminé        |
 | La possibilité de séparer dans des fichiers distincts les déclarations et les définitions                            | D        | Non implémenté |
 | Le support du préprocesseur (#define, #include, #if, etc.)                                                           | D        | Non implémenté |
 | Les structures et unions                                                                                             | D        | Non implémenté |
 
 ## Auteurs
+
+**Hexanome 4234**
 - Arthur Galet
 - Alexandre Rosard
 - Irvin Cote
