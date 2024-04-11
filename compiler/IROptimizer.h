@@ -11,12 +11,11 @@ public:
     void optimize() const;
 
 protected:
-    void constantOptimization() const;
     static void constantVariableOptimization(BasicBlock* bb);
     static void unusedVariables(CFG* cfg);
-    static void optimizeBB(BasicBlock* bb);
+    static void deadCodeRemoval(BasicBlock* bb);
     static void optimizeCFG(CFG *cfg);
-    static bool reduce(BasicBlock* bb, int indexFirst, int indexLast, int value);
+    static bool reduce(BasicBlock* bb, int index, int value);
     vector<CFG*>* cfgs;
 };
 
