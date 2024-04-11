@@ -1,10 +1,29 @@
 # PLD Compilateur : Developper's manual
 
+## Classes
+
+### `ValidatorVisitor`
+
+Cette classe se charge de faire toutes les vérifications qu'on ne peut pas faire dans la grammaire mais qui peuvent empêcher la compilation.
+
+###  `CToIRVisitor`
+
+Cette classe se charge de faire la traduction du language C en représentation intermédiaire (IR).
+Elle crée un `CFG` par fonction et génère tous les `BasicBlock` et les remplis d'instructions.
+Elle se charge d'attribuer l'offset sur la pile à chaque variable.
+
+### `IROptimizer`
+
+Cette classe se charge de simplifier des suites d'instructions IR.
+Les instructions étant générées une à une sans tenir compte des autres, beaucoup d'opérations sont effecturées de manière très peu efficace.
+
 ## Instructions en représentation intermédiaire (IR)
+
+Les instructions sont issues de l'enum `Operation`.
 
 | Nom de l'instruction | Paramètre(s)                                                   | Description                                                                                          |
 |----------------------|----------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
-| loadconst            | 0 : une variable<br/> 1 : la valeur                            | Met une valeur entière dans une variable                                                             |
+| ldconst              | 0 : une variable<br/> 1 : la valeur                            | Met une valeur entière dans une variable                                                             |
 | copyvar              | 0 : une variable <br/> 1 : une variable                        | Permet de copier le contenu de la variable `1` dans la variable `0`.                                 |
 | incr                 | 0 : une variable <br/>                                         | Ajoute 1 à la variable                                                                               |
 | decr                 | 0 : une variable <br/>                                         | Enlève 1 à la variable                                                                               |
@@ -30,24 +49,3 @@
 | bwsr                 | 0 : une variable <br/> 1 : une variable <br/> 2 : une variable | Met le résultat du décalage à droite binaire entre les variables `1` et `2` dans la `0`.             |
 | jump                 | 0 : un nom de basic bloc                                       | Se déplace vers le basic bloc susnommé                                                               |
 | ret                  | 0 : une variable <br/>                                         | Retourne la variable et met fin à la fonction en cours                                               |
-
-
-## Visiteurs
-
-### `ValidatorVisitor`
-
-Cette classe se charge de faire toutes les vérifications qu'on ne peut pas faire dans la grammaire mais qui peuvent empêcher la compilation.
-
-###  `CToIRVisitor` 
-
-Cette classe se charge de faire la traduction du language C en représentation intermédiaire (IR).
-Elle crée un `CFG` par fonction et génère tous les `BasicBlock` et les remplis d'instructions. 
-Elle se charge d'attribuer l'offset sur la pile à chaque variable.
-
-
-### `IROptimizer`
-
-Cette classe se charge de simplifier des suites d'instructions IR. 
-Les instructions étant générées une à une sans tenir compte des autres, beaucoup d'opérations sont effecturées de manière très peu efficace.
-
-La classe vient lire une instruction IR ainsi que celles qui la suivent, et si on est dans un cas qui peut être simplifié, ont remplace ces instructions par une version plus optimale.
