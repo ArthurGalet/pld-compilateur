@@ -11,9 +11,9 @@ void IROptimizer::optimize() const{
             constantVariableOptimization(bb);
         }
         unusedVariables(cfg);
-        optimizeCFG(cfg);
     }
     replaceJumpInstructions();
+    simplifyConditionnalBlockJump();
     for (auto cfg : *cfgs){
         optimizeCFG(cfg);
     }
@@ -356,6 +356,17 @@ void IROptimizer::unusedVariables(CFG* cfg) {
 
 }
 
+void IROptimizer::simplifyConditionnalBlockJump() const{
+    for (auto cfg : *cfgs)
+        for (auto bb : *cfg->bbs)
+            if (bb->exit_false != nullptr)
+                for (auto it = bb->instrs->rbegin(); it != bb->instrs->rend(); it++)
+                    if((*it)->op == ldconst && stoi((*it)->params[0]) == bb->test_var_index){
+                        if (stoi((*it)->params[1]) == 0)
+                            bb->exit_true = bb->exit_false;
+                        bb->exit_false = nullptr;
+                    }
+}
 
 bool IROptimizer::reduce(BasicBlock *bb, int index, int value, IRInstr* instr, map<string, string>* constVars) {
     auto *newInstr = new IRInstr(bb, ldconst, {(*bb->instrs)[index]->params[0], to_string(value)});

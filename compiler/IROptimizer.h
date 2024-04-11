@@ -20,5 +20,7 @@ protected:
 
 
     void replaceJumpInstructions() const;
+
+    void simplifyConditionnalBlockJump() const;
 };
 
