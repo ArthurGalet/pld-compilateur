@@ -131,10 +131,24 @@ string CFG::new_BB_name() {
     return name;
 }
 
+string CFG::new_BB_name(string partOfName) {
+    string name = cfg_name + "_" + partOfName + "_bb";
+    name.append(to_string(nextBBnumber));
+    nextBBnumber++;
+    return name;
+}
+
 void CFG::add_symbol_context() {
     Symbols->push_back(new map<string, pair<Type, int>>());
 }
 
 void CFG::end_symbol_context() {
     Symbols->pop_back();
+}
+
+BasicBlock* CFG::find_bb_by_name(string name){
+    for(auto bb : *bbs)
+        if (bb->label == name)
+            return bb;
+    return nullptr;
 }

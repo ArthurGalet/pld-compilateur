@@ -8,7 +8,7 @@ param : 'int' ID ;
 
 type : 'int' | 'void' ;
 
-declarations: 'int' declaration (',' declaration)*;
+declarations: 'int' (declaration? (',' declaration)*);
 declaration: ID ('=' expression)?;
 
 bloc: '{' (instruction | not_instruction)* '}';

@@ -118,7 +118,7 @@ void IRInstr::gen_asm(ostream &o)
         o << "    movl %eax, " << params[0] << "(%rbp)\n";
         break;
     case cmp_ne:
-        // P0 = (P1 == P2)
+        // P0 = !(P1 == P2)
         o << "    movl " << params[1] << "(%rbp), %eax\n";
         o << "    cmp " << params[2] << "(%rbp), %eax\n";
         o << "    setne %bl\n";

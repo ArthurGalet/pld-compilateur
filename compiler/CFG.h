@@ -46,6 +46,7 @@ class CFG {
 
         // basic block management
         string new_BB_name();
+        string new_BB_name(string partOfName);
         BasicBlock* current_bb = nullptr;
 
     protected:
@@ -58,4 +59,5 @@ class CFG {
         string cfg_name;
 
         vector <BasicBlock*>* bbs = new vector<BasicBlock*>; /**< all the basic blocks of this CFG*/
+    BasicBlock *find_bb_by_name(string name);
 };
